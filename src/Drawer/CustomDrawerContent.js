@@ -1,21 +1,37 @@
 // CustomDrawerContent.js
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const CustomDrawerContent = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <LinearGradient
+        colors={['#4c669f', 'white']}
+        style={styles.linearGradient}>
         <Image
-          source={{uri: 'https://picsum.photos/200/300'}}
+          source={{
+            uri: 'https://cdn.pixabay.com/photo/2020/10/11/19/51/cat-5646889_1280.jpg',
+          }}
           style={styles.profilePhoto}
         />
-        <Text style={styles.username}>John Doe</Text>
-      </View>
+        <Text style={styles.username}>Big Leap </Text>
+      </LinearGradient>
+
       <View style={styles.menuItems}>
-        <Text style={styles.menuItem}>Menu Item 1</Text>
-        <Text style={styles.menuItem}>Menu Item 2</Text>
-        {/* Add more menu items as needed */}
+        <Text
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('Dashboard')}>
+          Dashboard
+        </Text>
+        <Text
+          style={styles.menuItem}
+          onPress={() => navigation.navigate('Rewards')}>
+          Rewards
+        </Text>
+        <Text style={styles.menuItem}>Drawer Item 1</Text>
+        <Text style={styles.menuItem}>Drawer Item 2</Text>
+        <Text style={styles.menuItem}>Drawer Item 3</Text>
       </View>
     </View>
   );
@@ -24,7 +40,7 @@ const CustomDrawerContent = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    height: Dimensions.get('window').height,
   },
   header: {
     flexDirection: 'row',
@@ -32,9 +48,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profilePhoto: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     marginRight: 10,
   },
   username: {
@@ -43,10 +59,17 @@ const styles = StyleSheet.create({
   },
   menuItems: {
     marginTop: 10,
+    paddingHorizontal: 20,
   },
   menuItem: {
-    fontSize: 16,
+    fontSize: 20,
     marginBottom: 10,
+    fontWeight: '500',
+  },
+  linearGradient: {
+    padding: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
