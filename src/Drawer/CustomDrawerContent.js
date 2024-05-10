@@ -7,7 +7,9 @@ const CustomDrawerContent = ({navigation}) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#4c669f', 'white']}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
+        colors={['#00308F', '#5072A7']}
         style={styles.linearGradient}>
         <Image
           source={{
