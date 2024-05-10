@@ -1,10 +1,12 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {deviceWidth} from '../../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 // import Coin from '../Assets/svg/coin.svg';
 
 const PointCard = () => {
+  const navigation = useNavigation();
   return (
     <LinearGradient
       start={{x: 0, y: 0}}
@@ -35,11 +37,17 @@ const PointCard = () => {
       </View>
       <View style={styles.borderBottom}></View>
       <View style={styles.cardBottom}>
-        <Text style={[styles.text, {fontSize: 16}]}>Transaction</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Transactions')}>
+          <Text style={[styles.text, {fontSize: 16}]}>Transaction</Text>
+        </TouchableOpacity>
         <View style={styles.borderRight}></View>
-        <Text style={[styles.text, {fontSize: 16}]}>Bank</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Bank')}>
+          <Text style={[styles.text, {fontSize: 16}]}>Bank</Text>
+        </TouchableOpacity>
         <View style={styles.borderRight}></View>
-        <Text style={[styles.text, {fontSize: 16}]}>Redeem</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Redeem')}>
+          <Text style={[styles.text, {fontSize: 16}]}>Redeem</Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );

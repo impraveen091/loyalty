@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-const RewardsScreen = () => {
+const PromotionalOffers = () => {
   return (
     <View>
       <Text>Rewards Screen</Text>
@@ -10,4 +10,4 @@ const RewardsScreen = () => {
   );
 };
 
-export default RewardsScreen;
+export default PromotionalOffers;
