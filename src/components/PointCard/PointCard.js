@@ -3,7 +3,7 @@ import React from 'react';
 import {deviceWidth} from '../../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-// import Coin from '../Assets/svg/coin.svg';
+import Coin from '../Assets/svg/coin.svg';
 
 const PointCard = () => {
   const navigation = useNavigation();
@@ -15,14 +15,21 @@ const PointCard = () => {
       style={styles.linearGradient}>
       <View style={styles.cardView}>
         <View>
-          {/* <Coin width={25} height={25} /> */}
           <View>
-            <Text style={styles.text}>Available Points</Text>
+            <View style={styles.coinIcon}>
+              <Text style={styles.text}>Available Points</Text>
+              <Coin width={25} height={25} />
+            </View>
+
             <Text style={styles.text}>0.00</Text>
           </View>
 
           <View style={{marginTop: 20}}>
-            <Text style={styles.text}>Redemption limit</Text>
+            <View style={styles.coinIcon}>
+              <Text style={styles.text}>Redemption limit</Text>
+              <Coin width={25} height={25} />
+            </View>
+
             <Text style={styles.text}>250</Text>
           </View>
         </View>
@@ -92,5 +99,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     marginVertical: 5,
+  },
+  coinIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    columnGap: 10,
   },
 });

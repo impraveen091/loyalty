@@ -11,7 +11,14 @@ import {useSelector, useDispatch} from 'react-redux';
 import ImageSlider from '../components/imageSlider/ImageSlider';
 import PointCard from '../components/PointCard/PointCard';
 import {deviceHeight, deviceWidth} from '../constants/Constants';
-// import Coin from '../components/Assets/svg/coin.svg';
+import Promotional from '../components/Assets/svg/promotional.svg';
+import Redeem from '../components/Assets/svg/redeem.svg';
+import Bank from '../components/Assets/svg/bank.svg';
+import Catalog from '../components/Assets/svg/catalog.svg';
+import Product from '../components/Assets/svg/product.svg';
+import Transactions from '../components/Assets/svg/transactions.svg';
+import Refer from '../components/Assets/svg/refer.svg';
+import Receipt from '../components/Assets/svg/receipt.svg';
 
 const Dashboard = ({navigation}) => {
   const points = useSelector(state => state.loyalty.points);
@@ -35,42 +42,49 @@ const Dashboard = ({navigation}) => {
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('PromotionalOffers')}>
-          {/* <Coin /> */}
+          <Promotional width={30} height={30} />
           <Text style={styles.text}>Promotional Offers</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Redeem')}>
+          <Redeem width={30} height={30} />
           <Text style={styles.text}>Redeem</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Bank')}>
+          <Bank width={40} height={40} />
           <Text style={styles.text}>Bank</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Catalog')}>
+          <Catalog width={40} height={40} />
           <Text style={styles.text}>Catalog</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Products')}>
+          <Product width={40} height={40} />
           <Text style={styles.text}>Products</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Transactions')}>
+          <Transactions width={40} height={40} />
           <Text style={styles.text}>Transactions</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Refer')}>
+          <Refer width={40} height={40} />
           <Text style={styles.text}>Refer</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('PurchaseReceipt')}>
+          <Receipt width={40} height={40} />
           <Text style={styles.text}>Purchase Receipt</Text>
         </TouchableOpacity>
       </View>
