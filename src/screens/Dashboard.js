@@ -84,7 +84,7 @@ const Dashboard = ({navigation}) => {
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('PurchaseReceipt')}>
-          <Receipt width={40} height={40} />
+          <Receipt width={35} height={35} />
           <Text style={styles.text}>Purchase Receipt</Text>
         </TouchableOpacity>
       </View>
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   text: {
-    color: '#000130',
+    color: '#5072A7',
     fontWeight: '500',
     textAlign: 'center',
   },
