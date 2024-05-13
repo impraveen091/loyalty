@@ -47,7 +47,9 @@ const Products = () => {
               style={styles.image}
             />
             <View style={{maxWidth: '70%', rowGap: 5}}>
-              <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 18}}>
+                {item.name}
+              </Text>
               <Text style={{flexWrap: 'wrap'}}>
                 <Text style={{fontWeight: 'bold'}}>Description:</Text>
                 {item.details}
@@ -59,19 +61,7 @@ const Products = () => {
 
               <Text style={{fontWeight: 'bold'}}>colors available: 7</Text>
 
-              <TouchableOpacity
-                style={{
-                  width: 120,
-                  height: 40,
-                  backgroundColor: '#00308F',
-                  padding: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 10,
-                  position: 'absolute',
-                  right: 5,
-                  bottom: 0,
-                }}>
+              <TouchableOpacity style={styles.addtocart}>
                 <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
                   Add to Cart
                 </Text>
@@ -110,9 +100,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 10,
   },
-  cardContainer: {rowGap: 10},
+  cardContainer: {rowGap: 10, backgroundColor: 'white'},
   image: {
     width: 150,
     height: 150,
+  },
+  addtocart: {
+    width: 120,
+    height: 40,
+    backgroundColor: '#00308F',
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
   },
 });
