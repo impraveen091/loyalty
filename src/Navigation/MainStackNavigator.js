@@ -8,6 +8,9 @@ import Transactions from '../screens/Transactions';
 import Catalog from '../screens/Catalog';
 import Bank from '../screens/Bank';
 import Products from '../screens/Products';
+import Scan from '../screens/Scan';
+import OfferDetails from '../screens/OfferDetails';
+
 const Stack = createStackNavigator();
 
 const MainStackNavigator = () => {
@@ -56,6 +59,16 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="PurchaseReceipt"
         component={PurchaseReceipt}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Scan"
+        component={Scan}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="OfferDetails"
+        component={OfferDetails}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

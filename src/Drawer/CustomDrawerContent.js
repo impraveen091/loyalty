@@ -21,19 +21,17 @@ const CustomDrawerContent = ({navigation}) => {
       </LinearGradient>
 
       <View style={styles.menuItems}>
-        <Text
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('Dashboard')}>
-          Dashboard
-        </Text>
-        <Text
-          style={styles.menuItem}
-          onPress={() => navigation.navigate('Rewards')}>
-          Rewards
-        </Text>
-        <Text style={styles.menuItem}>Drawer Item 1</Text>
-        <Text style={styles.menuItem}>Drawer Item 2</Text>
-        <Text style={styles.menuItem}>Drawer Item 3</Text>
+        <Text style={styles.menuItem}>Announcement</Text>
+        <Text style={styles.menuItem}>Catalog</Text>
+        <Text style={styles.menuItem}>Help & Support</Text>
+        <Text style={styles.menuItem}>Take a tour</Text>
+        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
+        <Text style={styles.menuItemGrey}>About us</Text>
+        <Text style={styles.menuItemGrey}>Privacy policy</Text>
+        <Text style={styles.menuItemGrey}>Contact us</Text>
+        <Text style={styles.menuItemGrey}>Terms of use</Text>
+        <Text style={styles.menuItemGrey}>Logout</Text>
+        <Text style={styles.menuItemGrey}>Version 1.0.0</Text>
       </View>
     </View>
   );
@@ -58,15 +56,24 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
   },
   menuItems: {
     marginTop: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
+    rowGap: 20,
   },
   menuItem: {
     fontSize: 20,
     marginBottom: 10,
     fontWeight: '500',
+    color: 'black',
+  },
+  menuItemGrey: {
+    fontSize: 20,
+    marginBottom: 10,
+    fontWeight: '300',
+    color: 'grey',
   },
   linearGradient: {
     padding: 10,

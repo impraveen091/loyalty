@@ -19,6 +19,7 @@ import Product from '../components/Assets/svg/product.svg';
 import Transactions from '../components/Assets/svg/transactions.svg';
 import Refer from '../components/Assets/svg/refer.svg';
 import Receipt from '../components/Assets/svg/receipt.svg';
+import Scan from '../components/Assets/svg/scan.svg';
 
 const Dashboard = ({navigation}) => {
   const points = useSelector(state => state.loyalty.points);
@@ -39,6 +40,12 @@ const Dashboard = ({navigation}) => {
       <ImageSlider images={images} />
       <PointCard />
       <View style={styles.menuCardContainer}>
+        <TouchableOpacity
+          style={styles.menuCard}
+          onPress={() => navigation.navigate('Scan')}>
+          <Scan width={30} height={30} />
+          <Text style={styles.text}>Scan</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('PromotionalOffers')}>
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 5,
+    padding: 10,
   },
   text: {
     color: '#5072A7',
