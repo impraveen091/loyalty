@@ -32,22 +32,16 @@ const Catalog = () => {
 
 export default Catalog;
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 20},
+  container: {flex: 1, padding: 10},
   heading: {
-    fontSize: 20,
-    textAlign: 'center',
+    fontSize: 25,
     color: '#00308F',
-    backgroundColor: '#E3963E',
-    padding: 10,
-    borderRadius: 10,
-    fontWeight: '600',
-    width: deviceWidth / 2,
+    fontWeight: '400',
     alignSelf: 'center',
-    marginBottom: 30,
   },
   linearGradient: {
     padding: 10,
-    width: deviceWidth - 40,
+    width: deviceWidth - 20,
     height: 80,
     borderRadius: 10,
     marginTop: 15,

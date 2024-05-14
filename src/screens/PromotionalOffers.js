@@ -34,18 +34,16 @@ const PromotionalOffers = () => {
 
 export default PromotionalOffers;
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 20},
+  container: {flex: 1, padding: 10},
   heading: {
-    fontSize: 20,
-    textAlign: 'center',
+    fontSize: 25,
     color: '#00308F',
-    backgroundColor: '#E3963E',
-    padding: 10,
-    borderRadius: 10,
+    fontWeight: '400',
+    alignSelf: 'center',
   },
   linearGradient: {
     padding: 15,
-    width: deviceWidth - 40,
+    width: deviceWidth - 20,
     height: 130,
     borderRadius: 10,
     marginTop: 15,

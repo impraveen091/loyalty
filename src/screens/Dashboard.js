@@ -37,7 +37,7 @@ const Dashboard = ({navigation}) => {
   ];
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-      <ImageSlider images={images} />
+      <ImageSlider data={images} />
       <PointCard />
       <View style={styles.menuCardContainer}>
         <TouchableOpacity
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   menuCard: {
-    width: deviceWidth / 3.66,
-    height: deviceWidth / 3.66,
+    width: deviceWidth / 3.73,
+    height: deviceWidth / 3.73,
     backgroundColor: '#e6e6e6',
     borderRadius: 15,
     justifyContent: 'center',
@@ -128,5 +128,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingHorizontal: 5,
     marginBottom: 80,
+    justifyContent: 'center',
   },
 });

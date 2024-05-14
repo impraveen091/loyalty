@@ -47,19 +47,25 @@ const Products = () => {
               style={styles.image}
             />
             <View style={{maxWidth: '70%', rowGap: 5}}>
-              <Text style={{fontWeight: 'bold', fontSize: 18}}>
+              <Text style={{fontWeight: 'bold', fontSize: 18, color: 'black'}}>
                 {item.name}
               </Text>
-              <Text style={{flexWrap: 'wrap'}}>
-                <Text style={{fontWeight: 'bold'}}>Description:</Text>
+              <Text style={{flexWrap: 'wrap', color: 'black'}}>
+                <Text style={{fontWeight: 'bold', color: 'black'}}>
+                  Description:
+                </Text>
                 {item.details}
               </Text>
-              <Text>
-                <Text style={{fontWeight: 'bold'}}>Price: ₹</Text>
+              <Text style={{color: 'black'}}>
+                <Text style={{fontWeight: 'bold', color: 'black'}}>
+                  Price: ₹
+                </Text>
                 {item.price}
               </Text>
 
-              <Text style={{fontWeight: 'bold'}}>colors available: 7</Text>
+              <Text style={{fontWeight: 'bold', color: 'black'}}>
+                colors available: 7
+              </Text>
 
               <TouchableOpacity style={styles.addtocart}>
                 <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
@@ -78,16 +84,11 @@ export default Products;
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 10},
   heading: {
-    fontSize: 20,
-    textAlign: 'center',
+    fontSize: 25,
     color: '#00308F',
-    backgroundColor: '#E3963E',
-    padding: 10,
-    borderRadius: 10,
-    fontWeight: '600',
-    width: deviceWidth / 2,
+    fontWeight: '400',
     alignSelf: 'center',
-    marginBottom: 30,
+    marginBottom: 10,
   },
   card: {
     width: deviceWidth - 20,
@@ -106,15 +107,15 @@ const styles = StyleSheet.create({
     height: 150,
   },
   addtocart: {
-    width: 120,
-    height: 40,
+    width: 'fit-content',
+    paddingHorizontal: 5,
+    height: 30,
     backgroundColor: '#00308F',
-    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     position: 'absolute',
-    right: 10,
+    right: 60,
     bottom: 0,
   },
 });

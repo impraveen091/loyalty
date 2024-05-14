@@ -34,14 +34,9 @@ export default OfferDetails;
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 10},
   heading: {
-    fontSize: 20,
-    textAlign: 'center',
+    fontSize: 25,
     color: '#00308F',
-    backgroundColor: '#E3963E',
-    padding: 10,
-    borderRadius: 10,
-    fontWeight: '600',
-    width: deviceWidth / 2,
+    fontWeight: '400',
     alignSelf: 'center',
   },
   offerDetailsCard: {

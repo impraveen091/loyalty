@@ -10,12 +10,25 @@ import Bank from '../screens/Bank';
 import Products from '../screens/Products';
 import Scan from '../screens/Scan';
 import OfferDetails from '../screens/OfferDetails';
+import Termsofuse from '../screens/StaticPages/Termsofuse';
+import Privacypolicy from '../screens/StaticPages/Privacypolicy';
+import Contactus from '../screens/StaticPages/Contactus';
+import Notifications from '../screens/Notifications';
+import HelpSupport from '../screens/HelpSupport';
+import Signin from '../screens/Signin';
+import Otp from '../screens/Otp';
 
 const Stack = createStackNavigator();
 
 const MainStackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Dashboard">
+    <Stack.Navigator initialRouteName="Signin">
+      <Stack.Screen
+        name="Signin"
+        component={Signin}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="Otp" component={Otp} options={{headerShown: false}} />
       <Stack.Screen
         name="Dashboard"
         component={Dashboard}
@@ -69,6 +82,31 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="OfferDetails"
         component={OfferDetails}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Termsofuse"
+        component={Termsofuse}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Privacypolicy"
+        component={Privacypolicy}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Contactus"
+        component={Contactus}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="HelpSupport"
+        component={HelpSupport}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

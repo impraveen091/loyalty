@@ -76,17 +76,13 @@ export default Transactions;
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 10},
   heading: {
-    fontSize: 20,
-    textAlign: 'center',
+    fontSize: 25,
     color: '#00308F',
-    backgroundColor: '#E3963E',
-    padding: 10,
-    borderRadius: 10,
-    width: deviceWidth / 2,
+    fontWeight: '400',
     alignSelf: 'center',
   },
   card: {
-    marginTop: 20,
+    marginTop: 10,
     backgroundColor: 'white',
     height: 100,
     borderRadius: 10,

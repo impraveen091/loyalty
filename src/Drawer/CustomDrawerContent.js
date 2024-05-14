@@ -1,6 +1,13 @@
 // CustomDrawerContent.js
 import React from 'react';
-import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 const CustomDrawerContent = ({navigation}) => {
@@ -21,16 +28,33 @@ const CustomDrawerContent = ({navigation}) => {
       </LinearGradient>
 
       <View style={styles.menuItems}>
-        <Text style={styles.menuItem}>Announcement</Text>
-        <Text style={styles.menuItem}>Catalog</Text>
-        <Text style={styles.menuItem}>Help & Support</Text>
-        <Text style={styles.menuItem}>Take a tour</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+          <Text style={styles.menuItem}>Announcement</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Catalog')}>
+          <Text style={styles.menuItem}>Catalog</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('HelpSupport')}>
+          <Text style={styles.menuItem}>Help & Support</Text>
+        </TouchableOpacity>
+
+        {/* <Text style={styles.menuItem}>Take a tour</Text> */}
         <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
         <Text style={styles.menuItemGrey}>About us</Text>
-        <Text style={styles.menuItemGrey}>Privacy policy</Text>
-        <Text style={styles.menuItemGrey}>Contact us</Text>
-        <Text style={styles.menuItemGrey}>Terms of use</Text>
-        <Text style={styles.menuItemGrey}>Logout</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Privacypolicy')}>
+          <Text style={styles.menuItemGrey}>Privacy policy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Contactus')}>
+          <Text style={styles.menuItemGrey}>Contact us</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Termsofuse')}>
+          <Text style={styles.menuItemGrey}>Terms of use</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+          <Text style={styles.menuItemGrey}>Logout</Text>
+        </TouchableOpacity>
         <Text style={styles.menuItemGrey}>Version 1.0.0</Text>
       </View>
     </View>

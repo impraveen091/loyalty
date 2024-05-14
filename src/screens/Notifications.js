@@ -1,19 +1,11 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
-
 import {deviceWidth} from '../constants/Constants';
 
-const Bank = () => {
+const Notifications = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Bank Management</Text>
+      <Text style={styles.heading}>Notifications</Text>
       <View style={styles.imageContainer}>
         <Image
           source={{
@@ -22,28 +14,11 @@ const Bank = () => {
           style={styles.image}
         />
       </View>
-      <TouchableOpacity
-        style={{
-          width: 120,
-          height: 50,
-          backgroundColor: '#00308F',
-          padding: 10,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: 10,
-          position: 'absolute',
-          right: 10,
-          bottom: 20,
-        }}>
-        <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
-          + Add Bank
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-export default Bank;
+export default Notifications;
 
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 10, backgroundColor: 'white'},
