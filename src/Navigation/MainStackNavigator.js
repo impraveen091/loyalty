@@ -17,12 +17,43 @@ import Notifications from '../screens/Notifications';
 import HelpSupport from '../screens/HelpSupport';
 import Signin from '../screens/Signin';
 import Otp from '../screens/Otp';
+import Profile from '../screens/Profile';
+import Aboutus from '../screens/StaticPages/Aboutus';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import CustomDrawerContent from '../Drawer/CustomDrawerContent';
+import Logo from '../components/Assets/Images/logo.png';
+import {Image, TouchableOpacity} from 'react-native';
+import Bell from '../components/Assets/svg/bell.svg';
+import Signup from '../screens/Signup';
 
+const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
+
+const DashboardDrawerNavigator = ({navigation}) => (
+  <Drawer.Navigator
+    drawerContent={props => <CustomDrawerContent {...props} />}
+    screenOptions={{
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+          <Bell style={{width: 15, height: 15, marginHorizontal: 10}} />
+        </TouchableOpacity>
+      ),
+      headerTitle: () => (
+        <Image source={Logo} style={{width: 150, resizeMode: 'contain'}} />
+      ),
+    }}>
+    <Drawer.Screen name="Dashboard" component={Dashboard} />
+  </Drawer.Navigator>
+);
 
 const MainStackNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Signin">
+      <Stack.Screen
+        name="DashboardDrawer"
+        component={DashboardDrawerNavigator}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="Signin"
         component={Signin}
@@ -105,8 +136,23 @@ const MainStackNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="Aboutus"
+        component={Aboutus}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="HelpSupport"
         component={HelpSupport}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={Signup}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

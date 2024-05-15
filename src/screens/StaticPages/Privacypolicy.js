@@ -224,5 +224,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     width: deviceWidth - 20,
     color: 'black',
+    textAlign: 'justify',
   },
 });

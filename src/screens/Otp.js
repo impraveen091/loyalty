@@ -21,7 +21,7 @@ const Otp = () => {
       setError('OTP must be 6 digits');
     } else {
       setOtp('');
-      navigation.replace('Dashboard');
+      navigation.replace('DashboardDrawer');
     }
   };
   return (
@@ -30,7 +30,13 @@ const Otp = () => {
         source={{
           uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
         }}
-        style={[styles.image, {height: 50, marginBottom: 50}]}
+        style={[styles.image, {width: deviceWidth - 50, height: 40}]}
+      />
+      <Image
+        source={{
+          uri: 'https://img.freepik.com/free-vector/secure-login-concept-illustration_114360-4685.jpg?t=st=1715684176~exp=1715687776~hmac=2af716be16922611ea63755e198b9b131a32cf21853c5935f4532f6699c188e5&w=740',
+        }}
+        style={styles.image}
       />
       <Text style={styles.heading}>OTP verification</Text>
       <View style={styles.inputContainer}>
@@ -48,13 +54,6 @@ const Otp = () => {
         </TouchableOpacity>
       </View>
       {error && <Text style={styles.error}>{error}</Text>}
-
-      <Image
-        source={{
-          uri: 'https://img.freepik.com/free-vector/secure-login-concept-illustration_114360-4685.jpg?t=st=1715684176~exp=1715687776~hmac=2af716be16922611ea63755e198b9b131a32cf21853c5935f4532f6699c188e5&w=740',
-        }}
-        style={styles.image}
-      />
     </View>
   );
 };
@@ -64,15 +63,15 @@ export default Otp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
   },
   heading: {
-    fontSize: 25,
+    fontSize: 30,
     color: '#00308F',
-    fontWeight: '400',
+    fontWeight: '300',
     alignSelf: 'center',
   },
   input: {

@@ -18,7 +18,7 @@ const Signin = () => {
 
   const submit = () => {
     if (phone.length !== 10) {
-      setError('Phone must be 10 digits');
+      setError('Please enter a valid phone number');
     } else {
       setPhone('');
       navigation.navigate('Otp');
@@ -30,31 +30,40 @@ const Signin = () => {
         source={{
           uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
         }}
-        style={[styles.image, {height: 50, marginBottom: 50}]}
+        style={[styles.image, {width: deviceWidth - 50, height: 40}]}
       />
-      <Text style={styles.heading}>Sign In</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          keyboardType="numeric"
-          style={styles.input}
-          placeholder="Enter your Phone number"
-          placeholderTextColor="black"
-          onChangeText={setPhone}
-          value={phone}
-        />
-
-        <TouchableOpacity style={styles.submit} onPress={submit}>
-          <RightArrow width={30} height={30} />
-        </TouchableOpacity>
-      </View>
-      {error && <Text style={styles.error}>{error}</Text>}
-
       <Image
         source={{
           uri: 'https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg?t=st=1715683995~exp=1715687595~hmac=ab594e8d0da6ae56166a9698d3a15c9b8a42609c98e411b0d2815d334bd16408&w=740',
         }}
         style={styles.image}
       />
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.heading}>Login</Text>
+        <TextInput
+          keyboardType="numeric"
+          style={styles.input}
+          placeholder="Enter your Phone number"
+          placeholderTextColor="grey"
+          onChangeText={setPhone}
+          value={phone}
+        />
+        {error && <Text style={styles.error}>{error}</Text>}
+        <TouchableOpacity
+          style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
+          onPress={submit}>
+          <Text style={styles.register}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.submit,
+            {width: deviceWidth - 60, height: 50, backgroundColor: '#ff735c'},
+          ]}
+          onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.register}>Register / SignUp</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -64,7 +73,7 @@ export default Signin;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -75,10 +84,9 @@ const styles = StyleSheet.create({
     color: '#00308F',
     padding: 10,
     borderRadius: 10,
-    fontWeight: '600',
+    fontWeight: '300',
     width: 'fit-content',
     alignSelf: 'center',
-    // marginBottom: 20,
   },
   input: {
     backgroundColor: 'white',
@@ -86,14 +94,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
     elevation: 5,
-    width: deviceWidth / 1.5,
+    width: deviceWidth - 60,
     color: 'black',
   },
   image: {
     width: deviceWidth - 20,
     height: deviceWidth - 20,
     borderRadius: 10,
-    // marginTop: 50,
   },
   submit: {
     width: 'fit-content',
@@ -103,9 +110,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
   },
-  inputContainer: {flexDirection: 'row', columnGap: 20},
+  inputContainer: {
+    width: deviceWidth - 60,
+    justifyContent: 'space-between',
+    rowGap: 10,
+  },
   error: {
-    fontSize: 20,
+    fontSize: 14,
     color: 'red',
   },
+  register: {color: 'white', fontSize: 20},
 });

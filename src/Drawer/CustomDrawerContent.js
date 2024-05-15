@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import Pending from '../components/Assets/svg/exclamation.svg';
+import EditProfile from '../components/Assets/svg/editprofile.svg';
 
 const CustomDrawerContent = ({navigation}) => {
   return (
@@ -18,13 +20,30 @@ const CustomDrawerContent = ({navigation}) => {
         end={{x: 1, y: 1}}
         colors={['#00308F', '#5072A7']}
         style={styles.linearGradient}>
-        <Image
-          source={{
-            uri: 'https://cdn.pixabay.com/photo/2020/10/11/19/51/cat-5646889_1280.jpg',
-          }}
-          style={styles.profilePhoto}
-        />
-        <Text style={styles.username}>Big Leap </Text>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
+            }}
+            style={styles.profilePhoto}
+          />
+          <Text style={styles.username}>Mohan Bhargav </Text>
+        </View>
+        <View style={styles.kycSection}>
+          <View style={styles.pending}>
+            <Text style={styles.kycText}>KYC Pending</Text>
+            <Pending width={25} height={25} />
+          </View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{
+              flexDirection: 'row',
+              columnGap: 5,
+            }}>
+            <Text style={{color: 'white'}}>Edit Profile</Text>
+            <EditProfile width={20} height={20} />
+          </TouchableOpacity>
+        </View>
       </LinearGradient>
 
       <View style={styles.menuItems}>
@@ -41,7 +60,10 @@ const CustomDrawerContent = ({navigation}) => {
 
         {/* <Text style={styles.menuItem}>Take a tour</Text> */}
         <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
-        <Text style={styles.menuItemGrey}>About us</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Aboutus')}>
+          <Text style={styles.menuItemGrey}>About us</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => navigation.navigate('Privacypolicy')}>
           <Text style={styles.menuItemGrey}>Privacy policy</Text>
         </TouchableOpacity>
@@ -101,9 +123,27 @@ const styles = StyleSheet.create({
   },
   linearGradient: {
     padding: 10,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  imageContainer: {flexDirection: 'row', alignItems: 'center'},
+  kycSection: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
+  pending: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: 'fit-content',
+    padding: 3,
+    marginVertical: 10,
+    borderRadius: 5,
+    width: 130,
+  },
+  kycText: {fontSize: 14, fontWeight: '600', color: '#00308F'},
 });
 
 export default CustomDrawerContent;
