@@ -110,7 +110,7 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Scan"
         component={Scan}
-        options={{headerShown: false}}
+        // options={{headerShown: false}}
       />
       <Stack.Screen
         name="OfferDetails"

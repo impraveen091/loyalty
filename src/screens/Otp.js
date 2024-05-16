@@ -42,15 +42,17 @@ const Otp = () => {
       <View style={styles.inputContainer}>
         <TextInput
           keyboardType="numeric"
-          value={otp}
           style={styles.input}
           placeholder="Enter your OTP"
-          placeholderTextColor="black"
+          placeholderTextColor="grey"
           onChangeText={setOtp}
+          value={otp}
         />
-
-        <TouchableOpacity style={styles.submit} onPress={submit}>
-          <RightArrow width={30} height={30} />
+        {error && <Text style={styles.error}>{error}</Text>}
+        <TouchableOpacity
+          style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
+          onPress={submit}>
+          <Text style={styles.register}>Submit</Text>
         </TouchableOpacity>
       </View>
       {error && <Text style={styles.error}>{error}</Text>}
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
     elevation: 5,
-    width: deviceWidth / 1.5,
+    width: deviceWidth - 60,
   },
   image: {
     width: deviceWidth - 20,
@@ -97,9 +99,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
   },
-  inputContainer: {flexDirection: 'row', columnGap: 20},
+  inputContainer: {
+    width: deviceWidth - 60,
+    justifyContent: 'space-between',
+    rowGap: 10,
+  },
   error: {
     fontSize: 20,
     color: 'red',
   },
+  register: {color: 'white', fontSize: 20},
 });
