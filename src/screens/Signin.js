@@ -5,16 +5,24 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Modal,
+  ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import {deviceWidth} from '../constants/Constants';
-import RightArrow from '../components/Assets/svg/right-arrow.svg';
+import {deviceHeight, deviceWidth} from '../constants/Constants';
 import {useNavigation} from '@react-navigation/native';
+import {RadioButton} from 'react-native-paper';
+import Language from '../components/Assets/svg/language.svg';
+import Cancel from '../components/Assets/svg/cancel.svg';
+import UpArrow from '../components/Assets/svg/down-arrow.svg';
+import DownArrow from '../components/Assets/svg/up-arrow.svg';
 
 const Signin = () => {
   const navigation = useNavigation();
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [checked, setChecked] = useState('English');
 
   const submit = () => {
     if (phone.length !== 10) {
@@ -32,6 +40,57 @@ const Signin = () => {
         }}
         style={[styles.image, {width: deviceWidth - 50, height: 40}]}
       />
+      <TouchableOpacity
+        style={styles.languageSection}
+        onPress={() => setModalVisible(!modalVisible)}>
+        <Language width={20} height={20} />
+        <Text style={{fontSize: 18}}>{checked}</Text>
+
+        {modalVisible ? (
+          <UpArrow width={10} height={10} />
+        ) : (
+          <DownArrow width={10} height={10} />
+        )}
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Cancel
+              width={20}
+              height={20}
+              style={{alignSelf: 'flex-end'}}
+              onPress={() => setModalVisible(false)}
+            />
+            <RadioButton.Group
+              onValueChange={newValue => {
+                setChecked(newValue);
+                setModalVisible(false);
+              }}
+              value={checked}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <RadioButton.Item label="English" value="English" />
+                <RadioButton.Item label="हिंदी" value="हिंदी" />
+                <RadioButton.Item label="اردو" value="اردو" />
+                <RadioButton.Item label="ਪੰਜਾਬੀ" value="ਪੰਜਾਬੀ" />
+                <RadioButton.Item label="தமிழ்" value="தமிழ்" />
+                <RadioButton.Item label="తెలుగు" value="తెలుగు" />
+                <RadioButton.Item label="বাংলা" value="বাংলা" />
+                <RadioButton.Item label="മലയാളം" value="മലയാളം" />
+                <RadioButton.Item label="ಕನ್ನಡ" value="ಕನ್ನಡ" />
+                <RadioButton.Item label="ગુજરાતી" value="ગુજરાતી" />
+              </ScrollView>
+            </RadioButton.Group>
+          </View>
+        </View>
+      </Modal>
+
       <Image
         source={{
           uri: 'https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg?t=st=1715683995~exp=1715687595~hmac=ab594e8d0da6ae56166a9698d3a15c9b8a42609c98e411b0d2815d334bd16408&w=740',
@@ -120,4 +179,33 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   register: {color: 'white', fontSize: 20},
+  shadowColor: '#000',
+  languageSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    columnGap: 10,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    width: deviceWidth / 2,
+    height: deviceHeight - 300,
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
 });

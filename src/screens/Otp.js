@@ -55,7 +55,6 @@ const Otp = () => {
           <Text style={styles.register}>Submit</Text>
         </TouchableOpacity>
       </View>
-      {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
 };
