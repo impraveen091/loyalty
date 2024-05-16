@@ -1,14 +1,19 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Linking} from 'react-native';
 import {deviceWidth} from '../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 
 const Catalog = () => {
+  const handlePress = async () => {
+    await Linking.openURL(
+      'https://www.asianpaints.com/content/dam/asianpaints/landing-pages/delhi-beautiful-homes/Royale-Book-of-Colours.pdf',
+    );
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Catalog</Text>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handlePress}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
@@ -17,7 +22,7 @@ const Catalog = () => {
           <Text style={styles.subheading}>Catalog 2024(updated)</Text>
         </LinearGradient>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handlePress}>
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}

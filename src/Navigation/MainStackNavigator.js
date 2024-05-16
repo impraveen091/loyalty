@@ -25,12 +25,14 @@ import Logo from '../components/Assets/Images/logo.png';
 import {Image, TouchableOpacity} from 'react-native';
 import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
+import AddBankDetails from '../screens/AddBankDetails';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 const DashboardDrawerNavigator = ({navigation}) => (
   <Drawer.Navigator
+    initialRouteName="Dashboard"
     drawerContent={props => <CustomDrawerContent {...props} />}
     screenOptions={{
       headerRight: () => (
@@ -153,6 +155,11 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Signup"
         component={Signup}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddBankDetails"
+        component={AddBankDetails}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

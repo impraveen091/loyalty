@@ -9,8 +9,10 @@ import {
 import React from 'react';
 
 import {deviceWidth} from '../constants/Constants';
+import {useNavigation} from '@react-navigation/native';
 
 const Bank = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Bank Management</Text>
@@ -23,18 +25,8 @@ const Bank = () => {
         />
       </View>
       <TouchableOpacity
-        style={{
-          width: 120,
-          height: 50,
-          backgroundColor: '#00308F',
-          padding: 10,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: 10,
-          position: 'absolute',
-          right: 10,
-          bottom: 20,
-        }}>
+        style={styles.addbankbutton}
+        onPress={() => navigation.navigate('AddBankDetails')}>
         <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
           + Add Bank
         </Text>
@@ -60,5 +52,17 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     marginTop: '30%',
+  },
+  addbankbutton: {
+    width: 120,
+    height: 50,
+    backgroundColor: '#00308F',
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    right: 10,
+    bottom: 20,
   },
 });
