@@ -10,8 +10,10 @@ import React, {useState} from 'react';
 import {deviceWidth} from '../constants/Constants';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 
 const Otp = () => {
+  const {t} = useTranslation();
   const navigation = useNavigation();
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
@@ -38,12 +40,12 @@ const Otp = () => {
         }}
         style={styles.image}
       />
-      <Text style={styles.heading}>OTP verification</Text>
+      <Text style={styles.heading}>{t('OTP verification')}</Text>
       <View style={styles.inputContainer}>
         <TextInput
           keyboardType="numeric"
           style={styles.input}
-          placeholder="Enter your OTP"
+          placeholder={t('Enter your OTP')}
           placeholderTextColor="grey"
           onChangeText={setOtp}
           value={otp}
@@ -52,7 +54,7 @@ const Otp = () => {
         <TouchableOpacity
           style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
           onPress={submit}>
-          <Text style={styles.register}>Submit</Text>
+          <Text style={styles.register}>{t('Submit')}</Text>
         </TouchableOpacity>
       </View>
     </View>

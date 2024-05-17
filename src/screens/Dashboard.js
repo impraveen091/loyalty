@@ -20,8 +20,10 @@ import Transactions from '../components/Assets/svg/transactions.svg';
 import Refer from '../components/Assets/svg/refer.svg';
 import Receipt from '../components/Assets/svg/receipt.svg';
 import Scan from '../components/Assets/svg/scan.svg';
+import {useTranslation} from 'react-i18next';
 
 const Dashboard = ({navigation}) => {
+  const {t} = useTranslation();
   const points = useSelector(state => state.loyalty.points);
   const dispatch = useDispatch();
 
@@ -44,55 +46,55 @@ const Dashboard = ({navigation}) => {
           style={styles.menuCard}
           onPress={() => navigation.navigate('Scan')}>
           <Scan width={30} height={30} />
-          <Text style={styles.text}>Scan</Text>
+          <Text style={styles.text}>{t('Scan')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('PromotionalOffers')}>
           <Promotional width={30} height={30} />
-          <Text style={styles.text}>Promotional Offers</Text>
+          <Text style={styles.text}>{t('Promotional Offers')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Redeem')}>
           <Redeem width={30} height={30} />
-          <Text style={styles.text}>Redeem</Text>
+          <Text style={styles.text}>{t('Redeem')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Bank')}>
           <Bank width={40} height={40} />
-          <Text style={styles.text}>Bank</Text>
+          <Text style={styles.text}>{t('Bank')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Catalog')}>
           <Catalog width={40} height={40} />
-          <Text style={styles.text}>Catalog</Text>
+          <Text style={styles.text}>{t('Catalog')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Products')}>
           <Product width={40} height={40} />
-          <Text style={styles.text}>Products</Text>
+          <Text style={styles.text}>{t('Products')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Transactions')}>
           <Transactions width={40} height={40} />
-          <Text style={styles.text}>Transactions</Text>
+          <Text style={styles.text}>{t('Transactions')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('Refer')}>
           <Refer width={40} height={40} />
-          <Text style={styles.text}>Refer</Text>
+          <Text style={styles.text}>{t('Refer')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.menuCard}
           onPress={() => navigation.navigate('PurchaseReceipt')}>
           <Receipt width={35} height={35} />
-          <Text style={styles.text}>Purchase Receipt</Text>
+          <Text style={styles.text}>{t('Purchase Receipt')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -114,11 +116,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
+    rowGap: 10,
   },
   text: {
     color: '#5072A7',
     fontWeight: '500',
     textAlign: 'center',
+    fontSize: 16,
   },
   menuCardContainer: {
     marginTop: 25,

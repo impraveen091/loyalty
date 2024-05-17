@@ -4,8 +4,10 @@ import {deviceWidth} from '../../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import Coin from '../Assets/svg/coin.svg';
+import {useTranslation} from 'react-i18next';
 
 const PointCard = () => {
+  const {t} = useTranslation();
   const navigation = useNavigation();
   return (
     <LinearGradient
@@ -17,7 +19,7 @@ const PointCard = () => {
         <View>
           <View>
             <View style={styles.coinIcon}>
-              <Text style={styles.text}>Available Points</Text>
+              <Text style={styles.text}>{t('Available Points')}</Text>
               <Coin width={25} height={25} />
             </View>
 
@@ -26,7 +28,7 @@ const PointCard = () => {
 
           <View style={{marginTop: 20}}>
             <View style={styles.coinIcon}>
-              <Text style={styles.text}>Redemption limit</Text>
+              <Text style={styles.text}>{t('Redemption limit')}</Text>
               <Coin width={25} height={25} />
             </View>
 
@@ -36,7 +38,7 @@ const PointCard = () => {
         <View>
           <Image
             source={{
-              uri: 'https://cdn.pixabay.com/photo/2020/10/11/19/51/cat-5646889_1280.jpg',
+              uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
             }}
             style={styles.profilePhoto}
           />
@@ -45,15 +47,15 @@ const PointCard = () => {
       <View style={styles.borderBottom}></View>
       <View style={styles.cardBottom}>
         <TouchableOpacity onPress={() => navigation.navigate('Transactions')}>
-          <Text style={[styles.text, {fontSize: 16}]}>Transaction</Text>
+          <Text style={[styles.text, {fontSize: 16}]}>{t('Transactions')}</Text>
         </TouchableOpacity>
         <View style={styles.borderRight}></View>
         <TouchableOpacity onPress={() => navigation.navigate('Bank')}>
-          <Text style={[styles.text, {fontSize: 16}]}>Bank</Text>
+          <Text style={[styles.text, {fontSize: 16}]}>{t('Bank')}</Text>
         </TouchableOpacity>
         <View style={styles.borderRight}></View>
         <TouchableOpacity onPress={() => navigation.navigate('Redeem')}>
-          <Text style={[styles.text, {fontSize: 16}]}>Redeem</Text>
+          <Text style={[styles.text, {fontSize: 16}]}>{t('Redeem')}</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>

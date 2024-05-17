@@ -7,22 +7,43 @@ import {
   View,
   Modal,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {deviceHeight, deviceWidth} from '../constants/Constants';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {RadioButton} from 'react-native-paper';
 import Language from '../components/Assets/svg/language.svg';
 import Cancel from '../components/Assets/svg/cancel.svg';
 import UpArrow from '../components/Assets/svg/down-arrow.svg';
 import DownArrow from '../components/Assets/svg/up-arrow.svg';
+import {useTranslation} from 'react-i18next';
+import i18next from '../../services/i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signin = () => {
+  const {t} = useTranslation();
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [checked, setChecked] = useState('English');
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('language');
+        if (storedData) {
+          setChecked(JSON.parse(storedData));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadLanguage();
+  }, [isFocused, checked]);
 
   const submit = () => {
     if (phone.length !== 10) {
@@ -31,6 +52,11 @@ const Signin = () => {
       setPhone('');
       navigation.navigate('Otp');
     }
+  };
+
+  const changeLang = async language => {
+    await AsyncStorage.setItem('language', JSON.stringify(language));
+    ToastAndroid.show(`${language} selected`, ToastAndroid.SHORT);
   };
   return (
     <View style={styles.container}>
@@ -70,7 +96,9 @@ const Signin = () => {
             />
             <RadioButton.Group
               onValueChange={newValue => {
+                changeLang(newValue);
                 setChecked(newValue);
+                i18next.changeLanguage(newValue);
                 setModalVisible(false);
               }}
               value={checked}>
@@ -99,11 +127,11 @@ const Signin = () => {
       />
 
       <View style={styles.inputContainer}>
-        <Text style={styles.heading}>Login</Text>
+        <Text style={styles.heading}>{t('Login')}</Text>
         <TextInput
           keyboardType="numeric"
           style={styles.input}
-          placeholder="Enter your Phone number"
+          placeholder={t('Enter your phone Number')}
           placeholderTextColor="grey"
           onChangeText={setPhone}
           value={phone}
@@ -112,7 +140,7 @@ const Signin = () => {
         <TouchableOpacity
           style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
           onPress={submit}>
-          <Text style={styles.register}>Login</Text>
+          <Text style={styles.register}>{t('Login')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -120,7 +148,7 @@ const Signin = () => {
             {width: deviceWidth - 60, height: 50, backgroundColor: '#ff735c'},
           ]}
           onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.register}>Register / SignUp</Text>
+          <Text style={styles.register}>{t('Signup')}</Text>
         </TouchableOpacity>
       </View>
     </View>

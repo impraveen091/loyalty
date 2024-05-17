@@ -1,5 +1,5 @@
 // CustomDrawerContent.js
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Pending from '../components/Assets/svg/exclamation.svg';
@@ -17,12 +18,42 @@ import Language from '../components/Assets/svg/language.svg';
 import Cancel from '../components/Assets/svg/cancel.svg';
 import UpArrow from '../components/Assets/svg/down-arrow.svg';
 import DownArrow from '../components/Assets/svg/up-arrow.svg';
+import Announcement from '../components/Assets/svg/announcement.svg';
+import Catalog from '../components/Assets/svg/catalog.svg';
+import Support from '../components/Assets/svg/support.svg';
 import {RadioButton} from 'react-native-paper';
 import {deviceWidth, deviceHeight} from '../constants/Constants';
+import {useTranslation} from 'react-i18next';
+import i18next from '../../services/i18next';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 const CustomDrawerContent = ({navigation}) => {
+  const {t} = useTranslation();
+  const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
-  const [checked, setChecked] = useState('English');
+  const [checked, setChecked] = useState('');
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('language');
+        if (storedData) {
+          setChecked(JSON.parse(storedData));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadLanguage();
+  }, [isFocused, checked]);
+
+  const changeLang = async language => {
+    await AsyncStorage.setItem('language', JSON.stringify(language));
+    ToastAndroid.show(`${language} selected`, ToastAndroid.SHORT);
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -41,7 +72,7 @@ const CustomDrawerContent = ({navigation}) => {
         </View>
         <View style={styles.kycSection}>
           <View style={styles.pending}>
-            <Text style={styles.kycText}>KYC Pending</Text>
+            <Text style={styles.kycText}>{t('KYC Pending')}</Text>
             <Pending width={25} height={25} />
           </View>
           <TouchableOpacity
@@ -50,7 +81,7 @@ const CustomDrawerContent = ({navigation}) => {
               flexDirection: 'row',
               columnGap: 5,
             }}>
-            <Text style={{color: 'white'}}>Edit Profile</Text>
+            <Text style={{color: 'white'}}>{t('Edit Profile')}</Text>
             <EditProfile width={20} height={20} />
           </TouchableOpacity>
         </View>
@@ -86,7 +117,9 @@ const CustomDrawerContent = ({navigation}) => {
               />
               <RadioButton.Group
                 onValueChange={newValue => {
+                  changeLang(newValue);
                   setChecked(newValue);
+                  i18next.changeLanguage(newValue);
                   setModalVisible(false);
                 }}
                 value={checked}>
@@ -107,35 +140,46 @@ const CustomDrawerContent = ({navigation}) => {
           </View>
         </Modal>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-          <Text style={styles.menuItem}>Announcement</Text>
+        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Notifications')}
+          style={styles.section}>
+          <Announcement width={25} height={25} />
+          <Text style={styles.menuItem}>{t('Announcement')}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Catalog')}>
-          <Text style={styles.menuItem}>Catalog</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Catalog')}
+          style={styles.section}>
+          <Catalog width={25} height={25} />
+          <Text style={styles.menuItem}>{t('Catalog')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('HelpSupport')}>
-          <Text style={styles.menuItem}>Help & Support</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('HelpSupport')}
+          style={styles.section}>
+          <Support width={25} height={25} />
+          <Text style={styles.menuItem}>{t('Help & Support')}</Text>
         </TouchableOpacity>
 
         {/* <Text style={styles.menuItem}>Take a tour</Text> */}
         <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
         <TouchableOpacity onPress={() => navigation.navigate('Aboutus')}>
-          <Text style={styles.menuItemGrey}>About us</Text>
+          <Text style={styles.menuItemGrey}>{t('About us')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('Privacypolicy')}>
-          <Text style={styles.menuItemGrey}>Privacy policy</Text>
+          <Text style={styles.menuItemGrey}>{t('Privacy Policy')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Contactus')}>
-          <Text style={styles.menuItemGrey}>Contact us</Text>
+          <Text style={styles.menuItemGrey}>{t('Contact us')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('Termsofuse')}>
-          <Text style={styles.menuItemGrey}>Terms of use</Text>
+          <Text style={styles.menuItemGrey}>{t('Terms of use')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-          <Text style={styles.menuItemGrey}>Logout</Text>
+          <Text style={styles.menuItemGrey}>{t('Logout')}</Text>
         </TouchableOpacity>
         <Text style={styles.menuItemGrey}>Version 1.0.0</Text>
       </View>
@@ -174,6 +218,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: '500',
     color: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+    columnGap: 10,
   },
   menuItemGrey: {
     fontSize: 20,
@@ -191,6 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    columnGap: 10,
   },
   pending: {
     backgroundColor: 'white',
@@ -232,6 +280,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  section: {flexDirection: 'row', columnGap: 10},
 });
 
 export default CustomDrawerContent;
