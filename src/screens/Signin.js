@@ -8,6 +8,7 @@ import {
   Modal,
   ScrollView,
   ToastAndroid,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {deviceHeight, deviceWidth} from '../constants/Constants';
@@ -28,7 +29,7 @@ const Signin = () => {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [checked, setChecked] = useState('English');
+  const [checked, setChecked] = useState(checked);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -36,6 +37,10 @@ const Signin = () => {
         const storedData = await AsyncStorage.getItem('language');
         if (storedData) {
           setChecked(JSON.parse(storedData));
+          i18next.changeLanguage(JSON.parse(storedData));
+        } else {
+          i18next.changeLanguage('English');
+          setChecked('English');
         }
       } catch (error) {
         console.log(error);
@@ -56,9 +61,16 @@ const Signin = () => {
 
   const changeLang = async language => {
     await AsyncStorage.setItem('language', JSON.stringify(language));
-    ToastAndroid.show(`${language} selected`, ToastAndroid.SHORT);
+    ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
   };
   return (
+    // <KeyboardAvoidingView
+    //   style={{flex: 1}}
+    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    // <KeyboardAvoidingView
+    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    //   keyboardVerticalOffset={50}
+    //   style={{flex: 1}}>
     <View style={styles.container}>
       <Image
         source={{
@@ -152,6 +164,7 @@ const Signin = () => {
         </TouchableOpacity>
       </View>
     </View>
+    // </KeyboardAvoidingView>
   );
 };
 

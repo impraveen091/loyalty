@@ -10,6 +10,7 @@ import {
   Modal,
   ScrollView,
   ToastAndroid,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Pending from '../components/Assets/svg/exclamation.svg';
@@ -40,6 +41,9 @@ const CustomDrawerContent = ({navigation}) => {
         const storedData = await AsyncStorage.getItem('language');
         if (storedData) {
           setChecked(JSON.parse(storedData));
+        } else {
+          i18next.changeLanguage('English');
+          setChecked('English');
         }
       } catch (error) {
         console.log(error);
@@ -51,7 +55,7 @@ const CustomDrawerContent = ({navigation}) => {
 
   const changeLang = async language => {
     await AsyncStorage.setItem('language', JSON.stringify(language));
-    ToastAndroid.show(`${language} selected`, ToastAndroid.SHORT);
+    ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
   };
 
   return (
