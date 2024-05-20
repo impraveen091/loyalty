@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     color: '#5072A7',
     fontWeight: '500',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 14,
   },
   menuCardContainer: {
     marginTop: 25,
