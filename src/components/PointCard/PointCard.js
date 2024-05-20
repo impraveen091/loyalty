@@ -23,7 +23,7 @@ const PointCard = () => {
               <Coin width={25} height={25} />
             </View>
 
-            <Text style={styles.text}>0.0</Text>
+            <Text style={styles.text}>0.00</Text>
           </View>
 
           <View style={{marginTop: 20}}>

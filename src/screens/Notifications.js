@@ -1,11 +1,13 @@
 import {StyleSheet, Text, View, Image} from 'react-native';
 import React from 'react';
 import {deviceWidth} from '../constants/Constants';
+import {useTranslation} from 'react-i18next';
 
 const Notifications = () => {
+  const {t} = useTranslation();
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Notifications</Text>
+      <Text style={styles.heading}>{t('Notifications')}</Text>
       <View style={styles.imageContainer}>
         <Image
           source={{

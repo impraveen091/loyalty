@@ -82,7 +82,7 @@ const Signin = () => {
         style={styles.languageSection}
         onPress={() => setModalVisible(!modalVisible)}>
         <Language width={20} height={20} />
-        <Text style={{fontSize: 18}}>{checked}</Text>
+        <Text style={{fontSize: 18, color: '#5072A7'}}>{checked}</Text>
 
         {modalVisible ? (
           <UpArrow width={10} height={10} />
@@ -125,6 +125,9 @@ const Signin = () => {
                 <RadioButton.Item label="മലയാളം" value="മലയാളം" />
                 <RadioButton.Item label="ಕನ್ನಡ" value="ಕನ್ನಡ" />
                 <RadioButton.Item label="ગુજરાતી" value="ગુજરાતી" />
+                <RadioButton.Item label="ଓଡ଼ିଆ" value="ଓଡ଼ିଆ" />
+                <RadioButton.Item label="मराठी" value="मराठी" />
+                <RadioButton.Item label="অসমীয়া" value="অসমীয়া" />
               </ScrollView>
             </RadioButton.Group>
           </View>

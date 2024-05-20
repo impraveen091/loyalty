@@ -10,6 +10,9 @@ import bg from '../locales/bg.json';
 import ml from '../locales/ml.json';
 import kn from '../locales/kn.json';
 import gj from '../locales/gj.json';
+import od from '../locales/od.json';
+import mt from '../locales/mt.json';
+import as from '../locales/as.json';
 
 export const languageResources = {
   English: {translation: en},
@@ -22,19 +25,10 @@ export const languageResources = {
   മലയാളം: {translation: ml},
   ಕನ್ನಡ: {translation: kn},
   ગુજરાતી: {translation: gj},
+  ଓଡ଼ିଆ: {translation: od},
+  मराठी: {translation: mt},
+  অসমীয়া: {translation: as},
 };
-{
-  /* <RadioButton.Item label="English" value="English" />
-<RadioButton.Item label="हिंदी" value="हिंदी" />
-<RadioButton.Item label="اردو" value="اردو" />
-<RadioButton.Item label="ਪੰਜਾਬੀ" value="ਪੰਜਾਬੀ" />
-<RadioButton.Item label="தமிழ்" value="தமிழ்" />
-<RadioButton.Item label="తెలుగు" value="తెలుగు" />
-<RadioButton.Item label="বাংলা" value="বাংলা" />
-<RadioButton.Item label="മലയാളം" value="മലയാളം" />
-<RadioButton.Item label="ಕನ್ನಡ" value="ಕನ್ನಡ" />
-<RadioButton.Item label="ગુજરાતી" value="ગુજરાતી" /> */
-}
 
 i18next.use(initReactI18next).init({
   compatibilityJSON: 'v3',

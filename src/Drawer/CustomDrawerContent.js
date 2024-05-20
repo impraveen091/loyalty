@@ -84,6 +84,8 @@ const CustomDrawerContent = ({navigation}) => {
             style={{
               flexDirection: 'row',
               columnGap: 5,
+              maxWidth: 90,
+              marginRight: 20,
             }}>
             <Text style={{color: 'white'}}>{t('Edit Profile')}</Text>
             <EditProfile width={20} height={20} />
@@ -96,7 +98,7 @@ const CustomDrawerContent = ({navigation}) => {
           style={styles.languageSection}
           onPress={() => setModalVisible(!modalVisible)}>
           <Language width={20} height={20} />
-          <Text style={{fontSize: 18}}>{checked}</Text>
+          <Text style={{fontSize: 18, color: '#5072A7'}}>{checked}</Text>
           {modalVisible ? (
             <UpArrow width={10} height={10} />
           ) : (
@@ -138,6 +140,9 @@ const CustomDrawerContent = ({navigation}) => {
                   <RadioButton.Item label="മലയാളം" value="മലയാളം" />
                   <RadioButton.Item label="ಕನ್ನಡ" value="ಕನ್ನಡ" />
                   <RadioButton.Item label="ગુજરાતી" value="ગુજરાતી" />
+                  <RadioButton.Item label="ଓଡ଼ିଆ" value="ଓଡ଼ିଆ" />
+                  <RadioButton.Item label="मराठी" value="मराठी" />
+                  <RadioButton.Item label="অসমীয়া" value="অসমীয়া" />
                 </ScrollView>
               </RadioButton.Group>
             </View>
@@ -249,11 +254,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    width: 'fit-content',
-    padding: 3,
+    columnGap: 10,
+    padding: 10,
     marginVertical: 10,
     borderRadius: 5,
-    width: 130,
+    maxWidth: 120,
   },
   kycText: {fontSize: 14, fontWeight: '600', color: '#00308F'},
   languageSection: {
