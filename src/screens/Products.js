@@ -8,8 +8,15 @@ import {
   Image,
 } from 'react-native';
 import {deviceWidth} from '../constants/Constants';
+import {useDispatch, useSelector} from 'react-redux';
+import {addToCart} from '../redux/actions';
+import Cart from '../components/Assets/svg/cart.svg';
+import {useNavigation} from '@react-navigation/native';
 
 const Products = () => {
+  const navigation = useNavigation();
+  const centralData = useSelector(state => state.cart.cart);
+  const dispatch = useDispatch();
   const [product, setproduct] = useState([]);
   useEffect(() => {
     const generateRandomPaintData = () => {
@@ -32,9 +39,40 @@ const Products = () => {
     const paintsData = generateRandomPaintData();
     setproduct(paintsData);
   }, []);
+
+  const handleAddToCart = item => {
+    dispatch(addToCart(item));
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Products</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <Text style={styles.heading}>Products</Text>
+        <View
+          style={{
+            position: 'absolute',
+            right: 0,
+          }}>
+          <Text
+            style={{
+              alignSelf: 'flex-end',
+              textAlign: 'center',
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: 'white',
+              backgroundColor: 'red',
+              width: 20,
+              height: 20,
+              borderRadius: 10,
+            }}>
+            {centralData.length}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+            <Cart style={{width: 15, height: 15, marginTop: -8}} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <ScrollView
         style={styles.cardContainer}
         showsVerticalScrollIndicator={false}>
@@ -67,7 +105,9 @@ const Products = () => {
                 colors available: 7
               </Text>
 
-              <TouchableOpacity style={styles.addtocart}>
+              <TouchableOpacity
+                style={styles.addtocart}
+                onPress={() => handleAddToCart(item)}>
                 <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
                   Add to Cart
                 </Text>

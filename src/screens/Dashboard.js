@@ -24,12 +24,7 @@ import {useTranslation} from 'react-i18next';
 
 const Dashboard = ({navigation}) => {
   const {t} = useTranslation();
-  const points = useSelector(state => state.loyalty.points);
-  const dispatch = useDispatch();
 
-  const handleAddPoints = () => {
-    dispatch({type: 'ADD_POINTS', payload: 10}); // Example action to add points
-  };
   const images = [
     'https://cdn.pixabay.com/photo/2021/08/11/16/06/mountain-6538890_1280.jpg',
     'https://cdn.pixabay.com/photo/2023/02/13/10/30/eye-7787024_1280.jpg',
