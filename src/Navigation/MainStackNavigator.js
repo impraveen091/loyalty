@@ -27,6 +27,7 @@ import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
+import DummyScreen from '../screens/DummyScreen';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -166,6 +167,11 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Cart"
         component={Cart}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="DummyScreen"
+        component={DummyScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

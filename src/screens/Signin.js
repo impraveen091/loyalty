@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {deviceHeight, deviceWidth} from '../constants/Constants';
+import {COLORS, deviceHeight, deviceWidth} from '../constants/Constants';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {RadioButton} from 'react-native-paper';
 import Language from '../components/Assets/svg/language.svg';
@@ -21,6 +21,7 @@ import DownArrow from '../components/Assets/svg/up-arrow.svg';
 import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Signin = () => {
   const {t} = useTranslation();
@@ -64,14 +65,11 @@ const Signin = () => {
     ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
   };
   return (
-    // <KeyboardAvoidingView
-    //   style={{flex: 1}}
-    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    // <KeyboardAvoidingView
-    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    //   keyboardVerticalOffset={50}
-    //   style={{flex: 1}}>
-    <View style={styles.container}>
+    <View
+      // start={{x: 0, y: 0}}
+      // end={{x: 1, y: 1}}
+      // colors={[COLORS.primary, '#ffffff']}
+      style={styles.container}>
       <Image
         source={{
           uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
@@ -133,14 +131,12 @@ const Signin = () => {
           </View>
         </View>
       </Modal>
-
       <Image
         source={{
           uri: 'https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg?t=st=1715683995~exp=1715687595~hmac=ab594e8d0da6ae56166a9698d3a15c9b8a42609c98e411b0d2815d334bd16408&w=740',
         }}
         style={styles.image}
       />
-
       <View style={styles.inputContainer}>
         <Text style={styles.heading}>{t('Login')}</Text>
         <TextInput
@@ -166,8 +162,10 @@ const Signin = () => {
           <Text style={styles.register}>{t('Signup')}</Text>
         </TouchableOpacity>
       </View>
+      <Text onPress={() => navigation.navigate('DummyScreen')}>
+        DummyScreen
+      </Text>
     </View>
-    // </KeyboardAvoidingView>
   );
 };
 
