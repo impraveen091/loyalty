@@ -11,6 +11,8 @@ import {deviceWidth} from '../constants/Constants';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
+import {getUserData} from '../Auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Otp = () => {
   const {t} = useTranslation();
@@ -18,10 +20,30 @@ const Otp = () => {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
 
-  const submit = () => {
+  const submit = async () => {
+    const Data = await getUserData('data');
     if (otp.length !== 6) {
       setError('OTP must be 6 digits');
     } else {
+      const url = 'auth/app-user/verify-otp';
+      const formData = {
+        id: Data?.data?.id,
+        phone: Data.data.phone,
+        otp: otp,
+      };
+
+      try {
+        const result = await axiosInstance.post(url, formData);
+        console.log('Otp Data', result.data);
+        if (result.data.success === 'success') {
+          ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
+          setOtp('');
+          navigation.navigate('Dashboard');
+        }
+      } catch (error) {
+        Alert.alert(error.response.data.message);
+        console.log('API call error:', error);
+      }
       setOtp('');
       navigation.replace('DashboardDrawer');
     }

@@ -14,14 +14,17 @@ const getHeaders = async () => {
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
-  }
-  if (userData?.super_admin === false) {
-    if (userData && userData.Tenant.username) {
-      headers['x-username'] = userData.Tenant.username;
+    if (userData?.super_admin === false) {
+      if (userData && userData.Tenant.username) {
+        headers['x-username'] = userData.Tenant.username;
+      }
+      if (userData && userData.Tenant.id) {
+        headers['x-tenant-id'] = userData.Tenant.id;
+      }
     }
-    if (userData && userData.Tenant.id) {
-      headers['x-tenant-id'] = userData.Tenant.id;
-    }
+  } else {
+    headers['x-username'] = 'runolfssoninc';
+    headers['x-tenant-id'] = 1;
   }
 
   return headers;

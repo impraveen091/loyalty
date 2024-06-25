@@ -23,6 +23,7 @@ import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../AxiosInstance';
+import {saveUserData} from '../Auth';
 
 const Signin = () => {
   const {t} = useTranslation();
@@ -63,7 +64,7 @@ const Signin = () => {
         const result = await axiosInstance.post(url, formData);
         console.log('SignIn Data', result.data);
         if (result.data.success === 'success') {
-          ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
+          saveUserData(result.data);
           setPhone('');
           navigation.navigate('Otp');
         }

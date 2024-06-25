@@ -15,15 +15,13 @@ import Dropdown from 'react-native-dropdown-picker';
 import {useNavigation} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
 import axiosInstance from '../AxiosInstance';
+import {postData} from '../../services/Api';
 
 const Signup = () => {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
     phone: '',
     name: '',
-    pincode: '',
-    state: '',
-    referral: '',
   });
   const [error, setError] = useState({});
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -51,12 +49,6 @@ const Signup = () => {
     if (formData.name.length < 4) {
       newErrors.name = 'First name should have at least 4 characters';
     }
-    if (formData.pincode.length < 6) {
-      newErrors.pincode = 'Pincode should have at least 6 digits';
-    }
-    if (!formData.state) {
-      newErrors.state = "State can't be empty";
-    }
     if (!isCheckedTerm) {
       newErrors.condition = 'Accept the T&C';
     }
@@ -65,23 +57,24 @@ const Signup = () => {
 
   const submit = async () => {
     const newErrors = validateForm();
+    console.log('CLicked', Object.keys(newErrors).length);
     setError(newErrors);
     if (Object.keys(newErrors).length === 0) {
       const url = 'auth/app-user/sign-up';
       try {
         const result = await axiosInstance.post(url, formData);
+        console.log('Signup Data', result.data);
         if (result.data.success === 'success') {
           ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
           setFormData({
             phone: '',
             name: '',
-            pincode: '',
-            state: '',
             referral: '',
           });
-          navigation.navigate('Otp');
+          navigation.navigate('Signin');
         }
       } catch (error) {
+        console.log('CLicked error');
         Alert.alert(error.response?.data?.message || 'An error occurred');
       }
     }
@@ -131,9 +124,9 @@ const Signup = () => {
           onChangeText={value => handleChange('name', value)}
           value={formData.name}
         />
-        {error.firstName && <Text style={styles.error}>{error.firstName}</Text>}
+        {error.name && <Text style={styles.error}>{error.name}</Text>}
 
-        <TextInput
+        {/* <TextInput
           keyboardType="numeric"
           style={styles.input}
           placeholder="Pincode"
@@ -142,16 +135,16 @@ const Signup = () => {
           value={formData.pincode}
           maxLength={6}
         />
-        {error.pincode && <Text style={styles.error}>{error.pincode}</Text>}
-        <TextInput
+        {error.pincode && <Text style={styles.error}>{error.pincode}</Text>} */}
+        {/* <TextInput
           style={styles.input}
           placeholder="State"
           placeholderTextColor="grey"
           onChangeText={value => handleChange('state', value)}
           value={formData.state}
         />
-        {error.state && <Text style={styles.error}>{error.state}</Text>}
-        <View style={styles.checkboxContainer}>
+        {error.state && <Text style={styles.error}>{error.state}</Text>} */}
+        {/* <View style={styles.checkboxContainer}>
           <CheckBox
             value={isCheckedReferral}
             onValueChange={setCheckedReferral}
@@ -166,7 +159,7 @@ const Signup = () => {
             onChangeText={value => handleChange('referral', value)}
             value={formData.referral}
           />
-        )}
+        )} */}
         <View style={styles.checkboxContainer}>
           <CheckBox value={isCheckedTerm} onValueChange={setCheckedTerm} />
           <Text style={styles.checkboxText}>
@@ -179,7 +172,7 @@ const Signup = () => {
           </Text>
         </View>
         {error.condition && <Text style={styles.error}>{error.condition}</Text>}
-        <TouchableOpacity style={styles.submit} onPress={submit}>
+        <TouchableOpacity style={styles.submit} onPress={() => submit()}>
           <Text style={styles.registerText}> SignUp</Text>
         </TouchableOpacity>
       </View>

@@ -20,6 +20,9 @@ axiosInstance.interceptors.request.use(
           config.headers['x-tenant-id'] = userData.Tenant.id;
         }
       }
+    } else {
+      config.headers['x-username'] = 'runolfssoninc';
+      config.headers['x-tenant-id'] = 1;
     }
     return config;
   },
