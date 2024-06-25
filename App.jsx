@@ -13,10 +13,6 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {/* <Drawer.Navigator
-          drawerContent={props => <CustomDrawerContent {...props} />}>
-          <Drawer.Screen name="SureScanR" component={MainStackNavigator} />
-        </Drawer.Navigator> */}
         <MainStackNavigator />
       </NavigationContainer>
     </Provider>

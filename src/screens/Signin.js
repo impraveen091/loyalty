@@ -9,6 +9,7 @@ import {
   ScrollView,
   ToastAndroid,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {COLORS, deviceHeight, deviceWidth} from '../constants/Constants';
@@ -21,7 +22,7 @@ import DownArrow from '../components/Assets/svg/up-arrow.svg';
 import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import LinearGradient from 'react-native-linear-gradient';
+import axiosInstance from '../AxiosInstance';
 
 const Signin = () => {
   const {t} = useTranslation();
@@ -51,12 +52,25 @@ const Signin = () => {
     loadLanguage();
   }, [isFocused, checked]);
 
-  const submit = () => {
+  const submit = async () => {
     if (phone.length !== 10) {
       setError('Please enter a valid phone number');
     } else {
-      setPhone('');
-      navigation.navigate('Otp');
+      const url = 'auth/app-user/login';
+      const formData = {phone: phone.toString()};
+
+      try {
+        const result = await axiosInstance.post(url, formData);
+        console.log('SignIn Data', result.data);
+        if (result.data.success === 'success') {
+          ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
+          setPhone('');
+          navigation.navigate('Otp');
+        }
+      } catch (error) {
+        Alert.alert(error.response.data.message);
+        console.log('API call error:', error);
+      }
     }
   };
 
@@ -65,11 +79,7 @@ const Signin = () => {
     ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
   };
   return (
-    <View
-      // start={{x: 0, y: 0}}
-      // end={{x: 1, y: 1}}
-      // colors={[COLORS.primary, '#ffffff']}
-      style={styles.container}>
+    <View style={styles.container}>
       <Image
         source={{
           uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
@@ -162,9 +172,6 @@ const Signin = () => {
           <Text style={styles.register}>{t('Signup')}</Text>
         </TouchableOpacity>
       </View>
-      <Text onPress={() => navigation.navigate('DummyScreen')}>
-        DummyScreen
-      </Text>
     </View>
   );
 };

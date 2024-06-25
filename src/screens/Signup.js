@@ -7,61 +7,83 @@ import {
   ToastAndroid,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
 import {deviceWidth} from '../constants/Constants';
 import Dropdown from 'react-native-dropdown-picker';
 import {useNavigation} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
+import axiosInstance from '../AxiosInstance';
 
 const Signup = () => {
   const navigation = useNavigation();
-  const [phone, setPhone] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [district, setDistrict] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [referral, setReferral] = useState('');
+  const [formData, setFormData] = useState({
+    phone: '',
+    name: '',
+    pincode: '',
+    state: '',
+    referral: '',
+  });
   const [error, setError] = useState({});
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('Plumber');
-  const [items, setItems] = useState([
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [profession, setProfession] = useState('Plumber');
+  const [isCheckedReferral, setCheckedReferral] = useState(false);
+  const [isCheckedTerm, setCheckedTerm] = useState(false);
+  const professionItems = [
     {label: 'Plumber', value: 'Plumber'},
     {label: 'Painter', value: 'Painter'},
     {label: 'Carpenter', value: 'Carpenter'},
     {label: 'Architect', value: 'Architect'},
     {label: 'Designer', value: 'Designer'},
     {label: 'Electrician', value: 'Electrician'},
-  ]);
-  const [isCheckedReferral, setIsCheckedReferral] = useState(false);
-  const [isCheckedTerm, setIsCheckedTerm] = useState(false);
+  ];
 
-  const submit = () => {
+  const handleChange = (name, value) => {
+    setFormData({...formData, [name]: value});
+  };
+
+  const validateForm = () => {
     let newErrors = {};
-    if (phone.length !== 10) {
+    if (formData.phone.length !== 10) {
       newErrors.phone = 'Enter a valid number';
-    } else if (firstName.length < 4) {
-      newErrors.firstName = 'first name should have atleast 4 characters';
-    } else if (lastName.length < 4) {
-      newErrors.lastName = 'last name should have atleast 4 characters';
-    } else if (pincode.length < 6) {
-      newErrors.pincode = 'pincode should have atleast 6 digits';
-    } else if (district.length === 0) {
-      newErrors.district = "district can't be empty";
-    } else if (city.length === 0) {
-      newErrors.city = "city can't be empty";
-    } else if (state.length === 0) {
-      newErrors.state = "state can't be empty";
-    } else if (!isCheckedTerm) {
-      newErrors.condition = 'accept the T&C';
     }
+    if (formData.name.length < 4) {
+      newErrors.name = 'First name should have at least 4 characters';
+    }
+    if (formData.pincode.length < 6) {
+      newErrors.pincode = 'Pincode should have at least 6 digits';
+    }
+    if (!formData.state) {
+      newErrors.state = "State can't be empty";
+    }
+    if (!isCheckedTerm) {
+      newErrors.condition = 'Accept the T&C';
+    }
+    return newErrors;
+  };
 
+  const submit = async () => {
+    const newErrors = validateForm();
     setError(newErrors);
     if (Object.keys(newErrors).length === 0) {
-      ToastAndroid.show('Registration Successfull', ToastAndroid.SHORT);
-      navigation.navigate('Signin');
+      const url = 'auth/app-user/sign-up';
+      try {
+        const result = await axiosInstance.post(url, formData);
+        if (result.data.success === 'success') {
+          ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
+          setFormData({
+            phone: '',
+            name: '',
+            pincode: '',
+            state: '',
+            referral: '',
+          });
+          navigation.navigate('Otp');
+        }
+      } catch (error) {
+        Alert.alert(error.response?.data?.message || 'An error occurred');
+      }
     }
   };
 
@@ -73,7 +95,7 @@ const Signup = () => {
         source={{
           uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
         }}
-        style={[styles.image, {width: deviceWidth - 50, height: 40}]}
+        style={styles.bannerImage}
       />
       <Image
         source={{
@@ -85,85 +107,54 @@ const Signup = () => {
       <View style={styles.inputContainer}>
         <Text style={styles.heading}>Register</Text>
         <Dropdown
-          open={open}
-          value={value}
-          items={items}
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          style={[
-            styles.input,
-            {border: 'none', borderColor: 'white', elevation: 5},
-          ]}
+          open={isDropdownOpen}
+          value={profession}
+          items={professionItems}
+          setOpen={setDropdownOpen}
+          setValue={setProfession}
+          style={styles.dropdown}
         />
         <TextInput
           keyboardType="numeric"
           style={styles.input}
           placeholder="Phone number"
           placeholderTextColor="grey"
-          onChangeText={setPhone}
-          value={phone}
+          onChangeText={value => handleChange('phone', value)}
+          value={formData.phone}
           maxLength={10}
         />
         {error.phone && <Text style={styles.error}>{error.phone}</Text>}
         <TextInput
           style={styles.input}
-          placeholder="First Name"
+          placeholder="Name"
           placeholderTextColor="grey"
-          onChangeText={setFirstName}
-          value={firstName}
+          onChangeText={value => handleChange('name', value)}
+          value={formData.name}
         />
         {error.firstName && <Text style={styles.error}>{error.firstName}</Text>}
-        <TextInput
-          style={styles.input}
-          placeholder="Last Name"
-          placeholderTextColor="grey"
-          onChangeText={setLastName}
-          value={lastName}
-        />
-        {error.lastName && <Text style={styles.error}>{error.lastName}</Text>}
+
         <TextInput
           keyboardType="numeric"
           style={styles.input}
           placeholder="Pincode"
           placeholderTextColor="grey"
-          onChangeText={setPincode}
-          value={pincode}
+          onChangeText={value => handleChange('pincode', value)}
+          value={formData.pincode}
           maxLength={6}
         />
         {error.pincode && <Text style={styles.error}>{error.pincode}</Text>}
         <TextInput
           style={styles.input}
-          placeholder="District"
-          placeholderTextColor="grey"
-          onChangeText={setDistrict}
-          value={district}
-        />
-        {error.district && <Text style={styles.error}>{error.district}</Text>}
-        <TextInput
-          style={styles.input}
-          placeholder="City"
-          placeholderTextColor="grey"
-          onChangeText={setCity}
-          value={city}
-        />
-        {error.city && <Text style={styles.error}>{error.city}</Text>}
-        <TextInput
-          style={styles.input}
           placeholder="State"
           placeholderTextColor="grey"
-          onChangeText={setState}
-          value={state}
+          onChangeText={value => handleChange('state', value)}
+          value={formData.state}
         />
         {error.state && <Text style={styles.error}>{error.state}</Text>}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+        <View style={styles.checkboxContainer}>
           <CheckBox
             value={isCheckedReferral}
-            onValueChange={() => setIsCheckedReferral(!isCheckedReferral)}
+            onValueChange={setCheckedReferral}
           />
           <Text style={styles.checkboxText}>I have referral code</Text>
         </View>
@@ -172,37 +163,24 @@ const Signup = () => {
             style={styles.input}
             placeholder="Referral code (if any)"
             placeholderTextColor="grey"
-            onChangeText={setReferral}
-            value={referral}
+            onChangeText={value => handleChange('referral', value)}
+            value={formData.referral}
           />
         )}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <CheckBox
-            value={isCheckedTerm}
-            onValueChange={() => setIsCheckedTerm(!isCheckedTerm)}
-          />
+        <View style={styles.checkboxContainer}>
+          <CheckBox value={isCheckedTerm} onValueChange={setCheckedTerm} />
           <Text style={styles.checkboxText}>
-            I accept
+            I accept -
             <Text
-              style={{fontWeight: 'bold'}}
+              style={styles.termsText}
               onPress={() => navigation.navigate('Termsofuse')}>
-              {' '}
               Terms & Conditions
             </Text>
           </Text>
         </View>
         {error.condition && <Text style={styles.error}>{error.condition}</Text>}
-        <TouchableOpacity
-          style={[
-            styles.submit,
-            {width: deviceWidth - 60, height: 50, marginBottom: 20},
-          ]}
-          onPress={submit}>
-          <Text style={styles.register}> SignUp</Text>
+        <TouchableOpacity style={styles.submit} onPress={submit}>
+          <Text style={styles.registerText}> SignUp</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -216,6 +194,15 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
   },
+  bannerImage: {
+    width: deviceWidth - 50,
+    height: 40,
+  },
+  image: {
+    width: deviceWidth - 20,
+    height: deviceWidth - 20,
+    borderRadius: 10,
+  },
   heading: {
     fontSize: 30,
     textAlign: 'center',
@@ -223,8 +210,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     fontWeight: '300',
-    width: 'fit-content',
     alignSelf: 'center',
+  },
+  inputContainer: {
+    width: deviceWidth - 60,
+    marginVertical: 10,
   },
   input: {
     backgroundColor: 'white',
@@ -234,28 +224,43 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: deviceWidth - 40,
     color: 'black',
+    marginVertical: 5,
   },
-  image: {
-    width: deviceWidth - 20,
-    height: deviceWidth - 20,
+  dropdown: {
+    border: 'none',
+    borderColor: 'white',
+    elevation: 5,
+    backgroundColor: 'white',
     borderRadius: 10,
+    width: deviceWidth - 40,
   },
   submit: {
-    width: 'fit-content',
     backgroundColor: '#00308F',
-    padding: 10,
+    padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    marginVertical: 20,
   },
-  inputContainer: {
-    width: deviceWidth - 60,
-    rowGap: 10,
+  registerText: {
+    color: 'white',
+    fontSize: 20,
   },
   error: {
     fontSize: 14,
     color: 'red',
   },
-  register: {color: 'white', fontSize: 20},
-  checkboxText: {color: 'black'},
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  checkboxText: {
+    color: 'black',
+    marginLeft: 10,
+  },
+  termsText: {
+    fontWeight: 'bold',
+    color: '#00308F',
+  },
 });
