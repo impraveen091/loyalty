@@ -9,13 +9,15 @@ import {
   View,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
-import {deviceWidth} from '../constants/Constants';
+import React, {useEffect, useState} from 'react';
+import {deviceHeight, deviceWidth} from '../constants/Constants';
 import Dropdown from 'react-native-dropdown-picker';
 import {useNavigation} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
 import axiosInstance from '../AxiosInstance';
 import {postData} from '../../services/Api';
+import {getUserData} from '../Auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signup = () => {
   const navigation = useNavigation();
@@ -36,6 +38,15 @@ const Signup = () => {
     {label: 'Designer', value: 'Designer'},
     {label: 'Electrician', value: 'Electrician'},
   ];
+  useEffect(() => {
+    const getData = async () => {
+      const phone = await getUserData('phone');
+      if (phone) {
+        setFormData({...formData, phone: phone});
+      }
+    };
+    getData();
+  }, []);
 
   const handleChange = (name, value) => {
     setFormData({...formData, [name]: value});
@@ -69,7 +80,6 @@ const Signup = () => {
           setFormData({
             phone: '',
             name: '',
-            referral: '',
           });
           navigation.navigate('Signin');
         }
@@ -99,14 +109,14 @@ const Signup = () => {
 
       <View style={styles.inputContainer}>
         <Text style={styles.heading}>Register</Text>
-        <Dropdown
+        {/* <Dropdown
           open={isDropdownOpen}
           value={profession}
           items={professionItems}
           setOpen={setDropdownOpen}
           setValue={setProfession}
           style={styles.dropdown}
-        />
+        /> */}
         <TextInput
           keyboardType="numeric"
           style={styles.input}
@@ -208,6 +218,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: deviceWidth - 60,
     marginVertical: 10,
+    height: deviceWidth - 30,
   },
   input: {
     backgroundColor: 'white',

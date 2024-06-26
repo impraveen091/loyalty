@@ -57,6 +57,10 @@ const CustomDrawerContent = ({navigation}) => {
     await AsyncStorage.setItem('language', JSON.stringify(language));
     ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
   };
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    navigation.replace('Signin');
+  };
 
   return (
     <View style={styles.container}>
@@ -187,8 +191,10 @@ const CustomDrawerContent = ({navigation}) => {
         <TouchableOpacity onPress={() => navigation.navigate('Termsofuse')}>
           <Text style={styles.menuItemGrey}>{t('Terms of use')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-          <Text style={styles.menuItemGrey}>{t('Logout')}</Text>
+        <TouchableOpacity onPress={() => handleLogout()}>
+          <Text style={[styles.menuItemGrey, {color: 'red'}]}>
+            {t('Logout')}
+          </Text>
         </TouchableOpacity>
         <Text style={styles.menuItemGrey}>Version 1.0.0</Text>
       </View>

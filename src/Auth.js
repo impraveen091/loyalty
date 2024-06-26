@@ -11,17 +11,18 @@ export const saveToken = async token => {
   }
 };
 
-export const saveUserData = async data => {
+export const saveUserData = async (dataKey, data) => {
+  console.log(dataKey, data);
   try {
-    await AsyncStorage.setItem('data', JSON.stringify(data));
+    await AsyncStorage.setItem(`${dataKey}`, JSON.stringify(data));
   } catch (error) {
     console.error('Failed to save user data:', error);
   }
 };
 
-export const getUserData = async () => {
+export const getUserData = async dataKey => {
   try {
-    const data = await AsyncStorage.getItem('data');
+    const data = await AsyncStorage.getItem(`${dataKey}`);
     return data ? JSON.parse(data) : null;
   } catch (error) {
     console.error('Failed to get user data:', error);

@@ -64,13 +64,19 @@ const Signin = () => {
         const result = await axiosInstance.post(url, formData);
         console.log('SignIn Data', result.data);
         if (result.data.success === 'success') {
-          saveUserData(result.data);
+          saveUserData('data', result.data);
           setPhone('');
           navigation.navigate('Otp');
         }
       } catch (error) {
-        Alert.alert(error.response.data.message);
-        console.log('API call error:', error);
+        if (error.response.status === 400) {
+          ToastAndroid.show('User not found, please signup', ToastAndroid.LONG);
+          saveUserData('phone', phone);
+          navigation.navigate('Signup');
+        } else {
+          Alert.alert('Something bad happened, please try again later');
+        }
+        console.log('API call error:', error.response.status);
       }
     }
   };

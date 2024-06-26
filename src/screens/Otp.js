@@ -1,8 +1,10 @@
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -13,6 +15,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {getUserData} from '../Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance from '../AxiosInstance';
 
 const Otp = () => {
   const {t} = useTranslation();
@@ -27,7 +30,7 @@ const Otp = () => {
     } else {
       const url = 'auth/app-user/verify-otp';
       const formData = {
-        id: Data?.data?.id,
+        id: Data?.data?.id.toString(),
         phone: Data.data.phone,
         otp: otp,
       };
@@ -38,16 +41,35 @@ const Otp = () => {
         if (result.data.success === 'success') {
           ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
           setOtp('');
-          navigation.navigate('Dashboard');
+          navigation.replace('DashboardDrawer');
         }
       } catch (error) {
-        Alert.alert(error.response.data.message);
+        Alert.alert(error.response.data.message || 'Request failed');
         console.log('API call error:', error);
       }
-      setOtp('');
-      navigation.replace('DashboardDrawer');
     }
   };
+
+  const handleResendOTP = async () => {
+    console.log('clicked');
+    const Data = await getUserData('data');
+    const url = 'auth/app-user/resend-otp';
+    const formData = {
+      phone: Data.data.phone,
+    };
+
+    try {
+      const result = await axiosInstance.post(url, formData);
+      console.log('Otp Data', result.data);
+      if (result.data.success === 'success') {
+        ToastAndroid.show('OTP re-sent', ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      Alert.alert(error.response.data.message || 'Request failed');
+      console.log('API call error:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -73,6 +95,9 @@ const Otp = () => {
           value={otp}
         />
         {error && <Text style={styles.error}>{error}</Text>}
+        <TouchableOpacity onPress={handleResendOTP}>
+          <Text style={{color: '#00308F'}}>Re-send OTP</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
           onPress={submit}>
