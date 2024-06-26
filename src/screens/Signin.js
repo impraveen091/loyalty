@@ -167,7 +167,7 @@ const Signin = () => {
         {error && <Text style={styles.error}>{error}</Text>}
         <TouchableOpacity
           style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
-          onPress={submit}>
+          onPress={() => submit()}>
           <Text style={styles.register}>{t('Login')}</Text>
         </TouchableOpacity>
         <TouchableOpacity

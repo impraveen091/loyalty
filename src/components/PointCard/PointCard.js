@@ -35,14 +35,14 @@ const PointCard = () => {
             <Text style={styles.text}>250</Text>
           </View>
         </View>
-        <View>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image
             source={{
               uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
             }}
             style={styles.profilePhoto}
           />
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.borderBottom}></View>
       <View style={styles.cardBottom}>

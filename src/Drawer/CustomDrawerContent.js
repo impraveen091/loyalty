@@ -69,7 +69,9 @@ const CustomDrawerContent = ({navigation}) => {
         end={{x: 1, y: 1}}
         colors={['#00308F', '#5072A7']}
         style={styles.linearGradient}>
-        <View style={styles.imageContainer}>
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={() => navigation.navigate('Profile')}>
           <Image
             source={{
               uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
@@ -77,7 +79,7 @@ const CustomDrawerContent = ({navigation}) => {
             style={styles.profilePhoto}
           />
           <Text style={styles.username}>Mohan Bhargav </Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.kycSection}>
           <View style={styles.pending}>
             <Text style={styles.kycText}>{t('KYC Pending')}</Text>

@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     marginVertical: 20,
+    width: deviceWidth - 40,
   },
   registerText: {
     color: 'white',
