@@ -12,14 +12,8 @@ axiosInstance.interceptors.request.use(
     const userData = await getUserData();
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
-      if (userData?.super_admin === false) {
-        if (userData && userData.Tenant.username) {
-          config.headers['x-username'] = userData.Tenant.username;
-        }
-        if (userData && userData.Tenant.id) {
-          config.headers['x-tenant-id'] = userData.Tenant.id;
-        }
-      }
+      config.headers['x-username'] = 'runolfssoninc';
+      config.headers['x-tenant-id'] = 1;
     } else {
       config.headers['x-username'] = 'runolfssoninc';
       config.headers['x-tenant-id'] = 1;

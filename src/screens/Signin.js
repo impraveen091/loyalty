@@ -53,18 +53,17 @@ const Signin = () => {
     loadLanguage();
   }, [isFocused, checked]);
 
-  const submit = async () => {
+  const submit = async phone => {
     if (phone.length !== 10) {
       setError('Please enter a valid phone number');
     } else {
       const url = 'auth/app-user/login';
-      const formData = {phone: phone.toString()};
-
+      const formData = {phone};
       try {
         const result = await axiosInstance.post(url, formData);
         console.log('SignIn Data', result.data);
         if (result.data.success === 'success') {
-          saveUserData('data', result.data);
+          ToastAndroid.show(result.data.data.otp, ToastAndroid.LONG);
           setPhone('');
           navigation.navigate('Otp');
         }
@@ -150,7 +149,7 @@ const Signin = () => {
       </Modal>
       <Image
         source={{
-          uri: 'https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg?t=st=1715683995~exp=1715687595~hmac=ab594e8d0da6ae56166a9698d3a15c9b8a42609c98e411b0d2815d334bd16408&w=740',
+          uri: 'https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg?t=st=1719399088~exp=1719402688~hmac=bd4cede27ddfb952516560f019051da5594dc9b8c576ae8b69708fdb53cc2957&w=826',
         }}
         style={styles.image}
       />
@@ -165,11 +164,13 @@ const Signin = () => {
           value={phone}
         />
         {error && <Text style={styles.error}>{error}</Text>}
+
         <TouchableOpacity
           style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
-          onPress={() => submit()}>
+          onPress={() => submit(phone)}>
           <Text style={styles.register}>{t('Login')}</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             styles.submit,

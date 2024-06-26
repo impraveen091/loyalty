@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: deviceWidth - 60,
     marginVertical: 10,
-    height: deviceWidth - 30,
+    height: deviceWidth - 60,
   },
   input: {
     backgroundColor: 'white',

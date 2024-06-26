@@ -6,12 +6,15 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {deviceWidth} from '../constants/Constants';
-import {getUserData} from '../Auth';
+import {getUserData, saveUserData} from '../Auth';
+import axiosInstance from '../AxiosInstance';
+import {useNavigation} from '@react-navigation/native';
 
 const Profile = () => {
+  const navigation = useNavigation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,9 +29,9 @@ const Profile = () => {
         const data = await getUserData('data');
         console.log('DataProfile', data);
         setFormData({
-          name: data.data.name,
-          email: data.data.email,
-          phone: data.data.phone,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
         });
       } catch (err) {
         console.log(err);
@@ -43,24 +46,34 @@ const Profile = () => {
   };
 
   const handleSubmit = async () => {
-    const {name, email, phone} = formData;
+    const {name, email} = formData;
 
-    if (!name || !email || !phone) {
+    if (!name) {
       setError({
         name: !name ? 'Name is required' : '',
-        email: !email ? 'Email is required' : '',
-        phone: !phone ? 'Phone is required' : '',
       });
       return;
     }
-
+    const url = 'app-user/update';
+    const payload = {
+      name,
+      email: email === null ? '' : email,
+    };
+    console.log('payload', payload);
     try {
-      await AsyncStorage.setItem('name', name);
-      await AsyncStorage.setItem('email', email);
-      await AsyncStorage.setItem('phone', phone);
-      alert('Profile updated successfully');
+      const response = await axiosInstance.put(url, payload);
+
+      console.log('Update Profile Response', response.data);
+
+      if (response.data.success) {
+        saveUserData('data', response.data.data);
+        ToastAndroid.show('Profile Updated successfully', ToastAndroid.SHORT);
+        navigation.navigate('Dashboard');
+      } else {
+        alert('Failed to update profile');
+      }
     } catch (err) {
-      console.log(err);
+      console.log('API call error:', err.response.data.message);
       alert('Failed to update profile');
     }
   };

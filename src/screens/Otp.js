@@ -13,8 +13,7 @@ import {deviceWidth} from '../constants/Constants';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
-import {getUserData} from '../Auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getUserData, saveToken, saveUserData} from '../Auth';
 import axiosInstance from '../AxiosInstance';
 
 const Otp = () => {
@@ -30,8 +29,8 @@ const Otp = () => {
     } else {
       const url = 'auth/app-user/verify-otp';
       const formData = {
-        id: Data?.data?.id.toString(),
-        phone: Data.data.phone,
+        id: Data?.id.toString(),
+        phone: Data.phone,
         otp: otp,
       };
 
@@ -39,12 +38,14 @@ const Otp = () => {
         const result = await axiosInstance.post(url, formData);
         console.log('Otp Data', result.data);
         if (result.data.success === 'success') {
+          saveUserData('data', result.data.data);
+          saveToken(result.data.token);
           ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
           setOtp('');
           navigation.replace('DashboardDrawer');
         }
       } catch (error) {
-        Alert.alert(error.response.data.message || 'Request failed');
+        Alert.alert(error.response?.data.message || 'Request failed');
         console.log('API call error:', error);
       }
     }
