@@ -65,6 +65,7 @@ const Signin = () => {
         if (result.data.success === 'success') {
           ToastAndroid.show(result.data.data.otp, ToastAndroid.LONG);
           setPhone('');
+          saveUserData('data', result.data.data);
           navigation.navigate('Otp');
         }
       } catch (error) {

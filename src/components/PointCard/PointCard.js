@@ -1,14 +1,26 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {deviceWidth} from '../../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import Coin from '../Assets/svg/coin.svg';
 import {useTranslation} from 'react-i18next';
+import {getUserData} from '../../Auth';
 
 const PointCard = () => {
   const {t} = useTranslation();
   const navigation = useNavigation();
+  const [image, setImage] = useState('');
+  // console.log(image);
+
+  useEffect(() => {
+    const profileImage = async () => {
+      const imageData = await getUserData('data');
+      setImage(imageData.image);
+    };
+    profileImage();
+  }, []);
+
   return (
     <LinearGradient
       start={{x: 0, y: 0}}
@@ -38,7 +50,9 @@ const PointCard = () => {
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image
             source={{
-              uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
+              uri:
+                image ||
+                'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
             }}
             style={styles.profilePhoto}
           />

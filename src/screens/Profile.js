@@ -12,6 +12,7 @@ import {deviceWidth} from '../constants/Constants';
 import {getUserData, saveUserData} from '../Auth';
 import axiosInstance from '../AxiosInstance';
 import {useNavigation} from '@react-navigation/native';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -20,6 +21,7 @@ const Profile = () => {
     email: '',
     phone: '',
   });
+  const [image, setImage] = useState(null);
 
   const [error, setError] = useState({});
 
@@ -45,26 +47,66 @@ const Profile = () => {
     setFormData({...formData, [key]: value});
   };
 
+  const updateImage = async image => {
+    const url = 'app-user/upload-profile-image';
+    const payload = new FormData();
+    payload.append('image', {
+      uri: image.uri,
+      type: image.type,
+      name: image.fileName,
+    });
+    try {
+      const response = await axiosInstance.post(url, payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Update Profile Response', response.data);
+      if (response.data.success) {
+        saveUserData('data', response.data.data);
+        ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
+        navigation.navigate('Dashboard');
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch (err) {
+      console.log('API call error:', err.response.data.message);
+      alert('Failed to update profile photo');
+    }
+  };
+
+  const handleImagePick = () => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const imageAsset = response.assets[0];
+        console.log('image link', imageAsset.uri);
+        setImage(imageAsset);
+        updateImage(imageAsset);
+      }
+    });
+  };
+
   const handleSubmit = async () => {
     const {name, email} = formData;
-
     if (!name) {
       setError({
         name: !name ? 'Name is required' : '',
       });
       return;
     }
+
     const url = 'app-user/update';
     const payload = {
-      name,
+      name: name,
       email: email === null ? '' : email,
     };
-    console.log('payload', payload);
     try {
       const response = await axiosInstance.put(url, payload);
-
       console.log('Update Profile Response', response.data);
-
       if (response.data.success) {
         saveUserData('data', response.data.data);
         ToastAndroid.show('Profile Updated successfully', ToastAndroid.SHORT);
@@ -81,14 +123,16 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Profile</Text>
-      <View>
+      <TouchableOpacity onPress={handleImagePick}>
         <Image
           source={{
-            uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
+            uri:
+              image?.uri ||
+              'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
           }}
           style={styles.image}
         />
-      </View>
+      </TouchableOpacity>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
