@@ -6,10 +6,29 @@ import {RNCamera} from 'react-native-camera';
 const Scan = () => {
   const [scannedData, setScannedData] = useState(null);
 
+  const handleScan = async data => {
+    console.log('Scan Data', data);
+    const url = data;
+    try {
+      const response = await axiosInstance.post(url);
+      console.log('Update Profile Response', response.data);
+      if (response.data.success) {
+        saveUserData('data', response.data.data);
+        ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
+        navigation.navigate('Dashboard');
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch (err) {
+      console.log('API call error:', err.response?.data);
+      alert('Scan Data Failed');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <QRCodeScanner
-        onRead={({data}) => setScannedData(data)}
+        onRead={({data}) => handleScan(data)}
         flashMode={RNCamera.Constants.FlashMode.auto}
         reactivate={true}
         reactivateTimeout={500}

@@ -3,7 +3,8 @@ import {Dimensions, Platform} from 'react-native';
 export const deviceWidth = Dimensions.get('window').width;
 export const deviceHeight = Dimensions.get('window').height;
 
-// src/constants.js
+export const profileImageLink =
+  'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?t=st=1719550821~exp=1719554421~hmac=08ede42040b922d386ff3282f3388e73fadcca2707aa5c734b318878835f76ed&w=740';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 

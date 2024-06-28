@@ -23,17 +23,31 @@ import Announcement from '../components/Assets/svg/announcement.svg';
 import Catalog from '../components/Assets/svg/catalog.svg';
 import Support from '../components/Assets/svg/support.svg';
 import {RadioButton} from 'react-native-paper';
-import {deviceWidth, deviceHeight} from '../constants/Constants';
+import {
+  deviceWidth,
+  deviceHeight,
+  profileImageLink,
+} from '../constants/Constants';
 import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
+import {getUserData} from '../Auth';
 
 const CustomDrawerContent = ({navigation}) => {
   const {t} = useTranslation();
   const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
   const [checked, setChecked] = useState('');
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    const profileImage = async () => {
+      const imageData = await getUserData('data');
+      setImage(imageData.image);
+    };
+    profileImage();
+  }, []);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -74,7 +88,7 @@ const CustomDrawerContent = ({navigation}) => {
           onPress={() => navigation.navigate('Profile')}>
           <Image
             source={{
-              uri: 'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
+              uri: image ? image : profileImageLink,
             }}
             style={styles.profilePhoto}
           />

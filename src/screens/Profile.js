@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import {deviceWidth} from '../constants/Constants';
+import {deviceWidth, profileImageLink} from '../constants/Constants';
 import {getUserData, saveUserData} from '../Auth';
 import axiosInstance from '../AxiosInstance';
 import {useNavigation} from '@react-navigation/native';
@@ -65,7 +65,7 @@ const Profile = () => {
       if (response.data.success) {
         saveUserData('data', response.data.data);
         ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
-        navigation.navigate('Dashboard');
+        navigation.navigate('DashboardDrawer');
       } else {
         alert('Failed to update profile');
       }
@@ -110,7 +110,7 @@ const Profile = () => {
       if (response.data.success) {
         saveUserData('data', response.data.data);
         ToastAndroid.show('Profile Updated successfully', ToastAndroid.SHORT);
-        navigation.navigate('Dashboard');
+        navigation.navigate('DashboardDrawer');
       } else {
         alert('Failed to update profile');
       }
@@ -126,9 +126,7 @@ const Profile = () => {
       <TouchableOpacity onPress={handleImagePick}>
         <Image
           source={{
-            uri:
-              image?.uri ||
-              'https://img.freepik.com/free-photo/workman-with-ax-white-background_1368-5733.jpg?t=st=1715750000~exp=1715753600~hmac=8f953c61efbed903517fa0085ac44577018c6b2ec4e27c46290a8848f2cc0fe7&w=826',
+            uri: image?.uri || profileImageLink,
           }}
           style={styles.image}
         />

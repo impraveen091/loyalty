@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -21,9 +21,20 @@ import Refer from '../components/Assets/svg/refer.svg';
 import Receipt from '../components/Assets/svg/receipt.svg';
 import Scan from '../components/Assets/svg/scan.svg';
 import {useTranslation} from 'react-i18next';
+import {getUserData} from '../Auth';
 
 const Dashboard = ({navigation}) => {
   const {t} = useTranslation();
+  const [image, setImage] = useState('');
+  // console.log(image);
+
+  useEffect(() => {
+    const profileImage = async () => {
+      const imageData = await getUserData('data');
+      setImage(imageData.image);
+    };
+    profileImage();
+  }, []);
 
   const images = [
     'https://cdn.pixabay.com/photo/2021/08/11/16/06/mountain-6538890_1280.jpg',
@@ -35,7 +46,7 @@ const Dashboard = ({navigation}) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <ImageSlider data={images} />
-      <PointCard />
+      <PointCard imageLink={image} />
       <View style={styles.menuCardContainer}>
         <TouchableOpacity
           style={styles.menuCard}
