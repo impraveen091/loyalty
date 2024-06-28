@@ -52,11 +52,10 @@ const Otp = () => {
   };
 
   const handleResendOTP = async () => {
-    console.log('clicked');
     const Data = await getUserData('data');
     const url = 'auth/app-user/resend-otp';
     const formData = {
-      phone: Data.data.phone,
+      phone: Data.phone,
     };
 
     try {
@@ -64,6 +63,7 @@ const Otp = () => {
       console.log('Otp Data', result.data);
       if (result.data.success === 'success') {
         ToastAndroid.show('OTP re-sent', ToastAndroid.SHORT);
+        ToastAndroid.show(result.data.data.otp, ToastAndroid.SHORT);
       }
     } catch (error) {
       Alert.alert(error.response.data.message || 'Request failed');

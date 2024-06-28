@@ -40,11 +40,14 @@ const CustomDrawerContent = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [checked, setChecked] = useState('');
   const [image, setImage] = useState('');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     const profileImage = async () => {
-      const imageData = await getUserData('data');
-      setImage(imageData.image);
+      const DataDrawer = await getUserData('data');
+      console.log('DataDrawer', DataDrawer.image);
+      setImage(DataDrawer.image);
+      setName(DataDrawer.name);
     };
     profileImage();
   }, []);
@@ -92,7 +95,7 @@ const CustomDrawerContent = ({navigation}) => {
             }}
             style={styles.profilePhoto}
           />
-          <Text style={styles.username}>Mohan Bhargav </Text>
+          <Text style={styles.username}>{name}</Text>
         </TouchableOpacity>
         <View style={styles.kycSection}>
           <View style={styles.pending}>

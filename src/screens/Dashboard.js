@@ -10,7 +10,11 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import ImageSlider from '../components/imageSlider/ImageSlider';
 import PointCard from '../components/PointCard/PointCard';
-import {deviceHeight, deviceWidth} from '../constants/Constants';
+import {
+  deviceHeight,
+  deviceWidth,
+  profileImageLink,
+} from '../constants/Constants';
 import Promotional from '../components/Assets/svg/promotional.svg';
 import Redeem from '../components/Assets/svg/redeem.svg';
 import Bank from '../components/Assets/svg/bank.svg';
@@ -31,7 +35,8 @@ const Dashboard = ({navigation}) => {
   useEffect(() => {
     const profileImage = async () => {
       const imageData = await getUserData('data');
-      setImage(imageData.image);
+      console.log('profileimage', imageData);
+      setImage(imageData?.image);
     };
     profileImage();
   }, []);
@@ -46,7 +51,7 @@ const Dashboard = ({navigation}) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <ImageSlider data={images} />
-      <PointCard imageLink={image} />
+      <PointCard imageLink={image ? image : profileImageLink} />
       <View style={styles.menuCardContainer}>
         <TouchableOpacity
           style={styles.menuCard}

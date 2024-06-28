@@ -16,7 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
 import axiosInstance from '../AxiosInstance';
 import {postData} from '../../services/Api';
-import {getUserData} from '../Auth';
+import {getUserData, saveUserData} from '../Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signup = () => {
@@ -76,12 +76,13 @@ const Signup = () => {
         const result = await axiosInstance.post(url, formData);
         console.log('Signup Data', result.data);
         if (result.data.success === 'success') {
-          ToastAndroid.show('Login Successful', ToastAndroid.SHORT);
+          ToastAndroid.show(result.data.data.otp, ToastAndroid.SHORT);
+          saveUserData('phone', formData.phone);
           setFormData({
             phone: '',
             name: '',
           });
-          navigation.navigate('Signin');
+          navigation.navigate('Otp');
         }
       } catch (error) {
         console.log('CLicked error');
