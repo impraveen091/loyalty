@@ -7,10 +7,10 @@ import Coin from '../Assets/svg/coin.svg';
 import {useTranslation} from 'react-i18next';
 import {getUserData} from '../../Auth';
 
-const PointCard = ({imageLink}) => {
+const PointCard = ({imageLink, points}) => {
   const {t} = useTranslation();
   const navigation = useNavigation();
-  console.log('Profi', imageLink);
+  // console.log('Profi', imageLink);
 
   return (
     <LinearGradient
@@ -26,7 +26,7 @@ const PointCard = ({imageLink}) => {
               <Coin width={25} height={25} />
             </View>
 
-            <Text style={styles.text}>0.00</Text>
+            <Text style={styles.text}>{points}</Text>
           </View>
 
           <View style={{marginTop: 20}}>

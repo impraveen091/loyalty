@@ -2,12 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
 import ImageSlider from '../components/imageSlider/ImageSlider';
 import PointCard from '../components/PointCard/PointCard';
 import {
@@ -26,20 +25,42 @@ import Receipt from '../components/Assets/svg/receipt.svg';
 import Scan from '../components/Assets/svg/scan.svg';
 import {useTranslation} from 'react-i18next';
 import {getUserData} from '../Auth';
+import axiosInstance from '../AxiosInstance';
+import {useIsFocused} from '@react-navigation/native';
 
 const Dashboard = ({navigation}) => {
+  const isFocused = useIsFocused();
   const {t} = useTranslation();
   const [image, setImage] = useState('');
-  // console.log(image);
+  const [points, setPoints] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const profileImage = async () => {
+  const fetchData = async () => {
+    setLoading(true);
+    const url = 'app-user/points-available';
+    try {
+      const result = await axiosInstance.get(url);
+      console.log('Points:', result.data);
+      setPoints(result.data.data);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+
+    try {
       const imageData = await getUserData('data');
       console.log('profileimage', imageData);
       setImage(imageData?.image);
-    };
-    profileImage();
-  }, []);
+    } catch (error) {
+      console.error('Get user data failed:', error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]);
 
   const images = [
     'https://cdn.pixabay.com/photo/2021/08/11/16/06/mountain-6538890_1280.jpg',
@@ -48,66 +69,76 @@ const Dashboard = ({navigation}) => {
     'https://cdn.pixabay.com/photo/2014/08/11/21/39/wall-416060_1280.jpg',
     'https://cdn.pixabay.com/photo/2023/01/16/04/15/painter-7721563_1280.jpg',
   ];
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-      <ImageSlider data={images} />
-      <PointCard imageLink={image ? image : profileImageLink} />
-      <View style={styles.menuCardContainer}>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Scan')}>
-          <Scan width={30} height={30} />
-          <Text style={styles.text}>{t('Scan')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('PromotionalOffers')}>
-          <Promotional width={30} height={30} />
-          <Text style={styles.text}>{t('Promotional Offers')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Redeem')}>
-          <Redeem width={30} height={30} />
-          <Text style={styles.text}>{t('Redeem')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Bank')}>
-          <Bank width={40} height={40} />
-          <Text style={styles.text}>{t('Bank')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Catalog')}>
-          <Catalog width={40} height={40} />
-          <Text style={styles.text}>{t('Catalog')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Products')}>
-          <Product width={40} height={40} />
-          <Text style={styles.text}>{t('Products')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Transactions')}>
-          <Transactions width={40} height={40} />
-          <Text style={styles.text}>{t('Transactions')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('Refer')}>
-          <Refer width={40} height={40} />
-          <Text style={styles.text}>{t('Refer')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuCard}
-          onPress={() => navigation.navigate('PurchaseReceipt')}>
-          <Receipt width={35} height={35} />
-          <Text style={styles.text}>{t('Purchase Receipt')}</Text>
-        </TouchableOpacity>
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+      ) : (
+        <>
+          <ImageSlider data={images} />
+          <PointCard
+            imageLink={image ? image : profileImageLink}
+            points={points}
+          />
+          <View style={styles.menuCardContainer}>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Scan')}>
+              <Scan width={30} height={30} />
+              <Text style={styles.text}>{t('Scan')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('PromotionalOffers')}>
+              <Promotional width={30} height={30} />
+              <Text style={styles.text}>{t('Promotional Offers')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Redeem')}>
+              <Redeem width={30} height={30} />
+              <Text style={styles.text}>{t('Redeem')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Bank')}>
+              <Bank width={40} height={40} />
+              <Text style={styles.text}>{t('Bank')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Catalog')}>
+              <Catalog width={40} height={40} />
+              <Text style={styles.text}>{t('Catalog')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Products')}>
+              <Product width={40} height={40} />
+              <Text style={styles.text}>{t('Products')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Transactions')}>
+              <Transactions width={40} height={40} />
+              <Text style={styles.text}>{t('Transactions')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('Refer')}>
+              <Refer width={40} height={40} />
+              <Text style={styles.text}>{t('Refer')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() => navigation.navigate('PurchaseReceipt')}>
+              <Receipt width={35} height={35} />
+              <Text style={styles.text}>{t('Purchase Receipt')}</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 };
@@ -118,6 +149,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  loader: {
+    marginTop: deviceHeight / 2 - 20,
   },
   menuCard: {
     width: deviceWidth / 3.73,

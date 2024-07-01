@@ -18,6 +18,7 @@ const Products = () => {
   const centralData = useSelector(state => state.cart.cart);
   const dispatch = useDispatch();
   const [product, setproduct] = useState([]);
+
   useEffect(() => {
     const generateRandomPaintData = () => {
       const paints = [];
