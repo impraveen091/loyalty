@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     columnGap: 10,
-    padding: 10,
+    padding: 5,
     marginVertical: 10,
     borderRadius: 5,
     maxWidth: 120,

@@ -62,7 +62,7 @@ const Otp = () => {
       const result = await axiosInstance.post(url, formData);
       console.log('Otp Data', result.data);
       if (result.data.success === 'success') {
-        ToastAndroid.show('OTP re-sent', ToastAndroid.SHORT);
+        // ToastAndroid.show('OTP re-sent', ToastAndroid.SHORT);
         ToastAndroid.show(result.data.data.otp, ToastAndroid.SHORT);
       }
     } catch (error) {
