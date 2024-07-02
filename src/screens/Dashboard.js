@@ -31,7 +31,7 @@ import {useIsFocused} from '@react-navigation/native';
 const Dashboard = ({navigation}) => {
   const isFocused = useIsFocused();
   const {t} = useTranslation();
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(profileImageLink);
   const [points, setPoints] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -48,8 +48,8 @@ const Dashboard = ({navigation}) => {
 
     try {
       const imageData = await getUserData('data');
-      console.log('profileimage', imageData);
-      setImage(imageData?.image);
+      console.log('profileimage', imageData.image);
+      setImage(imageData?.image || profileImageLink);
     } catch (error) {
       console.error('Get user data failed:', error);
     }
@@ -77,10 +77,7 @@ const Dashboard = ({navigation}) => {
       ) : (
         <>
           <ImageSlider data={images} />
-          <PointCard
-            imageLink={image ? image : profileImageLink}
-            points={points}
-          />
+          <PointCard imageLink={image} points={points} />
           <View style={styles.menuCardContainer}>
             <TouchableOpacity
               style={styles.menuCard}

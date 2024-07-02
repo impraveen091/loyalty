@@ -1,4 +1,3 @@
-// CustomDrawerContent.js
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -44,11 +43,15 @@ const CustomDrawerContent = ({navigation}) => {
 
   useEffect(() => {
     const profileImage = async () => {
-      const DataDrawer = await getUserData('data');
-      console.log('DataDrawer', DataDrawer.image);
-      setImage(DataDrawer.image);
-      setName(DataDrawer.name);
+      try {
+        const DataDrawer = await getUserData('data');
+        setImage(DataDrawer.image);
+        setName(DataDrawer.name);
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+      }
     };
+
     profileImage();
   }, []);
 
@@ -63,7 +66,7 @@ const CustomDrawerContent = ({navigation}) => {
           setChecked('English');
         }
       } catch (error) {
-        console.log(error);
+        console.error('Failed to load language:', error);
       }
     };
 
@@ -71,12 +74,23 @@ const CustomDrawerContent = ({navigation}) => {
   }, [isFocused, checked]);
 
   const changeLang = async language => {
-    await AsyncStorage.setItem('language', JSON.stringify(language));
-    ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
+    try {
+      await AsyncStorage.setItem('language', JSON.stringify(language));
+      ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
+      setChecked(language);
+      i18next.changeLanguage(language);
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
   };
+
   const handleLogout = async () => {
-    await AsyncStorage.clear();
-    navigation.replace('Signin');
+    try {
+      await AsyncStorage.clear();
+      navigation.replace('Signin');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
   };
 
   return (
@@ -104,13 +118,8 @@ const CustomDrawerContent = ({navigation}) => {
           </View>
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
-            style={{
-              flexDirection: 'row',
-              columnGap: 5,
-              maxWidth: 90,
-              marginRight: 20,
-            }}>
-            <Text style={{color: 'white'}}>{t('Edit Profile')}</Text>
+            style={styles.editProfile}>
+            <Text style={styles.editProfileText}>{t('Edit Profile')}</Text>
             <EditProfile width={20} height={20} />
           </TouchableOpacity>
         </View>
@@ -121,7 +130,7 @@ const CustomDrawerContent = ({navigation}) => {
           style={styles.languageSection}
           onPress={() => setModalVisible(!modalVisible)}>
           <Language width={20} height={20} />
-          <Text style={{fontSize: 18, color: '#5072A7'}}>{checked}</Text>
+          <Text style={styles.languageText}>{checked}</Text>
           {modalVisible ? (
             <UpArrow width={10} height={10} />
           ) : (
@@ -132,23 +141,18 @@ const CustomDrawerContent = ({navigation}) => {
           animationType="slide"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModalVisible(!modalVisible);
-          }}>
+          onRequestClose={() => setModalVisible(!modalVisible)}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Cancel
                 width={20}
                 height={20}
-                style={{alignSelf: 'flex-end'}}
+                style={styles.modalCloseIcon}
                 onPress={() => setModalVisible(false)}
               />
               <RadioButton.Group
                 onValueChange={newValue => {
                   changeLang(newValue);
-                  setChecked(newValue);
-                  i18next.changeLanguage(newValue);
                   setModalVisible(false);
                 }}
                 value={checked}>
@@ -172,7 +176,7 @@ const CustomDrawerContent = ({navigation}) => {
           </View>
         </Modal>
 
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
+        <View style={styles.divider}></View>
 
         <TouchableOpacity
           onPress={() => navigation.navigate('Notifications')}
@@ -194,28 +198,25 @@ const CustomDrawerContent = ({navigation}) => {
           <Text style={styles.menuItem}>{t('Help & Support')}</Text>
         </TouchableOpacity>
 
-        {/* <Text style={styles.menuItem}>Take a tour</Text> */}
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}></View>
+        <View style={styles.divider}></View>
         <TouchableOpacity onPress={() => navigation.navigate('Aboutus')}>
           <Text style={styles.menuItemGrey}>{t('About us')}</Text>
         </TouchableOpacity>
-
         <TouchableOpacity onPress={() => navigation.navigate('Privacypolicy')}>
           <Text style={styles.menuItemGrey}>{t('Privacy Policy')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Contactus')}>
           <Text style={styles.menuItemGrey}>{t('Contact us')}</Text>
         </TouchableOpacity>
-
         <TouchableOpacity onPress={() => navigation.navigate('Termsofuse')}>
           <Text style={styles.menuItemGrey}>{t('Terms of use')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleLogout()}>
-          <Text style={[styles.menuItemGrey, {color: 'red'}]}>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={[styles.menuItemGrey, styles.logoutText]}>
             {t('Logout')}
           </Text>
         </TouchableOpacity>
-        <Text style={styles.menuItemGrey}>Version 1.0.0</Text>
+        <Text style={styles.versionText}>Version 1.0.0</Text>
       </View>
     </View>
   );
@@ -292,6 +293,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
   },
+  languageText: {
+    fontSize: 18,
+    color: '#5072A7',
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -314,7 +319,32 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modalCloseIcon: {
+    alignSelf: 'flex-end',
+  },
   section: {flexDirection: 'row', columnGap: 10},
+  editProfile: {
+    flexDirection: 'row',
+    columnGap: 5,
+    maxWidth: 90,
+    marginRight: 20,
+  },
+  editProfileText: {
+    color: 'white',
+  },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey',
+  },
+  logoutText: {
+    color: 'red',
+  },
+  versionText: {
+    fontSize: 16,
+    color: 'grey',
+    textAlign: 'center',
+    marginTop: 10,
+  },
 });
 
 export default CustomDrawerContent;

@@ -10,7 +10,7 @@ import {getUserData} from '../../Auth';
 const PointCard = ({imageLink, points}) => {
   const {t} = useTranslation();
   const navigation = useNavigation();
-  // console.log('Profi', imageLink);
+  console.log('imageLink1', imageLink);
 
   return (
     <LinearGradient
@@ -39,12 +39,7 @@ const PointCard = ({imageLink, points}) => {
           </View>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Image
-            source={{
-              uri: imageLink,
-            }}
-            style={styles.profilePhoto}
-          />
+          <Image source={{uri: imageLink}} style={styles.profilePhoto} />
         </TouchableOpacity>
       </View>
       <View style={styles.borderBottom}></View>

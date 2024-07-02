@@ -21,7 +21,7 @@ const Profile = () => {
     email: '',
     phone: '',
   });
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(profileImageLink);
 
   const [error, setError] = useState({});
 
@@ -35,6 +35,9 @@ const Profile = () => {
           email: data.email,
           phone: data.phone,
         });
+        if (data.image) {
+          setImage(data.image);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -56,21 +59,21 @@ const Profile = () => {
       name: image.fileName,
     });
     try {
-      const response = await axiosInstance.post(url, payload, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axiosInstance.post(url, payload);
       console.log('Update Profile Response', response.data);
       if (response.data.success) {
         saveUserData('data', response.data.data);
         ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
         navigation.navigate('DashboardDrawer');
+        setImage(response.data.data.image);
       } else {
         alert('Failed to update profile');
       }
     } catch (err) {
-      console.log('API call error:', err.response.data.message);
+      console.log(
+        'API call error:',
+        err.response?.data?.message || err.message,
+      );
       alert('Failed to update profile photo');
     }
   };
@@ -79,12 +82,12 @@ const Profile = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
       } else {
         const imageAsset = response.assets[0];
         console.log('image link', imageAsset.uri);
-        setImage(imageAsset);
+        setImage(imageAsset.uri);
         updateImage(imageAsset);
       }
     });
@@ -115,7 +118,10 @@ const Profile = () => {
         alert('Failed to update profile');
       }
     } catch (err) {
-      console.log('API call error:', err.response.data.message);
+      console.log(
+        'API call error:',
+        err.response?.data?.message || err.message,
+      );
       alert('Failed to update profile');
     }
   };
@@ -126,9 +132,10 @@ const Profile = () => {
       <TouchableOpacity onPress={handleImagePick}>
         <Image
           source={{
-            uri: image?.uri || profileImageLink,
+            uri: image || profileImageLink,
           }}
           style={styles.image}
+          onError={() => setImage(profileImageLink)}
         />
       </TouchableOpacity>
       <View style={styles.inputContainer}>
