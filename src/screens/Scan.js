@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
-import axiosInstance from '../AxiosInstance';
+import axiosInstance from '../Auth/AxiosInstance';
 import {useNavigation} from '@react-navigation/native';
 import {deviceWidth} from '../constants/Constants';
 

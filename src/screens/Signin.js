@@ -22,8 +22,8 @@ import DownArrow from '../components/Assets/svg/up-arrow.svg';
 import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance from '../AxiosInstance';
-import {saveUserData} from '../Auth';
+import axiosInstance from '../Auth/AxiosInstance';
+import {saveUserData} from '../Auth/Auth';
 
 const Signin = () => {
   const {t} = useTranslation();

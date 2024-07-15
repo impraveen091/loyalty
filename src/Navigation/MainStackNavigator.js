@@ -28,6 +28,7 @@ import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
 import DummyScreen from '../screens/DummyScreen';
+import {getUserData} from '../Auth/Auth';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();

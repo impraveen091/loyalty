@@ -13,8 +13,8 @@ import {deviceWidth} from '../constants/Constants';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
-import {getUserData, saveToken, saveUserData} from '../Auth';
-import axiosInstance from '../AxiosInstance';
+import {getUserData, saveToken, saveUserData} from '../Auth/Auth';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const Otp = () => {
   const {t} = useTranslation();
@@ -23,14 +23,15 @@ const Otp = () => {
   const [error, setError] = useState('');
 
   const submit = async () => {
-    const Data = await getUserData('data');
+    const data = await getUserData('data');
+    console.log('OTP data', data);
     if (otp.length !== 6) {
       setError('OTP must be 6 digits');
     } else {
       const url = 'auth/app-user/verify-otp';
       const formData = {
-        id: Data?.id.toString(),
-        phone: Data.phone,
+        id: data?.id.toString(),
+        phone: data.phone,
         otp: otp,
       };
 

@@ -1,6 +1,6 @@
 import {
   Image,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TextInput,
@@ -8,16 +8,16 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {deviceHeight, deviceWidth} from '../constants/Constants';
-import Dropdown from 'react-native-dropdown-picker';
+import {deviceWidth} from '../constants/Constants';
+import DropDownPicker from 'react-native-dropdown-picker';
 import {useNavigation} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
-import axiosInstance from '../AxiosInstance';
-import {postData} from '../../services/Api';
-import {getUserData, saveUserData} from '../Auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance from '../Auth/AxiosInstance';
+import {getUserData, saveUserData} from '../Auth/Auth';
 
 const Signup = () => {
   const navigation = useNavigation();
@@ -26,25 +26,56 @@ const Signup = () => {
     name: '',
   });
   const [error, setError] = useState({});
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [profession, setProfession] = useState('Plumber');
-  const [isCheckedReferral, setCheckedReferral] = useState(false);
+  const [isProfessionDropdownOpen, setProfessionDropdownOpen] = useState(false);
+  const [profession, setProfession] = useState(null);
+  const [isStateDropdownOpen, setStateDropdownOpen] = useState(false);
+  const [state, setState] = useState(null);
+  const [stateItems, setStateItems] = useState([]);
   const [isCheckedTerm, setCheckedTerm] = useState(false);
-  const professionItems = [
-    {label: 'Plumber', value: 'Plumber'},
-    {label: 'Painter', value: 'Painter'},
-    {label: 'Carpenter', value: 'Carpenter'},
-    {label: 'Architect', value: 'Architect'},
-    {label: 'Designer', value: 'Designer'},
-    {label: 'Electrician', value: 'Electrician'},
-  ];
+  const [professionItems, setProfessionItems] = useState([]);
+
+  const formattedProfessionItems = professionItems.map(prof => ({
+    label: prof.name,
+    value: prof.id,
+  }));
+  const formattedStateItems = stateItems.map(st => ({
+    label: st.name,
+    value: st.name,
+  }));
+
   useEffect(() => {
-    const getData = async () => {
-      const phone = await getUserData('phone');
-      if (phone) {
-        setFormData({...formData, phone: phone});
+    const getProfession = async () => {
+      const url = 'app-user/profession/list';
+      try {
+        const result = await axiosInstance.get(url);
+        setProfessionItems(result.data.data);
+      } catch (error) {
+        Alert.alert(error.response?.data?.message || 'An error occurred');
       }
     };
+
+    const getStates = async () => {
+      const url = 'https://countriesnow.space/api/v0.1/countries/states';
+      const payload = {country: 'India'};
+      try {
+        const response = await axiosInstance.post(url, payload);
+        setStateItems(response.data.data.states);
+      } catch (error) {
+        console.log('Error fetching states', error);
+      }
+    };
+
+    const getData = async () => {
+      const phone = await getUserData('phone');
+      console.log(phone);
+
+      if (phone) {
+        setFormData({...formData, phone});
+      }
+    };
+
+    getProfession();
+    getStates();
     getData();
   }, []);
 
@@ -60,6 +91,12 @@ const Signup = () => {
     if (formData.name.length < 4) {
       newErrors.name = 'First name should have at least 4 characters';
     }
+    if (!profession) {
+      newErrors.profession = 'Select a profession';
+    }
+    if (!state) {
+      newErrors.state = 'Please select your state';
+    }
     if (!isCheckedTerm) {
       newErrors.condition = 'Accept the T&C';
     }
@@ -68,126 +105,135 @@ const Signup = () => {
 
   const submit = async () => {
     const newErrors = validateForm();
-    console.log('CLicked', Object.keys(newErrors).length);
     setError(newErrors);
     if (Object.keys(newErrors).length === 0) {
       const url = 'auth/app-user/sign-up';
+      const payload = {...formData, profession_id: profession, state};
       try {
-        const result = await axiosInstance.post(url, formData);
-        console.log('Signup Data', result.data);
+        const result = await axiosInstance.post(url, payload);
+        console.log('signup Data', result.data);
         if (result.data.success === 'success') {
           ToastAndroid.show(result.data.data.otp, ToastAndroid.SHORT);
-          saveUserData('phone', formData.phone);
-          setFormData({
-            phone: '',
-            name: '',
-          });
+          saveUserData('data', result.data.data);
+          setFormData({phone: '', name: ''});
+          setProfession(null);
+          setState(null);
           navigation.navigate('Otp');
         }
       } catch (error) {
-        console.log('CLicked error');
         Alert.alert(error.response?.data?.message || 'An error occurred');
       }
     }
   };
 
-  return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}>
-      <Image
-        source={{
-          uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
-        }}
-        style={styles.bannerImage}
-      />
-      <Image
-        source={{
-          uri: 'https://img.freepik.com/free-vector/sign-up-concept-illustration_114360-7865.jpg?t=st=1715768500~exp=1715772100~hmac=1abdab2f0cf3b8c75543533d67ed9642d28043d29ce12b01850eebc428fd03fe&w=826',
-        }}
-        style={styles.image}
-      />
+  const renderItem = ({item}) => item;
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.heading}>Register</Text>
-        {/* <Dropdown
-          open={isDropdownOpen}
-          value={profession}
-          items={professionItems}
-          setOpen={setDropdownOpen}
-          setValue={setProfession}
-          style={styles.dropdown}
-        /> */}
-        <TextInput
-          keyboardType="numeric"
-          style={styles.input}
-          placeholder="Phone number"
-          placeholderTextColor="grey"
-          onChangeText={value => handleChange('phone', value)}
-          value={formData.phone}
-          maxLength={10}
-        />
-        {error.phone && <Text style={styles.error}>{error.phone}</Text>}
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          placeholderTextColor="grey"
-          onChangeText={value => handleChange('name', value)}
-          value={formData.name}
-        />
-        {error.name && <Text style={styles.error}>{error.name}</Text>}
+  const formContent = [
+    <Image
+      key="banner"
+      source={{
+        uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
+      }}
+      style={styles.bannerImage}
+    />,
+    <Image
+      key="mainImage"
+      source={{
+        uri: 'https://img.freepik.com/free-vector/sign-up-concept-illustration_114360-7865.jpg?t=st=1715768500~exp=1715772100~hmac=1abdab2f0cf3b8c75543533d67ed9642d28043d29ce12b01850eebc428fd03fe&w=826',
+      }}
+      style={styles.image}
+    />,
+    <View key="form" style={styles.inputContainer}>
+      <Text style={styles.heading}>Register</Text>
+      <DropDownPicker
+        open={isProfessionDropdownOpen}
+        value={profession}
+        items={formattedProfessionItems}
+        setOpen={setProfessionDropdownOpen}
+        setValue={setProfession}
+        style={styles.dropdown}
+        placeholder="Select Your Profession"
+        dropDownContainerStyle={{
+          maxHeight: 200,
+          zIndex: 9999,
+        }}
+      />
+      {error.profession && <Text style={styles.error}>{error.profession}</Text>}
 
-        {/* <TextInput
-          keyboardType="numeric"
-          style={styles.input}
-          placeholder="Pincode"
-          placeholderTextColor="grey"
-          onChangeText={value => handleChange('pincode', value)}
-          value={formData.pincode}
-          maxLength={6}
-        />
-        {error.pincode && <Text style={styles.error}>{error.pincode}</Text>} */}
-        {/* <TextInput
-          style={styles.input}
-          placeholder="State"
-          placeholderTextColor="grey"
-          onChangeText={value => handleChange('state', value)}
-          value={formData.state}
-        />
-        {error.state && <Text style={styles.error}>{error.state}</Text>} */}
-        {/* <View style={styles.checkboxContainer}>
-          <CheckBox
-            value={isCheckedReferral}
-            onValueChange={setCheckedReferral}
-          />
-          <Text style={styles.checkboxText}>I have referral code</Text>
-        </View>
-        {isCheckedReferral && (
-          <TextInput
-            style={styles.input}
-            placeholder="Referral code (if any)"
-            placeholderTextColor="grey"
-            onChangeText={value => handleChange('referral', value)}
-            value={formData.referral}
-          />
-        )} */}
-        <View style={styles.checkboxContainer}>
-          <CheckBox value={isCheckedTerm} onValueChange={setCheckedTerm} />
-          <Text style={styles.checkboxText}>
-            I accept -
-            <Text
-              style={styles.termsText}
-              onPress={() => navigation.navigate('Termsofuse')}>
-              Terms & Conditions
-            </Text>
+      <TextInput
+        keyboardType="numeric"
+        style={styles.input}
+        placeholder="Phone number"
+        placeholderTextColor="grey"
+        onChangeText={value => handleChange('phone', value)}
+        value={formData.phone}
+        maxLength={10}
+      />
+      {error.phone && <Text style={styles.error}>{error.phone}</Text>}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        placeholderTextColor="grey"
+        onChangeText={value => handleChange('name', value)}
+        value={formData.name}
+      />
+      {error.name && <Text style={styles.error}>{error.name}</Text>}
+
+      <DropDownPicker
+        open={isStateDropdownOpen}
+        value={state}
+        items={formattedStateItems}
+        setOpen={setStateDropdownOpen}
+        setValue={setState}
+        style={styles.dropdown}
+        placeholder="Select Your State"
+        dropDownContainerStyle={{
+          minHeight: 400,
+          width: deviceWidth - 60,
+          zIndex: 9999,
+        }}
+        scrollViewProps={{
+          nestedScrollEnabled: true,
+        }}
+        listMode="SCROLLVIEW"
+        containerStyle={{
+          height: 150,
+          marginBottom: 20,
+        }}
+      />
+      {error.state && <Text style={styles.error}>{error.state}</Text>}
+
+      <View style={styles.checkboxContainer}>
+        <CheckBox value={isCheckedTerm} onValueChange={setCheckedTerm} />
+        <Text style={styles.checkboxText}>
+          I accept -
+          <Text
+            style={styles.termsText}
+            onPress={() => navigation.navigate('Termsofuse')}>
+            Terms & Conditions
           </Text>
-        </View>
-        {error.condition && <Text style={styles.error}>{error.condition}</Text>}
-        <TouchableOpacity style={styles.submit} onPress={() => submit()}>
-          <Text style={styles.registerText}> SignUp</Text>
-        </TouchableOpacity>
+        </Text>
       </View>
-    </ScrollView>
+      {error.condition && <Text style={styles.error}>{error.condition}</Text>}
+
+      <TouchableOpacity style={styles.submit} onPress={submit}>
+        <Text style={styles.registerText}> SignUp</Text>
+      </TouchableOpacity>
+    </View>,
+  ];
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}>
+      <FlatList
+        data={formContent}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={styles.scrollViewContainer}
+      />
+    </KeyboardAvoidingView>
   );
 };
 
@@ -195,8 +241,12 @@ export default Signup;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
     backgroundColor: 'white',
+  },
+  scrollViewContainer: {
+    alignItems: 'center',
+    padding: 20,
   },
   bannerImage: {
     width: deviceWidth - 50,
@@ -219,7 +269,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: deviceWidth - 60,
     marginVertical: 10,
-    height: deviceWidth - 60,
+    flex: 1,
   },
   input: {
     backgroundColor: 'white',
@@ -227,7 +277,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 16,
     elevation: 5,
-    width: deviceWidth - 40,
+    width: deviceWidth - 60,
     color: 'black',
     marginVertical: 5,
   },
@@ -237,7 +287,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     backgroundColor: 'white',
     borderRadius: 10,
-    width: deviceWidth - 40,
+    width: deviceWidth - 60,
   },
   submit: {
     backgroundColor: '#00308F',
@@ -246,7 +296,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     marginVertical: 20,
-    width: deviceWidth - 40,
+    width: deviceWidth - 60,
   },
   registerText: {
     color: 'white',

@@ -1,7 +1,7 @@
 // auth.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Base_url} from '../services/Api';
+import {Base_url} from '../../services/Api';
 
 export const saveToken = async token => {
   try {

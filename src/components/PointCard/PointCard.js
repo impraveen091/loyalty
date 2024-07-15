@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import Coin from '../Assets/svg/coin.svg';
 import {useTranslation} from 'react-i18next';
-import {getUserData} from '../../Auth';
+import {getUserData} from '../../Auth/Auth';
 
 const PointCard = ({imageLink, points}) => {
   const {t} = useTranslation();

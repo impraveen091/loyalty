@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Base_url} from '../services/Api';
+import {Base_url} from '../../services/Api';
 import {getToken, getUserData, refreshToken, removeToken} from './Auth';
 
 const axiosInstance = axios.create({

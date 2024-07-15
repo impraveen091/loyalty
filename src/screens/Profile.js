@@ -9,8 +9,8 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {deviceWidth, profileImageLink} from '../constants/Constants';
-import {getUserData, saveUserData} from '../Auth';
-import axiosInstance from '../AxiosInstance';
+import {getUserData, saveUserData} from '../Auth/Auth';
+import axiosInstance from '../Auth/AxiosInstance';
 import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 
@@ -53,19 +53,24 @@ const Profile = () => {
   const updateImage = async image => {
     const url = 'app-user/upload-profile-image';
     const payload = new FormData();
-    payload.append('image', {
+    payload.append('profile', {
       uri: image.uri,
       type: image.type,
       name: image.fileName,
     });
+
     try {
-      const response = await axiosInstance.post(url, payload);
+      const response = await axiosInstance.post(url, payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       console.log('Update Profile Response', response.data);
       if (response.data.success) {
         saveUserData('data', response.data.data);
         ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
-        navigation.navigate('DashboardDrawer');
         setImage(response.data.data.image);
+        navigation.navigate('DashboardDrawer');
       } else {
         alert('Failed to update profile');
       }
@@ -74,6 +79,11 @@ const Profile = () => {
         'API call error:',
         err.response?.data?.message || err.message,
       );
+      if (err.response) {
+        console.log('Response data:', err.response.data);
+        console.log('Response status:', err.response.status);
+        console.log('Response headers:', err.response.headers);
+      }
       alert('Failed to update profile photo');
     }
   };

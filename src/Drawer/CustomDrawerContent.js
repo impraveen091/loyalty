@@ -31,7 +31,7 @@ import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
-import {getUserData} from '../Auth';
+import {getUserData} from '../Auth/Auth';
 
 const CustomDrawerContent = ({navigation}) => {
   const {t} = useTranslation();
@@ -45,7 +45,10 @@ const CustomDrawerContent = ({navigation}) => {
     const profileImage = async () => {
       try {
         const DataDrawer = await getUserData('data');
-        setImage(DataDrawer.image);
+        console.log('DataDrawer', DataDrawer);
+        setImage(
+          DataDrawer?.image === '' ? profileImageLink : DataDrawer?.image,
+        );
         setName(DataDrawer.name);
       } catch (error) {
         console.error('Failed to fetch user data:', error);

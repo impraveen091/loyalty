@@ -24,8 +24,8 @@ import Refer from '../components/Assets/svg/refer.svg';
 import Receipt from '../components/Assets/svg/receipt.svg';
 import Scan from '../components/Assets/svg/scan.svg';
 import {useTranslation} from 'react-i18next';
-import {getUserData} from '../Auth';
-import axiosInstance from '../AxiosInstance';
+import {getUserData} from '../Auth/Auth';
+import axiosInstance from '../Auth/AxiosInstance';
 import {useIsFocused} from '@react-navigation/native';
 
 const Dashboard = ({navigation}) => {
@@ -49,7 +49,7 @@ const Dashboard = ({navigation}) => {
     try {
       const imageData = await getUserData('data');
       console.log('profileimage', imageData.image);
-      setImage(imageData?.image || profileImageLink);
+      setImage(imageData?.image !== '' ? imageData?.image : profileImageLink);
     } catch (error) {
       console.error('Get user data failed:', error);
     }
