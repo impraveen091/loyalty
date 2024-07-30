@@ -34,6 +34,7 @@ const Dashboard = ({navigation}) => {
   const [image, setImage] = useState(profileImageLink);
   const [points, setPoints] = useState('');
   const [loading, setLoading] = useState(true);
+  const [SliderImages, setSliderImages] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -42,6 +43,15 @@ const Dashboard = ({navigation}) => {
       const result = await axiosInstance.get(url);
       console.log('Points:', result.data);
       setPoints(result.data.data);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+
+    const urlSlider = 'app-data/slider-img/list';
+    try {
+      const result = await axiosInstance.get(urlSlider);
+      console.log('SliderImages:', result.data);
+      setSliderImages(result.data.data);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -62,21 +72,13 @@ const Dashboard = ({navigation}) => {
     }
   }, [isFocused]);
 
-  const images = [
-    'https://cdn.pixabay.com/photo/2021/08/11/16/06/mountain-6538890_1280.jpg',
-    'https://cdn.pixabay.com/photo/2023/02/13/10/30/eye-7787024_1280.jpg',
-    'https://cdn.pixabay.com/photo/2017/11/11/21/08/paint-2940513_1280.jpg',
-    'https://cdn.pixabay.com/photo/2014/08/11/21/39/wall-416060_1280.jpg',
-    'https://cdn.pixabay.com/photo/2023/01/16/04/15/painter-7721563_1280.jpg',
-  ];
-
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
       ) : (
         <>
-          <ImageSlider data={images} />
+          <ImageSlider data={SliderImages} />
           <PointCard imageLink={image} points={points} />
           <View style={styles.menuCardContainer}>
             <TouchableOpacity

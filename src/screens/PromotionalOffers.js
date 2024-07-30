@@ -1,33 +1,81 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {deviceWidth} from '../constants/Constants';
+import {deviceHeight, deviceWidth, noDataImage} from '../constants/Constants';
 import Tag from '../components/Assets/svg/tag.svg';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const PromotionalOffers = () => {
   const navigation = useNavigation();
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const getCatalog = async () => {
+    setLoading(true);
+    const url = 'app-user/promotion/list';
+    try {
+      const result = await axiosInstance.get(url);
+      console.log('offers:', result.data.data);
+      if (result.data.success) {
+        setOffers(result.data.data);
+      }
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getCatalog();
+  }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Offers & Promotions</Text>
-      <Text style={styles.subheading}>Product Offers</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('OfferDetails')}>
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          colors={['#FFAC1C', '#CC5500']}
-          style={styles.linearGradient}>
-          <View style={styles.data}>
-            <Tag width={20} height={20} />
-            <Text style={styles.offername}>1% Painter</Text>
-          </View>
-          <View style={styles.viewContainer}>
-            <Text style={styles.viewMore}>View More</Text>
-            <RightArrow width={18} height={18} />
-          </View>
-        </LinearGradient>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+      ) : (
+        <>
+          <Text style={styles.heading}>Offers & Promotions</Text>
+          <Text style={styles.subheading}>Product Offers</Text>
+          {offers.length > 0 ? (
+            offers.map((item, index) => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('OfferDetails', {data: item})
+                }
+                key={index}>
+                <LinearGradient
+                  start={{x: 0, y: 0}}
+                  end={{x: 1, y: 1}}
+                  colors={['#FFAC1C', '#CC5500']}
+                  style={styles.linearGradient}>
+                  <View style={styles.data}>
+                    <Tag width={20} height={20} />
+                    <Text style={styles.offername}>{item.name}</Text>
+                  </View>
+                  <View style={styles.viewContainer}>
+                    <Text style={styles.viewMore}>View More</Text>
+                    <RightArrow width={18} height={18} />
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Image
+              resizeMode="cover"
+              source={{uri: noDataImage}}
+              style={styles.image}
+            />
+          )}
+        </>
+      )}
     </View>
   );
 };
@@ -64,4 +112,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewMore: {color: 'white'},
+  image: {
+    resizeMode: 'contain',
+    height: deviceHeight / 2,
+    marginTop: deviceHeight / 5,
+    width: deviceWidth - 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
 });

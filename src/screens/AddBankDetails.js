@@ -1,6 +1,7 @@
 import {
   Alert,
   Button,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -8,120 +9,169 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-// import Dropdown from 'react-native-dropdown-picker';
+import React, {useEffect, useState} from 'react';
 import DocumentPicker from 'react-native-document-picker';
-import {RadioButton} from 'react-native-paper';
+
 import {useNavigation} from '@react-navigation/native';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const AddBankDetails = () => {
   const navigation = useNavigation();
-  const [bank, setBank] = useState('');
-  const [account, setAccount] = useState('');
-  const [cfmaccount, setCfmaccount] = useState('');
-  const [name, setName] = useState('');
-  const [ifsc, setIfsc] = useState('');
-  const [checked, setChecked] = useState('Savings');
-  //   const [open, setOpen] = useState(false);
-  //   const [value, setValue] = useState('General');
-  //   const [items, setItems] = useState([
-  //     {label: 'General', value: 'General'},
-  //     {label: 'KYC Approval', value: 'KYC Approval'},
-  //     {label: 'Loyalty Approval', value: 'Loyalty Approval'},
-  //   ]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [formData, setFormData] = useState({
+    acc_no: '',
+    bank_name: '',
+    ifsc_code: '',
+    passbook_img: null,
+    account_name: '',
+    upi_id: '',
+  });
 
-  const pickFile = async () => {
-    try {
-      const file = await DocumentPicker.pickSingle({
-        type: [DocumentPicker.types.allFiles],
-      });
-      setSelectedFile(file);
-    } catch (err) {
-      console.log('err', err);
-      Alert.alert(`${err}`);
+  const [errors, setErrors] = useState({});
+
+  const handleInputChange = (field, value) => {
+    setFormData({...formData, [field]: value});
+    if (typeof value === 'string' && value.trim() !== '') {
+      setErrors({...errors, [field]: null});
     }
   };
+
+  const validateFields = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach(field => {
+      if (!formData[field]) {
+        newErrors[field] = 'This field is required';
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const pickFile = async field => {
+    try {
+      const file = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.images],
+      });
+      const fileType = file.name.split('.').pop().toLowerCase();
+      if (['jpg', 'jpeg', 'png'].includes(fileType)) {
+        handleInputChange(field, file);
+      } else {
+        Alert.alert(
+          'Invalid File Type',
+          'Only jpg, jpeg, and png formats are allowed.',
+        );
+      }
+    } catch (err) {
+      if (!DocumentPicker.isCancel(err)) {
+        Alert.alert('File Upload Error', `${err}`);
+      }
+    }
+  };
+
+  const handleSubmit = async () => {
+    console.log('formDatabank', formData);
+    if (validateFields()) {
+      try {
+        const response = await axiosInstance.post(
+          'app-user/bank-details/update',
+          formData,
+        );
+        console.log('bank details', response.data);
+        if (response.data.success === 'success') {
+          ToastAndroid.show('Details Added', ToastAndroid.SHORT);
+          navigation.navigate('Dashboard');
+        }
+      } catch (error) {
+        Alert.alert(
+          'Submission Error',
+          error.response.data.message || error.message,
+        );
+      }
+    } else {
+      ToastAndroid.show(
+        'Please fill in all required fields',
+        ToastAndroid.SHORT,
+      );
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.heading}>Add Bank Details</Text>
 
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Bank Name"
           placeholderTextColor={'grey'}
-          value={bank}
+          value={formData.bank_name}
           style={styles.input}
-          onChangeText={setBank}
+          onChangeText={value => handleInputChange('bank_name', value)}
         />
-        {/* <Dropdown
-          open={open}
-          value={value}
-          items={items}
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          style={[
-            styles.input,
-            {border: 'none', borderColor: 'white', elevation: 5},
-          ]}
-        /> */}
+        {errors.bank_name && (
+          <Text style={styles.errorText}>{errors.bank_name}</Text>
+        )}
+
         <TextInput
           placeholder="Account Number"
           placeholderTextColor={'grey'}
-          value={account}
+          keyboardType="numeric"
+          value={formData.acc_no}
           style={styles.input}
-          onChangeText={setAccount}
+          onChangeText={value => handleInputChange('acc_no', value)}
         />
-        <TextInput
-          placeholder="confirm Account Number"
-          placeholderTextColor={'grey'}
-          value={cfmaccount}
-          style={styles.input}
-          onChangeText={setCfmaccount}
-        />
+        {errors.acc_no && <Text style={styles.errorText}>{errors.acc_no}</Text>}
+
         <TextInput
           placeholder="Account holder's name"
           placeholderTextColor={'grey'}
-          value={name}
+          value={formData.account_name}
           style={styles.input}
-          onChangeText={setName}
+          onChangeText={value => handleInputChange('account_name', value)}
         />
-        <View>
-          <Text style={{color: 'grey', marginLeft: 10, fontSize: 16}}>
-            Account Type
-          </Text>
-          <RadioButton.Group
-            onValueChange={newValue => setChecked(newValue)}
-            value={checked}>
-            <RadioButton.Item label="Savings" value="Savings" />
-            <RadioButton.Item label="Current" value="current" />
-          </RadioButton.Group>
-        </View>
+        {errors.account_name && (
+          <Text style={styles.errorText}>{errors.account_name}</Text>
+        )}
 
         <TextInput
           placeholder="Enter IFSC code"
           placeholderTextColor={'grey'}
-          value={ifsc}
+          value={formData.ifsc_code}
           style={styles.input}
-          onChangeText={setIfsc}
+          onChangeText={value => handleInputChange('ifsc_code', value)}
         />
-      </View>
-      <View style={styles.fileSection}>
-        <Text style={{fontSize: 18, color: 'grey'}}>
-          {selectedFile ? `${selectedFile.name}` : 'Bank Passbook First Page'}
-        </Text>
-        <TouchableOpacity onPress={pickFile} style={styles.uploadButton}>
-          <Text style={styles.upload}>Upload</Text>
-        </TouchableOpacity>
+        {errors.ifsc_code && (
+          <Text style={styles.errorText}>{errors.ifsc_code}</Text>
+        )}
+
+        <TextInput
+          placeholder="UPI ID"
+          placeholderTextColor={'grey'}
+          value={formData.upi_id}
+          style={styles.input}
+          onChangeText={value => handleInputChange('upi_id', value)}
+        />
+        {errors.upi_id && <Text style={styles.errorText}>{errors.upi_id}</Text>}
       </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Dashboard')}>
+      <View style={styles.fileSection}>
+        <Text style={{fontSize: 18, color: 'grey'}}>
+          {formData.passbook_img
+            ? `${formData.passbook_img.name.slice(0, 25)}`
+            : 'Bank Passbook First Page'}
+        </Text>
+        <TouchableOpacity
+          onPress={() => pickFile('passbook_img')}
+          style={styles.uploadButton}>
+          <Text style={styles.upload}>Upload</Text>
+        </TouchableOpacity>
+        {errors.passbook_img && (
+          <Text style={styles.errorText}>{errors.passbook_img}</Text>
+        )}
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -147,6 +197,7 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
     marginTop: 50,
+    marginBottom: 15,
     width: 120,
     height: 50,
     backgroundColor: '#00308F',
@@ -181,4 +232,9 @@ const styles = StyleSheet.create({
     width: 100,
   },
   upload: {fontSize: 18, fontWeight: 'bold', color: 'white'},
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 5,
+  },
 });

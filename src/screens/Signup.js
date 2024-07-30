@@ -205,7 +205,11 @@ const Signup = () => {
       {error.state && <Text style={styles.error}>{error.state}</Text>}
 
       <View style={styles.checkboxContainer}>
-        <CheckBox value={isCheckedTerm} onValueChange={setCheckedTerm} />
+        <CheckBox
+          value={isCheckedTerm}
+          onValueChange={setCheckedTerm}
+          style={{backgroundColor: 'lightgrey'}}
+        />
         <Text style={styles.checkboxText}>
           I accept -
           <Text
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
+    marginTop: -100,
   },
   checkboxText: {
     color: 'black',

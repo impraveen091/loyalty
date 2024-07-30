@@ -4,126 +4,107 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   Image,
+  ActivityIndicator,
 } from 'react-native';
-import {deviceWidth} from '../constants/Constants';
+import {deviceHeight, deviceWidth} from '../constants/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../redux/actions';
 import Cart from '../components/Assets/svg/cart.svg';
 import {useNavigation} from '@react-navigation/native';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const Products = () => {
   const navigation = useNavigation();
   const centralData = useSelector(state => state.cart.cart);
   const dispatch = useDispatch();
-  const [product, setproduct] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const generateRandomPaintData = () => {
-      const paints = [];
-      for (let i = 0; i < 10; i++) {
-        const randomName = 'Paint ' + (i + 1);
-        const randomDetails =
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-        const randomPrice = (Math.random() * 100).toFixed(2);
-        paints.push({
-          id: i + 1,
-          name: randomName,
-          details: randomDetails,
-          price: parseFloat(randomPrice),
-        });
+    const getProducts = async () => {
+      setLoading(true);
+      const url = 'product/get-list';
+      try {
+        const result = await axiosInstance.get(url);
+        console.log('Products:', result.data.data[0]);
+        if (result.data.success === 'success') {
+          setProducts(result.data.data);
+        }
+      } catch (error) {
+        console.error('Get request failed:', error);
       }
-      return paints;
+      setLoading(false);
     };
-
-    const paintsData = generateRandomPaintData();
-    setproduct(paintsData);
+    getProducts();
   }, []);
 
   const handleAddToCart = item => {
     dispatch(addToCart(item));
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-        <Text style={styles.heading}>Products</Text>
-        <View
-          style={{
-            position: 'absolute',
-            right: 0,
-          }}>
-          <Text
-            style={{
-              alignSelf: 'flex-end',
-              textAlign: 'center',
-              fontSize: 16,
-              fontWeight: 'bold',
-              color: 'white',
-              backgroundColor: 'red',
-              width: 20,
-              height: 20,
-              borderRadius: 10,
-            }}>
-            {centralData.length}
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-            <Cart style={{width: 15, height: 15, marginTop: -8}} />
-          </TouchableOpacity>
-        </View>
+  const renderProduct = ({item}) => (
+    <View style={styles.card}>
+      <Image
+        source={{uri: item?.ProductImages[0].image}}
+        style={styles.image}
+      />
+      <View style={{maxWidth: '70%', rowGap: 5}}>
+        <Text style={styles.productName}>{item.name}</Text>
+        <Text style={styles.productDescription}>
+          <Text style={styles.boldText}>Description: </Text>
+          {item.description}
+        </Text>
+        <Text style={styles.productPrice}>
+          <Text style={styles.boldText}>Price: ₹</Text>
+          {item.price}
+        </Text>
+        <Text style={styles.productColor}>{item.color}</Text>
+        <TouchableOpacity
+          style={styles.addtocart}
+          onPress={() => handleAddToCart(item)}>
+          <Text style={styles.addToCartText}>Add to Cart</Text>
+        </TouchableOpacity>
       </View>
+    </View>
+  );
 
-      <ScrollView
-        style={styles.cardContainer}
-        showsVerticalScrollIndicator={false}>
-        {product.map((item, index) => (
-          <View style={styles.card} key={index}>
-            <Image
-              source={{
-                uri: 'https://img.freepik.com/free-vector/painting-tools-equipment-realistic-composition-with-paint-cans_1284-7523.jpg?t=st=1715601163~exp=1715604763~hmac=1293de342fa8bf0eca0352ba7eba14ab6db64f68e26008b06fa06ae8938c02af&w=826',
-              }}
-              style={styles.image}
-            />
-            <View style={{maxWidth: '70%', rowGap: 5}}>
-              <Text style={{fontWeight: 'bold', fontSize: 18, color: 'black'}}>
-                {item.name}
-              </Text>
-              <Text style={{flexWrap: 'wrap', color: 'black'}}>
-                <Text style={{fontWeight: 'bold', color: 'black'}}>
-                  Description:
-                </Text>
-                {item.details}
-              </Text>
-              <Text style={{color: 'black'}}>
-                <Text style={{fontWeight: 'bold', color: 'black'}}>
-                  Price: ₹
-                </Text>
-                {item.price}
-              </Text>
-
-              <Text style={{fontWeight: 'bold', color: 'black'}}>
-                colors available: 7
-              </Text>
-
-              <TouchableOpacity
-                style={styles.addtocart}
-                onPress={() => handleAddToCart(item)}>
-                <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
-                  Add to Cart
-                </Text>
+  return (
+    <View style={styles.mainContainer}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.heading}>Products</Text>
+            <View style={styles.cartContainer}>
+              <Text style={styles.cartCount}>{centralData.length}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+                <Cart style={styles.cartIcon} />
               </TouchableOpacity>
             </View>
           </View>
-        ))}
-      </ScrollView>
+          <FlatList
+            data={products}
+            renderItem={renderProduct}
+            keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={styles.cardContainer}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      )}
     </View>
   );
 };
 
 export default Products;
+
 const styles = StyleSheet.create({
+  mainContainer: {flex: 1},
   container: {flex: 1, padding: 10},
+  loader: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  header: {flexDirection: 'row', justifyContent: 'center'},
   heading: {
     fontSize: 25,
     color: '#00308F',
@@ -131,6 +112,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
   },
+  cartContainer: {
+    position: 'absolute',
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cartCount: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    backgroundColor: 'red',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+  cartIcon: {width: 20, height: 20, marginLeft: 5},
+  cardContainer: {paddingBottom: 10, backgroundColor: 'white'},
   card: {
     width: deviceWidth - 20,
     height: 170,
@@ -142,13 +141,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 10,
   },
-  cardContainer: {rowGap: 10, backgroundColor: 'white'},
-  image: {
-    width: 150,
-    height: 150,
+  image: {width: 150, height: 150},
+  productName: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: 'black',
   },
+  productDescription: {
+    flexWrap: 'wrap',
+    color: 'black',
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  productPrice: {color: 'black'},
+  productColor: {fontWeight: 'bold', color: 'black'},
   addtocart: {
-    width: 'fit-content',
+    width: 'auto',
     paddingHorizontal: 5,
     height: 30,
     backgroundColor: '#00308F',
@@ -158,5 +168,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 60,
     bottom: 0,
+  },
+  addToCartText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: 'white',
+  },
+  loader: {
+    marginTop: deviceHeight / 2 - 20,
   },
 });

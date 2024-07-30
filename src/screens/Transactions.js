@@ -1,73 +1,78 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {deviceWidth} from '../constants/Constants';
-import LinearGradient from 'react-native-linear-gradient';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
+
+import axiosInstance from '../Auth/AxiosInstance';
+import {deviceHeight, deviceWidth, noDataImage} from '../constants/Constants';
 
 const Transactions = () => {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const fetchTransactions = async () => {
+    setLoading(true);
+    const url = 'app-user/transaction/list';
+    try {
+      const result = await axiosInstance.get(url);
+      console.log('Transactions:', result.data.data);
+      if (result.data.success) {
+        setTransactions(result.data.data);
+      }
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Transactions</Text>
-
-      <TouchableOpacity>
-        <View style={styles.card}>
-          <View style={styles.insideCard}>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Date:</Text> 28, may 2024
-            </Text>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Points:</Text> 20
-            </Text>
-          </View>
-          <View style={styles.insideCard}>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Code:</Text> 2xwxmwhxuwg
-            </Text>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Product:</Text> 10 L bucket
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <View style={styles.card}>
-          <View style={styles.insideCard}>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Date:</Text> 29, may 2024
-            </Text>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Points:</Text> 20
-            </Text>
-          </View>
-          <View style={styles.insideCard}>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Code:</Text> 2xwxmwhxuwg
-            </Text>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Product:</Text> 10 L bucket
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <View style={styles.card}>
-          <View style={styles.insideCard}>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Date:</Text> 27, may 2024
-            </Text>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Points:</Text> 20
-            </Text>
-          </View>
-          <View style={styles.insideCard}>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Code:</Text> 2xwxmwhxuwg
-            </Text>
-            <Text style={styles.data}>
-              <Text style={styles.subheading}>Product:</Text> 10 L bucket
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+      ) : (
+        <>
+          <Text style={styles.heading}>Transactions</Text>
+          {transactions.length > 0 ? (
+            transactions.map((item, index) => (
+              <TouchableOpacity>
+                <View style={styles.card}>
+                  <View style={styles.insideCard}>
+                    <Text style={styles.data}>
+                      <Text style={styles.subheading}>Date:</Text> 28, may 2024
+                    </Text>
+                    <Text style={styles.data}>
+                      <Text style={styles.subheading}>Points:</Text> 20
+                    </Text>
+                  </View>
+                  <View style={styles.insideCard}>
+                    <Text style={styles.data}>
+                      <Text style={styles.subheading}>Code:</Text> 2xwxmwhxuwg
+                    </Text>
+                    <Text style={styles.data}>
+                      <Text style={styles.subheading}>Product:</Text> 10 L
+                      bucket
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Image
+              resizeMode="cover"
+              source={{uri: noDataImage}}
+              style={styles.image}
+            />
+          )}
+        </>
+      )}
     </View>
   );
 };
@@ -98,4 +103,15 @@ const styles = StyleSheet.create({
   },
   data: {color: 'black', fontSize: 16, marginBottom: 10},
   insideCard: {},
+  loader: {
+    marginTop: deviceHeight / 2 - 20,
+  },
+  image: {
+    resizeMode: 'contain',
+    height: deviceHeight / 2,
+    marginTop: deviceHeight / 5,
+    width: deviceWidth - 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
 });

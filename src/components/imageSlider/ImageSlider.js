@@ -60,7 +60,11 @@ const ImageSlider = ({data}) => {
     } else {
       return (
         <TouchableOpacity activeOpacity={0.7} key={index}>
-          <Image resizeMode="cover" source={{uri: item}} style={styles.image} />
+          <Image
+            resizeMode="cover"
+            source={{uri: item.filename}}
+            style={styles.image}
+          />
 
           <View style={styles.dotcontainer}>{renderDotIndicators()}</View>
         </TouchableOpacity>

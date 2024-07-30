@@ -16,8 +16,8 @@ import Pending from '../components/Assets/svg/exclamation.svg';
 import EditProfile from '../components/Assets/svg/editprofile.svg';
 import Language from '../components/Assets/svg/language.svg';
 import Cancel from '../components/Assets/svg/cancel.svg';
-import UpArrow from '../components/Assets/svg/down-arrow.svg';
-import DownArrow from '../components/Assets/svg/up-arrow.svg';
+import UpArrow from '../components/Assets/svg/up-arrow.svg';
+import DownArrow from '../components/Assets/svg/down-arrow.svg';
 import Announcement from '../components/Assets/svg/announcement.svg';
 import Catalog from '../components/Assets/svg/catalog.svg';
 import Support from '../components/Assets/svg/support.svg';
@@ -115,10 +115,12 @@ const CustomDrawerContent = ({navigation}) => {
           <Text style={styles.username}>{name}</Text>
         </TouchableOpacity>
         <View style={styles.kycSection}>
-          <View style={styles.pending}>
+          <TouchableOpacity
+            style={styles.pending}
+            onPress={() => navigation.navigate('Profile')}>
             <Text style={styles.kycText}>{t('KYC Pending')}</Text>
             <Pending width={25} height={25} />
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
             style={styles.editProfile}>

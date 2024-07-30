@@ -6,24 +6,53 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {deviceWidth} from '../constants/Constants';
 import {useNavigation} from '@react-navigation/native';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const Bank = () => {
   const navigation = useNavigation();
+  const [bank, setBank] = useState([]);
+  useEffect(() => {
+    const getBankDetails = async () => {
+      const url = 'app-user/bank-details/get';
+      try {
+        const result = await axiosInstance.get(url);
+        console.log('bank details:', result.data);
+        if (result.data.success) {
+          setBank(result.data.data);
+        }
+      } catch (error) {
+        console.error('Get request failed:', error);
+      }
+    };
+    getBankDetails();
+  }, []);
+  console.log('bank', bank);
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Bank Management</Text>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{
-            uri: 'https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127829.jpg?t=st=1715689358~exp=1715692958~hmac=6aeb7ad150adb056a4fa3ffef69ca163e18e4e6f09c44d844792aeca4a114899&w=740',
-          }}
-          style={styles.image}
-        />
-      </View>
+      {bank ? (
+        <View style={styles.imageContainer}>
+          <Text>Account Name:{bank.account_name}</Text>
+          <Text>Bank Name:{bank.bank_name}</Text>
+          <Text>Account Number:{bank.acc_no}</Text>
+          <Text>IFSC Code:{bank.ifsc_code}</Text>
+          <Text>UPI:{bank.upi_id}</Text>
+        </View>
+      ) : (
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: 'https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127829.jpg?t=st=1715689358~exp=1715692958~hmac=6aeb7ad150adb056a4fa3ffef69ca163e18e4e6f09c44d844792aeca4a114899&w=740',
+            }}
+            style={styles.image}
+          />
+        </View>
+      )}
+
       <TouchableOpacity
         style={styles.addbankbutton}
         onPress={() => navigation.navigate('AddBankDetails')}>
