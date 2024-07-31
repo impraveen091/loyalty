@@ -7,41 +7,67 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-
 import {deviceWidth} from '../constants/Constants';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
 
 const Bank = () => {
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [bank, setBank] = useState([]);
-  useEffect(() => {
-    const getBankDetails = async () => {
-      const url = 'app-user/bank-details/get';
-      try {
-        const result = await axiosInstance.get(url);
-        console.log('bank details:', result.data);
-        if (result.data.success) {
-          setBank(result.data.data);
-        }
-      } catch (error) {
-        console.error('Get request failed:', error);
+
+  const getBankDetails = async () => {
+    const url = 'app-user/bank-details/get';
+    try {
+      const result = await axiosInstance.get(url);
+      console.log('bank details:', result.data);
+      if (result.data.success) {
+        setBank(result.data.data);
       }
-    };
-    getBankDetails();
-  }, []);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+  };
+  useEffect(() => {
+    if (isFocused) {
+      getBankDetails();
+    }
+  }, [isFocused]);
+
   console.log('bank', bank);
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Bank Management</Text>
       {bank ? (
-        <View style={styles.imageContainer}>
-          <Text>Account Name:{bank.account_name}</Text>
-          <Text>Bank Name:{bank.bank_name}</Text>
-          <Text>Account Number:{bank.acc_no}</Text>
-          <Text>IFSC Code:{bank.ifsc_code}</Text>
-          <Text>UPI:{bank.upi_id}</Text>
-        </View>
+        <>
+          <View style={styles.imageContainer}>
+            <View style={styles.box}>
+              <Text style={styles.bankText}>Account Name:</Text>
+              <Text style={styles.mainText}>{bank.account_name}</Text>
+            </View>
+            <View style={styles.box}>
+              <Text style={styles.bankText}>Bank Name:</Text>
+              <Text style={styles.mainText}>{bank.bank_name}</Text>
+            </View>
+            <View style={styles.box}>
+              <Text style={styles.bankText}>Account Number:</Text>
+              <Text style={styles.mainText}>{bank.acc_no}</Text>
+            </View>
+            <View style={styles.box}>
+              <Text style={styles.bankText}>IFSC Code:</Text>
+              <Text style={styles.mainText}>{bank.ifsc_code}</Text>
+            </View>
+            <View style={styles.box}>
+              <Text style={styles.bankText}>UPI-Id:</Text>
+              <Text style={styles.mainText}>{bank.upi_id}</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.submit}
+            onPress={() => navigation.navigate('AddBankDetails', {data: bank})}>
+            <Text style={styles.registerText}> Edit</Text>
+          </TouchableOpacity>
+        </>
       ) : (
         <View style={styles.imageContainer}>
           <Image
@@ -50,16 +76,15 @@ const Bank = () => {
             }}
             style={styles.image}
           />
+          <TouchableOpacity
+            style={styles.addbankbutton}
+            onPress={() => navigation.navigate('AddBankDetails')}>
+            <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
+              + Add Bank
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
-
-      <TouchableOpacity
-        style={styles.addbankbutton}
-        onPress={() => navigation.navigate('AddBankDetails')}>
-        <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
-          + Add Bank
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -80,7 +105,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageContainer: {
-    marginTop: '30%',
+    marginTop: '10%',
+    width: deviceWidth - 20,
+    backgroundColor: 'white',
+    elevation: 5,
+    padding: 10,
+    borderRadius: 10,
   },
   addbankbutton: {
     width: 120,
@@ -93,5 +123,32 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     bottom: 20,
+  },
+  bankText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  mainText: {
+    color: 'grey',
+    fontSize: 20,
+  },
+  box: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    rowGap: 10,
+  },
+  submit: {
+    backgroundColor: '#00308F',
+    padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginVertical: 20,
+    width: deviceWidth - 20,
+  },
+  registerText: {
+    color: 'white',
+    fontSize: 20,
   },
 });

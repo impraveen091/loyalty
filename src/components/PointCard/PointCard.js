@@ -7,10 +7,10 @@ import Coin from '../Assets/svg/coin.svg';
 import {useTranslation} from 'react-i18next';
 import {getUserData} from '../../Auth/Auth';
 
-const PointCard = ({imageLink, points}) => {
+const PointCard = ({imageLink, points, pointLimit}) => {
   const {t} = useTranslation();
   const navigation = useNavigation();
-  console.log('imageLink1', imageLink);
+  // console.log('imageLink1', imageLink, pointLimit);
 
   return (
     <LinearGradient
@@ -35,7 +35,7 @@ const PointCard = ({imageLink, points}) => {
               <Coin width={25} height={25} />
             </View>
 
-            <Text style={styles.text}>250</Text>
+            <Text style={styles.text}>{pointLimit}</Text>
           </View>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>

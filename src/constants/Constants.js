@@ -93,3 +93,5 @@ export const commonStyles = {
     height: verticalScale(24),
   },
 };
+
+export const username = 'bigleap';

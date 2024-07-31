@@ -15,8 +15,9 @@ import DocumentPicker from 'react-native-document-picker';
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
 
-const AddBankDetails = () => {
+const AddBankDetails = ({route}) => {
   const navigation = useNavigation();
+  const editData = route.params.data;
   const [formData, setFormData] = useState({
     acc_no: '',
     bank_name: '',
@@ -27,6 +28,19 @@ const AddBankDetails = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (editData) {
+      setFormData({
+        acc_no: editData.acc_no,
+        bank_name: editData.bank_name,
+        ifsc_code: editData.ifsc_code,
+        passbook_img: null,
+        account_name: editData.account_name,
+        upi_id: editData.upi_id,
+      });
+    }
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData({...formData, [field]: value});
@@ -68,7 +82,7 @@ const AddBankDetails = () => {
   };
 
   const handleSubmit = async () => {
-    console.log('formDatabank', formData);
+    console.log('formdatabank', formData);
     if (validateFields()) {
       try {
         const response = await axiosInstance.post(
@@ -97,7 +111,6 @@ const AddBankDetails = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.heading}>Add Bank Details</Text>
-
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Bank Name"
@@ -151,7 +164,6 @@ const AddBankDetails = () => {
         />
         {errors.upi_id && <Text style={styles.errorText}>{errors.upi_id}</Text>}
       </View>
-
       <View style={styles.fileSection}>
         <Text style={{fontSize: 18, color: 'grey'}}>
           {formData.passbook_img
@@ -163,11 +175,10 @@ const AddBankDetails = () => {
           style={styles.uploadButton}>
           <Text style={styles.upload}>Upload</Text>
         </TouchableOpacity>
-        {errors.passbook_img && (
-          <Text style={styles.errorText}>{errors.passbook_img}</Text>
-        )}
       </View>
-
+      {errors.passbook_img && (
+        <Text style={styles.errorText}>{errors.passbook_img}</Text>
+      )}
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>

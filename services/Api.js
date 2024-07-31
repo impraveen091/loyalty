@@ -2,7 +2,7 @@
 import axios from 'axios';
 import {getToken, getUserData} from '../src/Auth/Auth';
 
-export const Base_url = 'http://194.238.17.185:3003/api/';
+export const Base_url = 'https://api.surescanr.com/api/';
 
 const getHeaders = async () => {
   const token = await getToken();

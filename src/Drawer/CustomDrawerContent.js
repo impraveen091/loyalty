@@ -40,16 +40,17 @@ const CustomDrawerContent = ({navigation}) => {
   const [checked, setChecked] = useState('');
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
-
+  const [kycStatus, setKycStatus] = useState(null);
   useEffect(() => {
     const profileImage = async () => {
       try {
         const DataDrawer = await getUserData('data');
-        console.log('DataDrawer', DataDrawer);
+        // console.log('DataDrawer', DataDrawer);
         setImage(
           DataDrawer?.image === '' ? profileImageLink : DataDrawer?.image,
         );
         setName(DataDrawer.name);
+        setKycStatus(DataDrawer.status);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
       }
@@ -115,15 +116,26 @@ const CustomDrawerContent = ({navigation}) => {
           <Text style={styles.username}>{name}</Text>
         </TouchableOpacity>
         <View style={styles.kycSection}>
-          <TouchableOpacity
-            style={styles.pending}
-            onPress={() => navigation.navigate('Profile')}>
-            <Text style={styles.kycText}>{t('KYC Pending')}</Text>
-            <Pending width={25} height={25} />
-          </TouchableOpacity>
+          {kycStatus !== 1 && (
+            <TouchableOpacity
+              style={styles.pending}
+              onPress={() => navigation.navigate('Profile')}>
+              <Text style={styles.kycText}>{t('KYC Pending')}</Text>
+              <Pending width={25} height={25} />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
-            style={styles.editProfile}>
+            style={
+              kycStatus !== 1
+                ? styles.editProfile
+                : {
+                    marginTop: 20,
+                    flexDirection: 'row',
+                    columnGap: 10,
+                    padding: 5,
+                  }
+            }>
             <Text style={styles.editProfileText}>{t('Edit Profile')}</Text>
             <EditProfile width={20} height={20} />
           </TouchableOpacity>

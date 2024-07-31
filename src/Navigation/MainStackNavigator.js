@@ -22,34 +22,58 @@ import Aboutus from '../screens/StaticPages/Aboutus';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawerContent from '../Drawer/CustomDrawerContent';
 import Logo from '../components/Assets/Images/logo.png';
-import {Image, TouchableOpacity} from 'react-native';
+import {Image, Text, TouchableOpacity} from 'react-native';
 import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
 import DummyScreen from '../screens/DummyScreen';
 import {getUserData} from '../Auth/Auth';
+import {useEffect, useState} from 'react';
+import {useRoute} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-const DashboardDrawerNavigator = ({navigation}) => (
-  <Drawer.Navigator
-    initialRouteName="Dashboard"
-    drawerContent={props => <CustomDrawerContent {...props} />}
-    screenOptions={{
-      headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-          <Bell style={{width: 15, height: 15, marginHorizontal: 10}} />
-        </TouchableOpacity>
-      ),
-      headerTitle: () => (
-        <Image source={Logo} style={{width: 150, resizeMode: 'contain'}} />
-      ),
-    }}>
-    <Drawer.Screen name="Dashboard" component={Dashboard} />
-  </Drawer.Navigator>
-);
+const DashboardDrawerNavigator = ({navigation}) => {
+  const [logoImage, setLogoImage] = useState(null);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const images = await getUserData('images');
+        console.log('img1', images.logo);
+        setLogoImage(images.logo ? images.logo : Logo);
+      } catch (error) {
+        console.error('Failed to fetch images', error);
+        setLogoImage(Logo);
+      }
+    };
+
+    fetchImages();
+  }, []);
+  return (
+    <Drawer.Navigator
+      initialRouteName="Dashboard"
+      drawerContent={props => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Notifications')}>
+            <Bell style={{width: 15, height: 15, marginHorizontal: 10}} />
+          </TouchableOpacity>
+        ),
+        headerTitle: () => (
+          <Image
+            source={logoImage !== null ? logoImage : Logo}
+            style={{width: 200, resizeMode: 'contain'}}
+          />
+        ),
+      }}>
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
+    </Drawer.Navigator>
+  );
+};
 
 const MainStackNavigator = () => {
   return (

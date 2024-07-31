@@ -9,16 +9,17 @@ import {
   ToastAndroid,
   ScrollView,
   Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import {deviceWidth, profileImageLink} from '../constants/Constants';
 import {getUserData, saveUserData} from '../Auth/Auth';
 import axiosInstance from '../Auth/AxiosInstance';
 import {useNavigation} from '@react-navigation/native';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import Up from '../components/Assets/svg/up-arrow.svg';
 import Down from '../components/Assets/svg/down-arrow.svg';
 import DocumentPicker from 'react-native-document-picker';
-import {launchCamera} from 'react-native-image-picker';
+// import {launchCamera} from 'react-native-image-picker';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -68,11 +69,24 @@ const Profile = () => {
       console.log('get KYC Response', response.data);
       if (response.data.data.status === 2) {
         setKyc(false);
+        if (response.data.success === 'success' && response.data.data) {
+          const {adhar, adhar_img, pan_img, pan, selfie_img} =
+            response.data.data;
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            adhar: adhar || prevFormData.adhar,
+            adhar_img: adhar_img || prevFormData.adhar_img,
+            pan: pan || prevFormData.pan,
+            pan_img: pan_img || prevFormData.pan_img,
+            selfie_img: selfie_img || prevFormData.selfie_img,
+          }));
+        } else {
+          console.log('Failed to retrieve KYC details or data is missing');
+        }
       } else {
         if (response.data.success === 'success' && response.data.data) {
           const {adhar, adhar_img, pan_img, pan, selfie_img} =
             response.data.data;
-          console.log('adhar', adhar);
           setFormData(prevFormData => ({
             ...prevFormData,
             adhar: adhar || prevFormData.adhar,
@@ -138,18 +152,44 @@ const Profile = () => {
     }
   };
 
-  const captureSelfie = () => {
-    const options = {
-      mediaType: 'photo',
-      cameraType: 'front',
-    };
-    launchCamera(options, response => {
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'App needs camera permission',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
+  const captureSelfie = async () => {
+    if (Platform.OS === 'android') {
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) {
+        return;
+      }
+    }
+    launchCamera({mediaType: 'photo'}, response => {
       if (response.didCancel) {
-        console.log('User cancelled camera picker');
+        console.log('User cancelled camera');
       } else if (response.errorCode) {
-        Alert.alert('Camera Error', response.errorMessage);
+        console.log('Camera Error: ', response.errorMessage);
       } else {
-        handleInputChange('selfie_img', response.assets[0]);
+        const imageAsset = response.assets[0];
+        handleInputChange('selfie_img', {
+          uri: imageAsset.uri,
+          type: imageAsset.type,
+          fileName: imageAsset.fileName,
+        });
       }
     });
   };
@@ -282,7 +322,7 @@ const Profile = () => {
         'API call error:',
         err.response?.data?.message || err.message,
       );
-      Alert.alert('Failed to update KYC details');
+      Alert.alert(err.response?.data?.message || err.message);
     }
   };
 

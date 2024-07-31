@@ -33,6 +33,7 @@ const Dashboard = ({navigation}) => {
   const {t} = useTranslation();
   const [image, setImage] = useState(profileImageLink);
   const [points, setPoints] = useState('');
+  const [pointLimit, setPointLimit] = useState('');
   const [loading, setLoading] = useState(true);
   const [SliderImages, setSliderImages] = useState([]);
 
@@ -41,8 +42,16 @@ const Dashboard = ({navigation}) => {
     const url = 'app-user/points-available';
     try {
       const result = await axiosInstance.get(url);
-      console.log('Points:', result.data);
+      // console.log('Points:', result.data);
       setPoints(result.data.data);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+    const urllimit = 'tenant/redemption/get';
+    try {
+      const result = await axiosInstance.get(urllimit);
+      // console.log('Points limit:', result.data);
+      setPointLimit(result.data.data);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -50,7 +59,7 @@ const Dashboard = ({navigation}) => {
     const urlSlider = 'app-data/slider-img/list';
     try {
       const result = await axiosInstance.get(urlSlider);
-      console.log('SliderImages:', result.data);
+      // console.log('SliderImages:', result.data);
       setSliderImages(result.data.data);
     } catch (error) {
       console.error('Get request failed:', error);
@@ -58,7 +67,7 @@ const Dashboard = ({navigation}) => {
 
     try {
       const imageData = await getUserData('data');
-      console.log('profileimage', imageData.image);
+      // console.log('profileimage', imageData.image);
       setImage(imageData?.image !== '' ? imageData?.image : profileImageLink);
     } catch (error) {
       console.error('Get user data failed:', error);
@@ -79,7 +88,11 @@ const Dashboard = ({navigation}) => {
       ) : (
         <>
           <ImageSlider data={SliderImages} />
-          <PointCard imageLink={image} points={points} />
+          <PointCard
+            imageLink={image}
+            points={points}
+            pointLimit={pointLimit.limit}
+          />
           <View style={styles.menuCardContainer}>
             <TouchableOpacity
               style={styles.menuCard}

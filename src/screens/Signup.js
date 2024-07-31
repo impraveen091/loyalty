@@ -18,8 +18,11 @@ import {useNavigation} from '@react-navigation/native';
 import CheckBox from '@react-native-community/checkbox';
 import axiosInstance from '../Auth/AxiosInstance';
 import {getUserData, saveUserData} from '../Auth/Auth';
+import {useTranslation} from 'react-i18next';
+import axios from 'axios';
 
 const Signup = () => {
+  const {t} = useTranslation();
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
     phone: '',
@@ -29,10 +32,15 @@ const Signup = () => {
   const [isProfessionDropdownOpen, setProfessionDropdownOpen] = useState(false);
   const [profession, setProfession] = useState(null);
   const [isStateDropdownOpen, setStateDropdownOpen] = useState(false);
+  const [isCityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [state, setState] = useState(null);
   const [stateItems, setStateItems] = useState([]);
+  const [city, setCity] = useState(null);
+  const [cityItems, setCityItems] = useState([]);
   const [isCheckedTerm, setCheckedTerm] = useState(false);
   const [professionItems, setProfessionItems] = useState([]);
+  const [signup, setSignup] = useState('');
+  const [logo, setLogo] = useState('');
 
   const formattedProfessionItems = professionItems.map(prof => ({
     label: prof.name,
@@ -41,6 +49,10 @@ const Signup = () => {
   const formattedStateItems = stateItems.map(st => ({
     label: st.name,
     value: st.name,
+  }));
+  const formattedCityItems = cityItems.map(st => ({
+    label: st,
+    value: st,
   }));
 
   useEffect(() => {
@@ -58,7 +70,7 @@ const Signup = () => {
       const url = 'https://countriesnow.space/api/v0.1/countries/states';
       const payload = {country: 'India'};
       try {
-        const response = await axiosInstance.post(url, payload);
+        const response = await axios.post(url, payload);
         setStateItems(response.data.data.states);
       } catch (error) {
         console.log('Error fetching states', error);
@@ -68,16 +80,38 @@ const Signup = () => {
     const getData = async () => {
       const phone = await getUserData('phone');
       console.log(phone);
-
       if (phone) {
         setFormData({...formData, phone});
       }
+      const screenImage = await getUserData('images');
+      if (screenImage) {
+        setSignup(screenImage.signup);
+        setLogo(screenImage.logo);
+      }
+      console.log(screenImage.signup);
     };
 
     getProfession();
     getStates();
     getData();
   }, []);
+
+  useEffect(() => {
+    const getCity = async () => {
+      const url = 'https://countriesnow.space/api/v0.1/countries/state/cities';
+      const payload = {country: 'India', state: state};
+      try {
+        const response = await axios.post(url, payload);
+        console.log('City', response.data);
+        setCityItems(response.data.data);
+      } catch (error) {
+        console.log('Error fetching states', error);
+      }
+    };
+    if (state) {
+      getCity();
+    }
+  }, [state]);
 
   const handleChange = (name, value) => {
     setFormData({...formData, [name]: value});
@@ -97,6 +131,9 @@ const Signup = () => {
     if (!state) {
       newErrors.state = 'Please select your state';
     }
+    if (!city) {
+      newErrors.city = 'Please select your city';
+    }
     if (!isCheckedTerm) {
       newErrors.condition = 'Accept the T&C';
     }
@@ -108,7 +145,8 @@ const Signup = () => {
     setError(newErrors);
     if (Object.keys(newErrors).length === 0) {
       const url = 'auth/app-user/sign-up';
-      const payload = {...formData, profession_id: profession, state};
+      const payload = {...formData, profession_id: profession, state, city};
+      console.log('payload signup', payload);
       try {
         const result = await axiosInstance.post(url, payload);
         console.log('signup Data', result.data);
@@ -132,14 +170,19 @@ const Signup = () => {
     <Image
       key="banner"
       source={{
-        uri: 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
+        uri: logo
+          ? logo
+          : 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
       }}
       style={styles.bannerImage}
+      resizeMode="contain"
     />,
     <Image
       key="mainImage"
       source={{
-        uri: 'https://img.freepik.com/free-vector/sign-up-concept-illustration_114360-7865.jpg?t=st=1715768500~exp=1715772100~hmac=1abdab2f0cf3b8c75543533d67ed9642d28043d29ce12b01850eebc428fd03fe&w=826',
+        uri: signup
+          ? signup
+          : 'https://img.freepik.com/free-vector/sign-up-concept-illustration_114360-7865.jpg?t=st=1715768500~exp=1715772100~hmac=1abdab2f0cf3b8c75543533d67ed9642d28043d29ce12b01850eebc428fd03fe&w=826',
       }}
       style={styles.image}
     />,
@@ -189,7 +232,7 @@ const Signup = () => {
         style={styles.dropdown}
         placeholder="Select Your State"
         dropDownContainerStyle={{
-          minHeight: 400,
+          minHeight: 300,
           width: deviceWidth - 60,
           zIndex: 9999,
         }}
@@ -199,10 +242,33 @@ const Signup = () => {
         listMode="SCROLLVIEW"
         containerStyle={{
           height: 150,
-          marginBottom: 20,
         }}
       />
       {error.state && <Text style={styles.error}>{error.state}</Text>}
+
+      <DropDownPicker
+        open={isCityDropdownOpen}
+        value={city}
+        items={formattedCityItems}
+        setOpen={setCityDropdownOpen}
+        setValue={setCity}
+        style={[styles.dropdown, {marginTop: -90}]}
+        placeholder="Select Your City"
+        dropDownContainerStyle={{
+          minHeight: 300,
+          width: deviceWidth - 60,
+          zIndex: 9999,
+          marginTop: -90,
+        }}
+        scrollViewProps={{
+          nestedScrollEnabled: true,
+        }}
+        listMode="SCROLLVIEW"
+        containerStyle={{
+          height: 150,
+        }}
+      />
+      {error.city && <Text style={styles.error}>{error.city}</Text>}
 
       <View style={styles.checkboxContainer}>
         <CheckBox
@@ -223,6 +289,11 @@ const Signup = () => {
 
       <TouchableOpacity style={styles.submit} onPress={submit}>
         <Text style={styles.registerText}> SignUp</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.submit, {marginTop: -10, backgroundColor: '#ff735c'}]}
+        onPress={() => navigation.navigate('Signin')}>
+        <Text style={styles.register}>{t('Signin')}</Text>
       </TouchableOpacity>
     </View>,
   ];
@@ -313,7 +384,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: -100,
+    marginTop: -150,
   },
   checkboxText: {
     color: 'black',
@@ -323,4 +394,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#00308F',
   },
+  register: {color: 'white', fontSize: 20},
 });
