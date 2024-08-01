@@ -36,6 +36,7 @@ const Profile = () => {
   const [kyc, setKyc] = useState(null);
   const [image, setImage] = useState(profileImageLink);
   const [error, setError] = useState({});
+  const [kycid, setKycId] = useState('');
   const [isPersonalDetailsOpen, setPersonalDetailsOpen] = useState(true);
   const [isKYCDetailsOpen, setKYCDetailsOpen] = useState(false);
   console.log('formdata', formData);
@@ -79,6 +80,7 @@ const Profile = () => {
             pan: pan || prevFormData.pan,
             pan_img: pan_img || prevFormData.pan_img,
             selfie_img: selfie_img || prevFormData.selfie_img,
+            id: response.data.data,
           }));
         } else {
           console.log('Failed to retrieve KYC details or data is missing');
@@ -87,6 +89,7 @@ const Profile = () => {
         if (response.data.success === 'success' && response.data.data) {
           const {adhar, adhar_img, pan_img, pan, selfie_img} =
             response.data.data;
+          setKyc(true);
           setFormData(prevFormData => ({
             ...prevFormData,
             adhar: adhar || prevFormData.adhar,
@@ -299,7 +302,7 @@ const Profile = () => {
       type: selfie_img.type,
       name: selfie_img.fileName,
     });
-    console.log('payload', payload);
+    console.log('payloadkyc', payload);
     try {
       const response = await axiosInstance.post(url, payload, {
         headers: {
@@ -308,7 +311,7 @@ const Profile = () => {
       });
 
       console.log('Update KYC Details Response', response.data);
-      if (response.data.success) {
+      if (response.data.success === 'success') {
         saveUserData('KYCdata', response.data.data);
         ToastAndroid.show(
           'KYC Details Updated successfully',

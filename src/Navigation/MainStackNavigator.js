@@ -21,7 +21,6 @@ import Profile from '../screens/Profile';
 import Aboutus from '../screens/StaticPages/Aboutus';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawerContent from '../Drawer/CustomDrawerContent';
-import Logo from '../components/Assets/Images/logo.png';
 import {Image, Text, TouchableOpacity} from 'react-native';
 import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
@@ -65,7 +64,7 @@ const DashboardDrawerNavigator = ({navigation}) => {
         ),
         headerTitle: () => (
           <Image
-            source={logoImage !== null ? logoImage : Logo}
+            source={logoImage !== null && logoImage}
             style={{width: 200, resizeMode: 'contain'}}
           />
         ),

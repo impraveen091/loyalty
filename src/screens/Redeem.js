@@ -23,6 +23,7 @@ const Redeem = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [maxRedeemValue, setMaxRedeemValue] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -38,7 +39,7 @@ const Redeem = () => {
     try {
       const result = await axiosInstance.get(urllimit);
       // console.log('Points limit:', result.data);
-      setPointLimit(result.data.data);
+      setPointLimit(result.data.data.limit);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -56,6 +57,7 @@ const Redeem = () => {
   };
 
   const handleSubmit = async maxRedeemValue => {
+    // console.log('input', inputValue, maxRedeemValue);
     if (inputValue < maxRedeemValue) {
       const value = inputValue % 10;
       if (value > 0) {
@@ -83,30 +85,8 @@ const Redeem = () => {
   const notifyUser = () => {
     if (points > pointLimit) {
       const value = points % 10;
-      const maxRedeemValue = points - value;
-      setModalVisible(true);
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <Text>Please Add points in multiple of 10 only</Text>
-          <View style={styles.modalContent}>
-            <Text>Please enter a value:</Text>
-            <TextInput
-              style={styles.input}
-              value={inputValue}
-              onChangeText={handleInputChange}
-              keyboardType="numeric"
-            />
-            <View style={styles.buttonContainer}>
-              <Button title="Submit" onPress={handleSubmit(maxRedeemValue)} />
-              <Button title="Close" onPress={() => setModalVisible(false)} />
-            </View>
-          </View>
-        </View>
-      </Modal>;
+      setMaxRedeemValue(points - value);
+      setModalVisible(!modalVisible);
     } else {
       Alert.alert('Your points balance is less than the Redeem limit');
       return;
@@ -144,6 +124,35 @@ const Redeem = () => {
                 request to the admin.
               </Text>
             </LinearGradient>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}>
+              <View style={styles.modalOverlay}>
+                <Text>Please Add points in multiple of 10 only</Text>
+                <View style={styles.modalContent}>
+                  <Text style={styles.titleText}>Please enter a value:</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={inputValue}
+                    onChangeText={handleInputChange}
+                    keyboardType="numeric"
+                  />
+                  <View style={styles.buttonContainer}>
+                    <Button
+                      title="Submit"
+                      onPress={() => handleSubmit(maxRedeemValue)}
+                    />
+                    <Button
+                      title="Close"
+                      onPress={() => setModalVisible(false)}
+                      color={'grey'}
+                    />
+                  </View>
+                </View>
+              </View>
+            </Modal>
           </TouchableOpacity>
         </View>
       )}
@@ -184,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: 300,
+    width: deviceWidth - 20,
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -202,5 +211,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  titleText: {
+    fontSize: 18,
   },
 });

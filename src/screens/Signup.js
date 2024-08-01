@@ -170,9 +170,7 @@ const Signup = () => {
     <Image
       key="banner"
       source={{
-        uri: logo
-          ? logo
-          : 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
+        uri: logo,
       }}
       style={styles.bannerImage}
       resizeMode="contain"
@@ -325,7 +323,8 @@ const styles = StyleSheet.create({
   },
   bannerImage: {
     width: deviceWidth - 50,
-    height: 40,
+    height: 70,
+    marginBottom: 20,
   },
   image: {
     width: deviceWidth - 20,

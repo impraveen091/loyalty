@@ -143,26 +143,25 @@ const Signin = () => {
     ToastAndroid.show(`${language} ${t('Selected')}`, ToastAndroid.SHORT);
   };
   return (
-    <View showsVerticalScrollIndicator={false} style={styles.container}>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
       ) : error !== null && error.error === 'Network Error' ? (
+        <Image
+          source={timeout}
+          style={styles.errorimage}
+          resizeMode="contain"
+        />
+      ) : (
         <View>
           <Image
-            source={timeout}
-            style={styles.errorimage}
-            resizeMode="contain"
-          />
-        </View>
-      ) : (
-        <View s>
-          <Image
             source={{
-              uri: logo
-                ? logo
-                : 'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F74b543a971c26d31eb953337ff7d64f2.cdn.bubble.io%2Ff1694581734495x451542289950882940%2Ffinal%2520icon-01.png?w=256&h=37&auto=compress&dpr=1.25&fit=max',
+              uri: logo,
             }}
-            style={[styles.image, {width: deviceWidth - 50, height: 40}]}
+            style={[
+              styles.image,
+              {width: deviceWidth - 50, height: 70, alignSelf: 'center'},
+            ]}
             resizeMode="contain"
           />
           <TouchableOpacity
@@ -222,11 +221,10 @@ const Signin = () => {
           </Modal>
           <Image
             source={{
-              uri: signin
-                ? signin
-                : 'https://img.freepik.com/free-vector/tablet-login-concept-illustration_114360-7863.jpg?t=st=1719399088~exp=1719402688~hmac=bd4cede27ddfb952516560f019051da5594dc9b8c576ae8b69708fdb53cc2957&w=826',
+              uri: signin !== null && signin,
             }}
             style={styles.image}
+            resizeMode="contain"
           />
           <View style={styles.inputContainer}>
             <Text style={styles.heading}>{t('Login')}</Text>
@@ -238,7 +236,7 @@ const Signin = () => {
               onChangeText={setPhone}
               value={phone}
             />
-            {error && <Text style={styles.error}>{error}</Text>}
+            {error !== null && <Text style={styles.error}>{error.phone}</Text>}
 
             <TouchableOpacity
               style={[styles.submit, {width: deviceWidth - 60, height: 50}]}
@@ -253,6 +251,7 @@ const Signin = () => {
                   width: deviceWidth - 60,
                   height: 50,
                   backgroundColor: '#ff735c',
+                  marginBottom: 15,
                 },
               ]}
               onPress={() => navigation.navigate('Signup')}>
@@ -261,7 +260,7 @@ const Signin = () => {
           </View>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -270,9 +269,7 @@ export default Signin;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    padding: 10,
     backgroundColor: 'white',
   },
   heading: {
@@ -295,22 +292,23 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   image: {
-    width: deviceWidth - 20,
-    height: deviceWidth - 20,
+    width: deviceWidth - 10,
+    height: deviceWidth - 10,
     borderRadius: 10,
   },
   submit: {
-    width: 'fit-content',
     backgroundColor: '#00308F',
-    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    width: deviceWidth - 60,
   },
   inputContainer: {
     width: deviceWidth - 60,
     justifyContent: 'space-between',
     rowGap: 10,
+    alignSelf: 'center',
+    marginTop: 20,
   },
   error: {
     fontSize: 14,
@@ -323,6 +321,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     columnGap: 10,
+    marginTop: 20,
+    marginBottom: 20,
   },
   centeredView: {
     flex: 1,
