@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  Button,
 } from 'react-native';
 import {deviceHeight, deviceWidth} from '../constants/Constants';
 import {useDispatch, useSelector} from 'react-redux';
@@ -78,12 +79,14 @@ const Products = () => {
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.heading}>Products</Text>
-            <View style={styles.cartContainer}>
+            <TouchableOpacity
+              style={styles.cartContainer}
+              onPress={() => navigation.navigate('Cart')}>
               <Text style={styles.cartCount}>{centralData.length}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+              <View>
                 <Cart style={styles.cartIcon} />
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
           </View>
           <FlatList
             data={products}
@@ -92,6 +95,11 @@ const Products = () => {
             contentContainerStyle={styles.cardContainer}
             showsVerticalScrollIndicator={false}
           />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Cart')}>
+            <Text style={styles.buttonText}>Go to Cart</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -127,8 +135,10 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
+    marginTop: -30,
+    marginRight: -30,
   },
-  cartIcon: {width: 20, height: 20, marginLeft: 5},
+  cartIcon: {width: 20, height: 20, marginLeft: 5, marginTop: 10},
   cardContainer: {paddingBottom: 10, backgroundColor: 'white'},
   card: {
     width: deviceWidth - 20,
@@ -176,5 +186,17 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: deviceHeight / 2 - 20,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

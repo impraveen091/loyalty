@@ -48,7 +48,7 @@ const Transactions = () => {
           <Text style={styles.heading}>Transactions</Text>
           {transactions.length > 0 ? (
             transactions.map((item, index) => (
-              <View style={styles.card}>
+              <View style={styles.card} key={index.toString()}>
                 <View style={styles.insideCard}>
                   <Text style={styles.data}>
                     <Text style={styles.subheading}>Date:</Text>

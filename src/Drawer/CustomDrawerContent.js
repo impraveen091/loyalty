@@ -32,6 +32,7 @@ import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import {getUserData} from '../Auth/Auth';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const CustomDrawerContent = ({navigation}) => {
   const {t} = useTranslation();
@@ -41,6 +42,7 @@ const CustomDrawerContent = ({navigation}) => {
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
   const [kycStatus, setKycStatus] = useState(null);
+
   useEffect(() => {
     const profileImage = async () => {
       try {
@@ -57,6 +59,20 @@ const CustomDrawerContent = ({navigation}) => {
     };
 
     profileImage();
+
+    const getKYC = async () => {
+      const urlkyc = 'app-user/get/kyc-details';
+      try {
+        const result = await axiosInstance.get(urlkyc);
+        setKycStatus(result.data.data.status);
+      } catch (error) {
+        console.log('Get request failed:', error.response.data.message);
+        if (error.response.data.message === 'Kyc data not found.') {
+          setKycStatus(2);
+        }
+      }
+    };
+    getKYC();
   }, []);
 
   useEffect(() => {

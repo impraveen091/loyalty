@@ -14,7 +14,7 @@ import {
 import {deviceWidth, profileImageLink} from '../constants/Constants';
 import {getUserData, saveUserData} from '../Auth/Auth';
 import axiosInstance from '../Auth/AxiosInstance';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import Up from '../components/Assets/svg/up-arrow.svg';
 import Down from '../components/Assets/svg/down-arrow.svg';
@@ -22,6 +22,7 @@ import DocumentPicker from 'react-native-document-picker';
 
 const Profile = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -40,33 +41,37 @@ const Profile = () => {
   const [isKYCDetailsOpen, setKYCDetailsOpen] = useState(false);
 
   useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const data = await getUserData('data');
-        const kyc = await getUserData('kyc');
-        console.log('DataProfile', data, kyc);
-        setFormData({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          adhar: kyc.adhar,
-          adhar_img: kyc.adhar_img,
-          pan: kyc.pan,
-          pan_img: kyc.pan_img,
-          selfie_img: kyc.selfie_img,
-          id: kyc.id,
-        });
-        if (data.image) {
-          setImage(data.image);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
+    if (isFocused) {
+      loadProfile();
+      getKYCdetails();
+    }
+  }, [isFocused]);
 
-    loadProfile();
-    getKYCdetails();
-  }, []);
+  const loadProfile = async () => {
+    try {
+      const data = await getUserData('data');
+      const kyc = await getUserData('kyc');
+      console.log('DataProfile', data, kyc);
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        name: data?.name,
+        email: data?.email,
+        phone: data?.phone,
+        adhar: kyc?.adhar,
+        adhar_img: kyc?.adhar_img,
+        pan: kyc?.pan,
+        pan_img: kyc?.pan_img,
+        selfie_img: kyc?.selfie_img,
+        id: kyc?.id,
+      }));
+
+      if (data.image) {
+        setImage(data.image);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const getKYCdetails = async () => {
     const url = 'app-user/get/kyc-details';

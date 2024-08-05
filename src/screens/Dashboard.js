@@ -36,6 +36,7 @@ const Dashboard = ({navigation}) => {
   const [pColor, setPColor] = useState('');
   const [sColor, setSColor] = useState('');
   const [pointLimit, setPointLimit] = useState('');
+  const [status, setStatus] = useState(0);
   const [loading, setLoading] = useState(true);
   const [SliderImages, setSliderImages] = useState([]);
 
@@ -69,7 +70,8 @@ const Dashboard = ({navigation}) => {
 
     try {
       const imageData = await getUserData('data');
-      // console.log('profileimage', imageData.image);
+      console.log('profileDAta', imageData.image);
+
       setImage(imageData?.image !== '' ? imageData?.image : profileImageLink);
     } catch (error) {
       console.error('Get user data failed:', error);
@@ -83,6 +85,19 @@ const Dashboard = ({navigation}) => {
     } catch (error) {
       console.error('Get request failed:', error);
     }
+
+    const urlkyc = 'app-user/get/kyc-details';
+    try {
+      const result = await axiosInstance.get(urlkyc);
+      console.log('kyc details:', result.data);
+      setStatus(result.data.data.status);
+    } catch (error) {
+      console.log('Get request failed:', error.response.data.message);
+      if (error.response.data.message === 'Kyc data not found.') {
+        setStatus(2);
+      }
+    }
+
     setLoading(false);
   };
 
@@ -108,8 +123,13 @@ const Dashboard = ({navigation}) => {
           />
           <View style={styles.menuCardContainer}>
             <TouchableOpacity
-              style={styles.menuCard}
-              onPress={() => navigation.navigate('Scan')}>
+              style={
+                status !== 1
+                  ? [styles.menuCard, {backgroundColor: ''}]
+                  : styles.menuCard
+              }
+              onPress={() => navigation.navigate('Scan')}
+              disabled={status !== 1}>
               <Scan width={30} height={30} />
               <Text style={styles.text}>{t('Scan')}</Text>
             </TouchableOpacity>
