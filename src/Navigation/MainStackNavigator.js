@@ -30,6 +30,7 @@ import DummyScreen from '../screens/DummyScreen';
 import {getUserData} from '../Auth/Auth';
 import {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
+import RedeemStatus from '../screens/RedeemStatus';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -194,8 +195,8 @@ const MainStackNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="DummyScreen"
-        component={DummyScreen}
+        name="RedeemStatus"
+        component={RedeemStatus}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

@@ -33,6 +33,8 @@ const Dashboard = ({navigation}) => {
   const {t} = useTranslation();
   const [image, setImage] = useState(profileImageLink);
   const [points, setPoints] = useState('');
+  const [pColor, setPColor] = useState('');
+  const [sColor, setSColor] = useState('');
   const [pointLimit, setPointLimit] = useState('');
   const [loading, setLoading] = useState(true);
   const [SliderImages, setSliderImages] = useState([]);
@@ -72,6 +74,15 @@ const Dashboard = ({navigation}) => {
     } catch (error) {
       console.error('Get user data failed:', error);
     }
+
+    try {
+      const result = await getUserData('images');
+      // console.log('Points limit:', result.data);
+      setPColor(result.primary_color);
+      setSColor(result.secondary_color);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
     setLoading(false);
   };
 
@@ -92,6 +103,8 @@ const Dashboard = ({navigation}) => {
             imageLink={image}
             points={points}
             pointLimit={pointLimit.limit}
+            pColor={pColor}
+            sColor={sColor}
           />
           <View style={styles.menuCardContainer}>
             <TouchableOpacity

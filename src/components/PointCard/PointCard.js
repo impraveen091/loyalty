@@ -7,7 +7,7 @@ import Coin from '../Assets/svg/coin.svg';
 import {useTranslation} from 'react-i18next';
 import {getUserData} from '../../Auth/Auth';
 
-const PointCard = ({imageLink, points, pointLimit}) => {
+const PointCard = ({imageLink, points, pointLimit, pColor, sColor}) => {
   const {t} = useTranslation();
   const navigation = useNavigation();
   // console.log('imageLink1', imageLink, pointLimit);
@@ -16,7 +16,7 @@ const PointCard = ({imageLink, points, pointLimit}) => {
     <LinearGradient
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
-      colors={['#00308F', '#5072A7']}
+      colors={[pColor, sColor]}
       style={styles.linearGradient}>
       <View style={styles.cardView}>
         <View>

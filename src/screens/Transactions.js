@@ -33,6 +33,12 @@ const Transactions = () => {
   useEffect(() => {
     fetchTransactions();
   }, []);
+
+  function formatDate(dateString) {
+    const parts = dateString.split('-');
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+
   return (
     <View style={styles.container}>
       {loading ? (
@@ -42,31 +48,34 @@ const Transactions = () => {
           <Text style={styles.heading}>Transactions</Text>
           {transactions.length > 0 ? (
             transactions.map((item, index) => (
-              <TouchableOpacity>
-                <View style={styles.card}>
-                  <View style={styles.insideCard}>
-                    <Text style={styles.data}>
-                      <Text style={styles.subheading}>Date:</Text> 28, may 2024
+              <View style={styles.card}>
+                <View style={styles.insideCard}>
+                  <Text style={styles.data}>
+                    <Text style={styles.subheading}>Date:</Text>
+                    <Text style={[styles.subheading, {fontWeight: '300'}]}>
+                      {formatDate(item.scan_date)}
                     </Text>
-                    <Text style={styles.data}>
-                      <Text style={styles.subheading}>Points:</Text> 20
+                  </Text>
+                  <Text style={styles.data}>
+                    <Text style={styles.subheading}>Points:</Text>
+                    <Text style={[styles.subheading, {fontWeight: '300'}]}>
+                      {item.points}
                     </Text>
-                  </View>
-                  <View style={styles.insideCard}>
-                    <Text style={styles.data}>
-                      <Text style={styles.subheading}>Code:</Text> 2xwxmwhxuwg
-                    </Text>
-                    <Text style={styles.data}>
-                      <Text style={styles.subheading}>Product:</Text> 10 L
-                      bucket
-                    </Text>
-                  </View>
+                  </Text>
                 </View>
-              </TouchableOpacity>
+                <View style={styles.insideCard}>
+                  <Text style={styles.data}>
+                    <Text style={styles.subheading}>Product:</Text>
+                    <Text style={[styles.subheading, {fontWeight: '300'}]}>
+                      {item.Product.name}
+                    </Text>
+                  </Text>
+                </View>
+              </View>
             ))
           ) : (
             <Image
-              resizeMode="cover"
+              resizeMode="contain"
               source={{uri: noDataImage}}
               style={styles.image}
             />

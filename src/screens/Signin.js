@@ -32,8 +32,9 @@ import axiosInstance from '../Auth/AxiosInstance';
 import {saveUserData} from '../Auth/Auth';
 import {Base_url} from '../../services/Api';
 import axios from 'axios';
-import Signup from './Signup';
 import timeout from '../components/Assets/Images/timeout.jpg';
+import NoInternet from '../components/Assets/Images/noInternet.jpg';
+import NetInfo from '@react-native-community/netinfo';
 
 const Signin = () => {
   const {t} = useTranslation();
@@ -44,10 +45,26 @@ const Signin = () => {
   const [logo, setLogo] = useState('');
   const [signin, setSignin] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [checked, setChecked] = useState(checked);
+  const [checked, setChecked] = useState('');
 
   useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isConnected) {
+      setError({error: 'No internet connection'});
+      return;
+    }
+
     const makeApiCall = async () => {
       setLoading(true);
       try {
@@ -61,19 +78,22 @@ const Signin = () => {
             },
           },
         );
-
+        console.log('imagesresponse', response.data);
         if (response.data.success === 'success') {
           const data = response.data.data;
           setLogo(data.logo);
           setSignin(data.login_img);
+
           const screenImages = {
             signup: data.singup_img,
             otp: data.otp_img,
             logo: data.logo,
+            primary_color: data.primary_color,
+            secondary_color: data.secondary_color,
           };
           await saveUserData('images', screenImages);
         } else {
-          console.error('Unexpected response format', response.data);
+          console.error('Unexpected response format', responseData);
           setError({error: 'Unexpected response format'});
         }
       } catch (error) {
@@ -88,7 +108,7 @@ const Signin = () => {
     };
 
     makeApiCall();
-  }, []);
+  }, [username, isConnected]);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -146,6 +166,12 @@ const Signin = () => {
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+      ) : !isConnected ? (
+        <Image
+          source={NoInternet}
+          style={styles.errorimage}
+          resizeMode="contain"
+        />
       ) : error !== null && error.error === 'Network Error' ? (
         <Image
           source={timeout}

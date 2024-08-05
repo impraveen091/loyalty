@@ -13,17 +13,21 @@ import {
 } from 'react-native';
 import {deviceHeight, deviceWidth} from '../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
+import {getUserData} from '../Auth/Auth';
 
 const Redeem = () => {
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
   const [points, setPoints] = useState('');
   const [pointLimit, setPointLimit] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [maxRedeemValue, setMaxRedeemValue] = useState(null);
+  const [pColor, setPColor] = useState('');
+  const [sColor, setSColor] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
@@ -40,6 +44,15 @@ const Redeem = () => {
       const result = await axiosInstance.get(urllimit);
       // console.log('Points limit:', result.data);
       setPointLimit(result.data.data.limit);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+
+    try {
+      const result = await getUserData('images');
+      // console.log('Points limit:', result.data);
+      setPColor(result.primary_color);
+      setSColor(result.secondary_color);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -100,25 +113,25 @@ const Redeem = () => {
       ) : (
         <View>
           <Text style={styles.heading}>Redeem Points</Text>
-          {/* <TouchableOpacity>
-        <LinearGradient
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 1}}
-          colors={['#EE4B2B', '#DE3163']}
-          style={styles.linearGradient}>
-          <Text style={styles.subheading}> Point Transfer</Text>
-          <Text style={styles.data}>
-            You can transfer loyality points to your friend or family member.
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity> */}
+          <TouchableOpacity onPress={() => navigation.navigate('RedeemStatus')}>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 1}}
+              colors={['#EE4B2B', '#DE3163']}
+              style={styles.linearGradient}>
+              <Text style={styles.subheading}> Redeem Log</Text>
+              <Text style={styles.data}>
+                You can see status of redeem points.
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
           <TouchableOpacity onPress={notifyUser}>
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
               colors={['#FFAC1C', '#CC5500']}
               style={styles.linearGradient}>
-              <Text style={styles.subheading}> On-request Cashback</Text>
+              <Text style={styles.subheading}>Redeem Points</Text>
               <Text style={styles.data}>
                 Loyalty points can be redeemed to your bank account by sending a
                 request to the admin.

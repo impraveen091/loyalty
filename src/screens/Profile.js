@@ -19,7 +19,6 @@ import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import Up from '../components/Assets/svg/up-arrow.svg';
 import Down from '../components/Assets/svg/down-arrow.svg';
 import DocumentPicker from 'react-native-document-picker';
-// import {launchCamera} from 'react-native-image-picker';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -39,17 +38,23 @@ const Profile = () => {
   const [kycid, setKycId] = useState('');
   const [isPersonalDetailsOpen, setPersonalDetailsOpen] = useState(true);
   const [isKYCDetailsOpen, setKYCDetailsOpen] = useState(false);
-  console.log('formdata', formData);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
         const data = await getUserData('data');
-        console.log('DataProfile', data);
+        const kyc = await getUserData('kyc');
+        console.log('DataProfile', data, kyc);
         setFormData({
           name: data.name,
           email: data.email,
           phone: data.phone,
+          adhar: kyc.adhar,
+          adhar_img: kyc.adhar_img,
+          pan: kyc.pan,
+          pan_img: kyc.pan_img,
+          selfie_img: kyc.selfie_img,
+          id: kyc.id,
         });
         if (data.image) {
           setImage(data.image);
@@ -80,7 +85,7 @@ const Profile = () => {
             pan: pan || prevFormData.pan,
             pan_img: pan_img || prevFormData.pan_img,
             selfie_img: selfie_img || prevFormData.selfie_img,
-            id: response.data.data,
+            id: response.data.data.id,
           }));
         } else {
           console.log('Failed to retrieve KYC details or data is missing');
@@ -97,6 +102,7 @@ const Profile = () => {
             pan: pan || prevFormData.pan,
             pan_img: pan_img || prevFormData.pan_img,
             selfie_img: selfie_img || prevFormData.selfie_img,
+            id: response.data.data.id,
           }));
           console.log('Updated formData', formData); // Log updated formData
         } else {
@@ -112,9 +118,16 @@ const Profile = () => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData({...formData, [field]: value});
+    console.log('update fields', field, value);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [field]: value,
+    }));
     if (typeof value === 'string' && value.trim() !== '') {
-      setError({...error, [field]: null});
+      setError(prevError => ({
+        ...prevError,
+        [field]: null,
+      }));
     }
   };
 
@@ -256,6 +269,7 @@ const Profile = () => {
           'Personal Details Updated successfully',
           ToastAndroid.SHORT,
         );
+        navigation.navigate('DashboardDrawer');
       } else {
         Alert.alert('Failed to update personal details');
       }
@@ -269,15 +283,12 @@ const Profile = () => {
   };
 
   const updateKYCDetails = async () => {
-    const {adhar, pan, pan_img, adhar_img, selfie_img} = formData;
+    const {adhar, pan, adhar_img, pan_img, selfie_img} = formData;
 
-    if (!adhar || !pan || !pan_img || !adhar_img || !selfie_img) {
+    if (!adhar || !pan) {
       setError({
         adhar: !adhar ? 'Aadhar number is required' : '',
         pan: !pan ? 'PAN number is required' : '',
-        pan_img: !pan_img ? 'PAN Image is required' : '',
-        adhar_img: !adhar_img ? 'Adhar Image is required' : '',
-        selfie_img: !selfie_img ? 'selfie_img is required' : '',
       });
       return;
     }
@@ -287,36 +298,43 @@ const Profile = () => {
 
     payload.append('adhar', adhar);
     payload.append('pan', pan);
-    payload.append('pan_img', {
-      uri: pan_img.uri,
-      type: pan_img.type,
-      name: pan_img.name,
-    });
-    payload.append('adhar_img', {
-      uri: adhar_img.uri,
-      type: adhar_img.type,
-      name: adhar_img.name,
-    });
-    payload.append('selfie_img', {
-      uri: selfie_img.uri,
-      type: selfie_img.type,
-      name: selfie_img.fileName,
-    });
-    console.log('payloadkyc', payload);
+
+    if (adhar_img) {
+      payload.append('adhar_img', {
+        uri: adhar_img.uri,
+        type: adhar_img.type,
+        name: adhar_img.name,
+      });
+    }
+    if (pan_img) {
+      payload.append('pan_img', {
+        uri: pan_img.uri,
+        type: pan_img.type,
+        name: pan_img.name,
+      });
+    }
+    if (selfie_img) {
+      payload.append('selfie_img', {
+        uri: selfie_img.uri,
+        type: selfie_img.type,
+        name: selfie_img.name || 'selfie_img.jpg',
+      });
+    }
+
     try {
       const response = await axiosInstance.post(url, payload, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
       console.log('Update KYC Details Response', response.data);
-      if (response.data.success === 'success') {
-        saveUserData('KYCdata', response.data.data);
+      if (response.data.success) {
+        saveUserData('kyc', response.data.data);
         ToastAndroid.show(
-          'KYC Details Updated successfully',
+          'KYC details updated successfully',
           ToastAndroid.SHORT,
         );
+        navigation.navigate('DashboardDrawer');
       } else {
         Alert.alert('Failed to update KYC details');
       }
@@ -325,243 +343,214 @@ const Profile = () => {
         'API call error:',
         err.response?.data?.message || err.message,
       );
-      Alert.alert(err.response?.data?.message || err.message);
+      Alert.alert('Failed to update KYC details');
     }
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.heading}>Profile</Text>
-      <TouchableOpacity onPress={() => handleImagePick()}>
-        <Image
-          source={{
-            uri: image || profileImageLink,
-          }}
-          style={styles.image}
-          onError={() => setImage(profileImageLink)}
-        />
-      </TouchableOpacity>
+    <ScrollView>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleImagePick}>
+          <Image
+            source={{uri: image}}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
+        <Text style={styles.text}>Edit Profile Photo</Text>
+      </View>
+      <View style={styles.form}>
+        <TouchableOpacity
+          style={styles.toggleContainer}
+          onPress={() => setPersonalDetailsOpen(!isPersonalDetailsOpen)}>
+          <Text style={styles.title}>Personal Details</Text>
+          {isPersonalDetailsOpen ? <Up /> : <Down />}
+        </TouchableOpacity>
+        {isPersonalDetailsOpen && (
+          <View style={styles.container}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.name}
+              onChangeText={text => handleInputChange('name', text)}
+            />
+            {error.name && <Text style={styles.error}>{error.name}</Text>}
 
-      <TouchableOpacity
-        style={styles.collapsibleHeader}
-        onPress={() => setPersonalDetailsOpen(!isPersonalDetailsOpen)}>
-        <Text style={styles.collapsibleHeaderText}>Personal Details</Text>
-        {isPersonalDetailsOpen ? <Up /> : <Down />}
-      </TouchableOpacity>
-      {isPersonalDetailsOpen && (
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            placeholderTextColor="grey"
-            onChangeText={value => handleInputChange('name', value)}
-            value={formData.name}
-          />
-          {error.name && <Text style={styles.error}>{error.name}</Text>}
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="grey"
-            keyboardType="email-address"
-            onChangeText={value => handleInputChange('email', value)}
-            value={formData.email}
-          />
-          {error.email && <Text style={styles.error}>{error.email}</Text>}
-          <TextInput
-            style={styles.input}
-            placeholder="Phone"
-            placeholderTextColor="grey"
-            keyboardType="numeric"
-            onChangeText={value => handleInputChange('phone', value)}
-            value={formData.phone}
-            editable={false}
-          />
-          {error.phone && <Text style={styles.error}>{error.phone}</Text>}
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.email}
+              onChangeText={text => handleInputChange('email', text)}
+            />
+            {error.email && <Text style={styles.error}>{error.email}</Text>}
 
-          <TouchableOpacity
-            style={styles.submit}
-            onPress={updatePersonalDetails}>
-            <Text style={styles.submitText}>Update Profile</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      <TouchableOpacity
-        style={styles.collapsibleHeader}
-        onPress={() => setKYCDetailsOpen(!isKYCDetailsOpen)}>
-        <Text style={styles.collapsibleHeaderText}>KYC Details</Text>
-        {isKYCDetailsOpen ? <Up /> : <Down />}
-      </TouchableOpacity>
-      {isKYCDetailsOpen && (
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            placeholder="Aadhar Number"
-            placeholderTextColor="grey"
-            onChangeText={value => handleInputChange('adhar', value)}
-            value={formData.adhar}
-            editable={!kyc}
-          />
-          {error.adhar && <Text style={styles.error}>{error.adhar}</Text>}
-          <TextInput
-            style={styles.input}
-            placeholder="PAN Number"
-            placeholderTextColor="grey"
-            onChangeText={value => handleInputChange('pan', value)}
-            value={formData.pan}
-            editable={!kyc}
-          />
-          {error.pan && <Text style={styles.error}>{error.pan}</Text>}
-
-          <View style={styles.fileSection}>
-            <Text style={{fontSize: 18, color: 'grey'}}>
-              {formData.adhar_img
-                ? formData.adhar_img.name
-                  ? formData.adhar_img.name?.slice(0, 25)
-                  : formData.adhar_img.slice(0, 15)
-                : 'AdharCard image'}
-            </Text>
-            <TouchableOpacity
-              disabled={kyc}
-              onPress={() => pickFile('adhar_img')}
-              style={styles.uploadButton}>
-              <Text style={styles.upload}>Upload</Text>
-            </TouchableOpacity>
+            <Text style={styles.label}>Phone</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.phone}
+              editable={false}
+            />
           </View>
+        )}
+        <TouchableOpacity style={styles.button} onPress={updatePersonalDetails}>
+          <Text style={styles.buttonText}>Update Personal Details</Text>
+        </TouchableOpacity>
 
-          {error.adhar_img && (
-            <Text style={styles.error}>{error.adhar_img}</Text>
-          )}
-          <View style={styles.fileSection}>
-            <Text style={{fontSize: 18, color: 'grey'}}>
-              {formData.pan_img
-                ? formData.pan_img.name
-                  ? formData.pan_img.name.slice(0, 25)
-                  : formData.pan_img.slice(0, 15)
-                : 'PAN image'}
-            </Text>
+        <TouchableOpacity
+          style={styles.toggleContainer}
+          onPress={() => setKYCDetailsOpen(!isKYCDetailsOpen)}>
+          <Text style={styles.title}>KYC Details</Text>
+          {isKYCDetailsOpen ? <Up /> : <Down />}
+        </TouchableOpacity>
+        {isKYCDetailsOpen && (
+          <View style={styles.container}>
+            <Text style={styles.label}>Adhar</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.adhar}
+              onChangeText={text => handleInputChange('adhar', text)}
+            />
+            {error.adhar && <Text style={styles.error}>{error.adhar}</Text>}
+
+            <Text style={styles.label}>Adhar Image</Text>
             <TouchableOpacity
-              disabled={kyc}
-              onPress={() => pickFile('pan_img')}
-              style={styles.uploadButton}>
-              <Text style={styles.upload}>Upload</Text>
+              style={styles.fileButton}
+              onPress={() => pickFile('adhar_img')}>
+              <Text style={styles.buttonText}>Upload Adhar Image</Text>
             </TouchableOpacity>
-          </View>
-          {error.pan_img && <Text style={styles.error}>{error.pan_img}</Text>}
+            {formData.adhar_img && (
+              <Image
+                source={{uri: formData.adhar_img.uri || formData.adhar_img}}
+                style={styles.uploadedImage}
+                resizeMode="cover"
+              />
+            )}
 
-          <View style={styles.fileSection}>
-            <Text style={{fontSize: 18, color: 'grey'}}>
-              {formData.selfie_img
-                ? formData.selfie_img.fileName
-                  ? formData.selfie_img.fileName.split('.j')[0].slice(0, 15)
-                  : formData.selfie_img.split('.j')[0].slice(0, 15)
-                : 'selfie_img'}
-            </Text>
+            <Text style={styles.label}>PAN</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.pan}
+              onChangeText={text => handleInputChange('pan', text)}
+            />
+            {error.pan && <Text style={styles.error}>{error.pan}</Text>}
+
+            <Text style={styles.label}>PAN Image</Text>
             <TouchableOpacity
-              disabled={kyc}
-              onPress={captureSelfie}
-              style={styles.uploadButton}>
-              <Text style={styles.upload}>Capture</Text>
+              style={styles.fileButton}
+              onPress={() => pickFile('pan_img')}>
+              <Text style={styles.buttonText}>Upload PAN Image</Text>
             </TouchableOpacity>
+            {formData.pan_img && (
+              <Image
+                source={{uri: formData.pan_img.uri || formData.pan_img}}
+                style={styles.uploadedImage}
+                resizeMode="cover"
+              />
+            )}
+
+            <Text style={styles.label}>Selfie Image</Text>
+            <TouchableOpacity style={styles.fileButton} onPress={captureSelfie}>
+              <Text style={styles.buttonText}>Capture Selfie</Text>
+            </TouchableOpacity>
+            {formData.selfie_img && (
+              <Image
+                source={{uri: formData.selfie_img.uri || formData.selfie_img}}
+                style={styles.uploadedImage}
+                resizeMode="cover"
+              />
+            )}
           </View>
-
-          {error.selfie_img && (
-            <Text style={styles.error}>{error.selfie_img}</Text>
-          )}
-
-          <TouchableOpacity style={styles.submit} onPress={updateKYCDetails}>
-            <Text style={styles.submitText}>Update KYC</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        )}
+        <TouchableOpacity style={styles.button} onPress={updateKYCDetails}>
+          <Text style={styles.buttonText}>Update KYC Details</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
 
-export default Profile;
-
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 10, backgroundColor: 'white'},
-  heading: {
-    fontSize: 25,
-    color: '#00308F',
-    fontWeight: '400',
-    alignSelf: 'center',
-    marginBottom: 20,
+  header: {
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#f9f9f9',
   },
   image: {
-    width: deviceWidth - 20,
-    height: deviceWidth - 20,
-    borderRadius: (deviceWidth - 20) / 2,
-    alignSelf: 'center',
-    marginBottom: 20,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#ddd',
   },
-  input: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 16,
-    elevation: 5,
-    width: deviceWidth - 20,
-    color: 'black',
-    alignSelf: 'center',
-    marginVertical: 10,
-  },
-  submit: {
-    backgroundColor: '#00308F',
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    width: deviceWidth - 40,
-    alignSelf: 'center',
-    marginBottom: 15,
+  text: {
     marginTop: 10,
+    fontSize: 16,
+    color: '#555',
   },
-  submitText: {
-    color: 'white',
-    fontSize: 18,
+  form: {
+    padding: 20,
   },
-  error: {
-    fontSize: 14,
-    color: 'red',
-    alignSelf: 'center',
-  },
-  collapsibleHeader: {
+  toggleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    marginBottom: 10,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
-  collapsibleHeaderText: {
+  title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#00308F',
+    color: '#333',
   },
-  inputContainer: {marginTop: 10},
-  fileSection: {
-    marginTop: 20,
-    backgroundColor: 'white',
-    height: 50,
-    borderRadius: 10,
-    elevation: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingLeft: 20,
+  container: {
+    marginTop: 10,
   },
-  uploadButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#00308F',
+  label: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
     padding: 10,
-    borderRadius: 10,
-    height: 50,
-    width: 100,
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#333',
   },
-  upload: {fontSize: 18, fontWeight: 'bold', color: 'white'},
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  fileButton: {
+    backgroundColor: '#6c757d',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  uploadedImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginTop: 10,
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+  },
 });
+
+export default Profile;
