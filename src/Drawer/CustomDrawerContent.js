@@ -41,38 +41,44 @@ const CustomDrawerContent = ({navigation}) => {
   const [checked, setChecked] = useState('');
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
+  const [pColor, setPColor] = useState('');
+  const [sColor, setSColor] = useState('');
   const [kycStatus, setKycStatus] = useState(null);
 
+  const data = async () => {
+    try {
+      const DataDrawer = await getUserData('data');
+      // console.log('DataDrawer', DataDrawer);
+      setImage(DataDrawer?.image === '' ? profileImageLink : DataDrawer?.image);
+      setName(DataDrawer.name);
+      setKycStatus(DataDrawer.status);
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    }
+
+    const urlkyc = 'app-user/get/kyc-details';
+    try {
+      const result = await axiosInstance.get(urlkyc);
+      setKycStatus(result.data.data.status);
+    } catch (error) {
+      console.log('Get request failed:', error.response.data.message);
+      if (error.response.data.message === 'Kyc data not found.') {
+        setKycStatus(2);
+      }
+    }
+
+    try {
+      const result = await getUserData('images');
+      // console.log('Points limit:', result.data);
+      setPColor(result.primary_color);
+      setSColor(result.secondary_color);
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+  };
+
   useEffect(() => {
-    const profileImage = async () => {
-      try {
-        const DataDrawer = await getUserData('data');
-        // console.log('DataDrawer', DataDrawer);
-        setImage(
-          DataDrawer?.image === '' ? profileImageLink : DataDrawer?.image,
-        );
-        setName(DataDrawer.name);
-        setKycStatus(DataDrawer.status);
-      } catch (error) {
-        console.error('Failed to fetch user data:', error);
-      }
-    };
-
-    profileImage();
-
-    const getKYC = async () => {
-      const urlkyc = 'app-user/get/kyc-details';
-      try {
-        const result = await axiosInstance.get(urlkyc);
-        setKycStatus(result.data.data.status);
-      } catch (error) {
-        console.log('Get request failed:', error.response.data.message);
-        if (error.response.data.message === 'Kyc data not found.') {
-          setKycStatus(2);
-        }
-      }
-    };
-    getKYC();
+    data();
   }, []);
 
   useEffect(() => {

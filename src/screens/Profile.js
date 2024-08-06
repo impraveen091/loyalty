@@ -156,20 +156,19 @@ const Profile = () => {
         ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
         setImage(response.data.data.image);
         navigation.navigate('DashboardDrawer');
-      } else {
-        Alert.alert('Failed to update profile');
       }
     } catch (err) {
       console.log(
         'API call error:',
         err.response?.data?.message || err.message,
       );
-      if (err.response) {
-        console.log('Response data:', err.response.data);
-        console.log('Response status:', err.response.status);
-        console.log('Response headers:', err.response.headers);
+      if (
+        err.response?.data?.message ||
+        err.message === 'Request failed with status code 413'
+      ) {
+        Alert.alert('file is too large');
       }
-      Alert.alert('Failed to update profile photo');
+      Alert.alert('Profile photo not updated');
     }
   };
 
@@ -340,15 +339,13 @@ const Profile = () => {
           ToastAndroid.SHORT,
         );
         navigation.navigate('DashboardDrawer');
-      } else {
-        Alert.alert('Failed to update KYC details');
       }
     } catch (err) {
       console.log(
         'API call error:',
         err.response?.data?.message || err.message,
       );
-      Alert.alert('Failed to update KYC details');
+      Alert.alert(err.response?.data?.message || err.message);
     }
   };
 

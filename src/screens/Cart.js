@@ -18,6 +18,20 @@ const Cart = () => {
   const centralData = useSelector(state => state.cart.cart);
   console.log('centralData', centralData);
 
+  const truncateText = (text, length) => {
+    if (text.length > length) {
+      return text.substring(0, length) + '...';
+    }
+    return text;
+  };
+
+  const calculateTotal = () => {
+    return centralData.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -44,8 +58,10 @@ const Cart = () => {
                   }}
                   style={styles.image}
                 />
-                <Text style={styles.itemData}>{item?.name}</Text>
-                <Text style={styles.itemData}>{item?.price}</Text>
+                <Text style={styles.itemData}>
+                  {truncateText(item?.name, 10)}
+                </Text>
+                <Text style={styles.itemData}>₹{item?.price}</Text>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -71,20 +87,33 @@ const Cart = () => {
               </View>
             ))}
           </View>
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalText}>Total: ₹{calculateTotal()}</Text>
+          </View>
           <TouchableOpacity
             style={styles.proceed}
+            disabled={true}
             onPress={() => navigation.pop()}>
-            <Text style={{color: 'white', fontSize: 20}}>Proceed</Text>
+            <Text style={{color: 'white', fontSize: 20}}>Send Order</Text>
           </TouchableOpacity>
         </>
       ) : (
-        <Image
-          resizeMode="contain"
-          source={{
-            uri: 'https://img.freepik.com/premium-vector/customer-running-into-shop-with-trolley_107173-15134.jpg?w=826',
-          }}
-          style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
-        />
+        <View
+          style={[
+            styles.container,
+            {justifyContent: 'center', alignItems: 'center'},
+          ]}>
+          <Text style={{fontWeight: 'bold', fontSize: 20, textAlign: 'center'}}>
+            Cart is Empty
+          </Text>
+          <Image
+            resizeMode="contain"
+            source={{
+              uri: 'https://img.freepik.com/free-vector/shopping-cart-realistic_1284-6011.jpg?t=st=1722846427~exp=1722850027~hmac=b19784b55904019c22c3bf80f365ae4599474991573f37b47a0496c2a4e93895&w=826',
+            }}
+            style={{width: deviceWidth, height: deviceWidth, borderRadius: 10}}
+          />
+        </View>
       )}
     </View>
   );
@@ -132,5 +161,14 @@ const styles = StyleSheet.create({
     width: deviceWidth / 2,
     alignItems: 'center',
     borderRadius: 10,
+  },
+  totalContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  totalText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
   },
 });

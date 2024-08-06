@@ -36,40 +36,66 @@ const Products = () => {
       } catch (error) {
         console.error('Get request failed:', error);
       }
+
       setLoading(false);
     };
     getProducts();
   }, []);
 
-  const handleAddToCart = item => {
-    dispatch(addToCart(item));
+  const handleAddToCart = (item, quantity) => {
+    dispatch(addToCart(item, quantity));
   };
 
-  const renderProduct = ({item}) => (
-    <View style={styles.card}>
-      <Image
-        source={{uri: item?.ProductImages[0].image}}
-        style={styles.image}
-      />
-      <View style={{maxWidth: '70%', rowGap: 5}}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productDescription}>
-          <Text style={styles.boldText}>Description: </Text>
-          {item.description}
-        </Text>
-        <Text style={styles.productPrice}>
-          <Text style={styles.boldText}>Price: ₹</Text>
-          {item.price}
-        </Text>
-        <Text style={styles.productColor}>{item.color}</Text>
-        <TouchableOpacity
-          style={styles.addtocart}
-          onPress={() => handleAddToCart(item)}>
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableOpacity>
+  const renderProduct = ({item}) => {
+    const cartItem = centralData.find(cartItem => cartItem.id === item.id);
+    const quantity = cartItem ? cartItem.quantity : 0;
+
+    return (
+      <View style={styles.card}>
+        <Image
+          source={{uri: item?.ProductImages[0].image}}
+          style={styles.image}
+        />
+        <View style={{maxWidth: '70%', rowGap: 5}}>
+          <Text style={styles.productName}>{item.name}</Text>
+          <Text style={styles.productDescription}>
+            <Text style={styles.boldText}>Description: </Text>
+            {item.description}
+          </Text>
+          <Text style={styles.productPrice}>
+            <Text style={styles.boldText}>Price: ₹</Text>
+            {item.price}
+          </Text>
+          <Text style={styles.productColor}>{item.color}</Text>
+
+          <View style={styles.quantityContainer}>
+            {quantity <= 0 ? (
+              <TouchableOpacity
+                style={styles.addtocart}
+                onPress={() => handleAddToCart(item, quantity + 1)}>
+                <Text style={styles.addToCartText}>Add to Cart</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.quantityButton}
+                  onPress={() => handleAddToCart(item, quantity - 1)}
+                  disabled={quantity <= 0}>
+                  <Text style={styles.quantityButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.quantityText}>{quantity}</Text>
+                <TouchableOpacity
+                  style={styles.quantityButton}
+                  onPress={() => handleAddToCart(item, quantity + 1)}>
+                  <Text style={styles.quantityButtonText}>+</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -167,25 +193,30 @@ const styles = StyleSheet.create({
   },
   productPrice: {color: 'black'},
   productColor: {fontWeight: 'bold', color: 'black'},
-  addtocart: {
-    width: 'auto',
-    paddingHorizontal: 5,
-    height: 30,
-    backgroundColor: '#00308F',
-    justifyContent: 'center',
+  quantityContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 10,
     position: 'absolute',
     right: 60,
     bottom: 0,
   },
-  addToCartText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: 'white',
+  quantityButton: {
+    backgroundColor: '#00308F',
+    padding: 5,
+    borderRadius: 5,
+    width: 30,
+    alignItems: 'center',
   },
-  loader: {
-    marginTop: deviceHeight / 2 - 20,
+  quantityButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  quantityText: {
+    marginHorizontal: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
   },
   button: {
     backgroundColor: '#007bff',
@@ -198,5 +229,22 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  addtocart: {
+    width: 'auto',
+    paddingHorizontal: 10,
+    height: 30,
+    backgroundColor: '#00308F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+  },
+  addToCartText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: 'white',
   },
 });

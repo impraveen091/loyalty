@@ -11,9 +11,12 @@ import {deviceHeight, deviceWidth, noDataImage} from '../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import {useTranslation} from 'react-i18next';
 import axiosInstance from '../Auth/AxiosInstance';
+import {getUserData} from '../Auth/Auth';
 
 const Catalog = () => {
   const {t} = useTranslation();
+  const [pColor, setPColor] = useState('');
+  const [sColor, setSColor] = useState('');
   const [catalog, setCatalog] = useState([]);
   const [loading, setLoading] = useState(true);
   const getCatalog = async () => {
@@ -25,6 +28,15 @@ const Catalog = () => {
       if (result.data.success) {
         setCatalog(result.data.data);
       }
+    } catch (error) {
+      console.error('Get request failed:', error);
+      ('');
+    }
+    try {
+      const result = await getUserData('images');
+      // console.log('Points limit:', result.data);
+      setPColor(result.primary_color);
+      setSColor(result.secondary_color);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -47,14 +59,14 @@ const Catalog = () => {
         <>
           <Text style={styles.heading}>{t('Catalog')}</Text>
           {catalog.length > 0 ? (
-            catalog.map((item, index) => (
+            catalog.reverse().map((item, index) => (
               <TouchableOpacity
                 onPress={() => handlePress(item.filename)}
                 key={index}>
                 <LinearGradient
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
-                  colors={['#EE4B2B', '#DE3163']}
+                  colors={[pColor, sColor]}
                   style={styles.linearGradient}>
                   <Text style={styles.subheading}>
                     {t('Catalog')} {item.original_name}

@@ -12,9 +12,12 @@ import Tag from '../components/Assets/svg/tag.svg';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
+import {getUserData} from '../Auth/Auth';
 
 const PromotionalOffers = () => {
   const navigation = useNavigation();
+  const [pColor, setPColor] = useState('');
+  const [sColor, setSColor] = useState('');
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const getCatalog = async () => {
@@ -26,6 +29,15 @@ const PromotionalOffers = () => {
       if (result.data.success) {
         setOffers(result.data.data);
       }
+    } catch (error) {
+      console.error('Get request failed:', error);
+    }
+
+    try {
+      const result = await getUserData('images');
+      // console.log('Points limit:', result.data);
+      setPColor(result.primary_color);
+      setSColor(result.secondary_color);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -54,7 +66,7 @@ const PromotionalOffers = () => {
                 <LinearGradient
                   start={{x: 0, y: 0}}
                   end={{x: 1, y: 1}}
-                  colors={['#FFAC1C', '#CC5500']}
+                  colors={[pColor, sColor]}
                   style={styles.linearGradient}>
                   <View style={styles.data}>
                     <Tag width={20} height={20} />

@@ -50,9 +50,12 @@ const Redeem = () => {
 
     try {
       const result = await getUserData('images');
-      // console.log('Points limit:', result.data);
-      setPColor(result.primary_color);
-      setSColor(result.secondary_color);
+      console.log('color', result);
+      if (result?.primary_color) {
+        console.log('colorP', result.primary_color);
+        setPColor(result?.primary_color);
+        setSColor(result?.secondary_color);
+      }
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -112,12 +115,12 @@ const Redeem = () => {
         <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
       ) : (
         <View>
-          <Text style={styles.heading}>Redeem Points</Text>
+          <Text style={styles.heading}>Redeem </Text>
           <TouchableOpacity onPress={() => navigation.navigate('RedeemStatus')}>
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={['#EE4B2B', '#DE3163']}
+              colors={['#342422', '#846824']}
               style={styles.linearGradient}>
               <Text style={styles.subheading}> Redeem Log</Text>
               <Text style={styles.data}>
@@ -129,7 +132,7 @@ const Redeem = () => {
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={['#FFAC1C', '#CC5500']}
+              colors={[pColor, sColor]}
               style={styles.linearGradient}>
               <Text style={styles.subheading}>Redeem Points</Text>
               <Text style={styles.data}>
