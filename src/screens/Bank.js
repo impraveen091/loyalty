@@ -5,6 +5,7 @@ import {
   View,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {deviceWidth} from '../constants/Constants';
@@ -15,8 +16,10 @@ const Bank = () => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [bank, setBank] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const getBankDetails = async () => {
+    setLoading(true);
     const url = 'app-user/bank-details/get';
     try {
       const result = await axiosInstance.get(url);
@@ -27,6 +30,7 @@ const Bank = () => {
     } catch (error) {
       console.error('Get request failed:', error);
     }
+    setLoading(false);
   };
   useEffect(() => {
     if (isFocused) {
@@ -37,53 +41,61 @@ const Bank = () => {
   console.log('bank', bank);
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Bank Management</Text>
-      {bank ? (
-        <>
-          <View style={styles.imageContainer}>
-            <View style={styles.box}>
-              <Text style={styles.bankText}>Account Name:</Text>
-              <Text style={styles.mainText}>{bank.account_name}</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.bankText}>Bank Name:</Text>
-              <Text style={styles.mainText}>{bank.bank_name}</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.bankText}>Account Number:</Text>
-              <Text style={styles.mainText}>{bank.acc_no}</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.bankText}>IFSC Code:</Text>
-              <Text style={styles.mainText}>{bank.ifsc_code}</Text>
-            </View>
-            <View style={styles.box}>
-              <Text style={styles.bankText}>UPI-Id:</Text>
-              <Text style={styles.mainText}>{bank.upi_id}</Text>
-            </View>
-          </View>
-          <TouchableOpacity
-            style={styles.submit}
-            onPress={() => navigation.navigate('AddBankDetails', {data: bank})}>
-            <Text style={styles.registerText}> Edit</Text>
-          </TouchableOpacity>
-        </>
+      {loading ? (
+        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
       ) : (
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: 'https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127829.jpg?t=st=1715689358~exp=1715692958~hmac=6aeb7ad150adb056a4fa3ffef69ca163e18e4e6f09c44d844792aeca4a114899&w=740',
-            }}
-            style={styles.image}
-          />
-          <TouchableOpacity
-            style={styles.addbankbutton}
-            onPress={() => navigation.navigate('AddBankDetails')}>
-            <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
-              + Add Bank
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <>
+          <Text style={styles.heading}>Bank Management</Text>
+          {bank ? (
+            <>
+              <View style={styles.imageContainer}>
+                <View style={styles.box}>
+                  <Text style={styles.bankText}>Account Name:</Text>
+                  <Text style={styles.mainText}>{bank.account_name}</Text>
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.bankText}>Bank Name:</Text>
+                  <Text style={styles.mainText}>{bank.bank_name}</Text>
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.bankText}>Account Number:</Text>
+                  <Text style={styles.mainText}>{bank.acc_no}</Text>
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.bankText}>IFSC Code:</Text>
+                  <Text style={styles.mainText}>{bank.ifsc_code}</Text>
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.bankText}>UPI-Id:</Text>
+                  <Text style={styles.mainText}>{bank.upi_id}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.submit}
+                onPress={() =>
+                  navigation.navigate('AddBankDetails', {data: bank})
+                }>
+                <Text style={styles.registerText}> Edit</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri: 'https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127829.jpg?t=st=1715689358~exp=1715692958~hmac=6aeb7ad150adb056a4fa3ffef69ca163e18e4e6f09c44d844792aeca4a114899&w=740',
+                }}
+                style={styles.image}
+              />
+              <TouchableOpacity
+                style={styles.addbankbutton}
+                onPress={() => navigation.navigate('AddBankDetails')}>
+                <Text style={{fontSize: 18, fontWeight: '600', color: 'white'}}>
+                  + Add Bank
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
@@ -150,5 +162,8 @@ const styles = StyleSheet.create({
   registerText: {
     color: 'white',
     fontSize: 20,
+  },
+  loader: {
+    marginTop: deviceWidth,
   },
 });
