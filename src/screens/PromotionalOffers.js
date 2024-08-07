@@ -132,4 +132,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
   },
+  loader: {marginTop: deviceWidth},
 });

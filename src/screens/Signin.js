@@ -59,54 +59,50 @@ const Signin = () => {
     };
   }, []);
 
+  const makeApiCall = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${Base_url}app-user/tenant/app-data`, {
+        headers: {
+          'x-username': username,
+          'x-tenant-id': '1',
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('imagesresponse', response.data);
+      if (response.data.success === 'success') {
+        const data = response.data.data;
+        setLogo(data.logo);
+        setSignin(data.login_img);
+
+        const screenImages = {
+          signup: data.singup_img,
+          otp: data.otp_img,
+          logo: data.logo,
+          primary_color: data.primary_color,
+          secondary_color: data.secondary_color,
+        };
+        await saveUserData('images', screenImages);
+      } else {
+        console.error('Unexpected response format', responseData);
+        setError({error: 'Unexpected response format'});
+      }
+    } catch (error) {
+      console.log(
+        'There was a problem with the fetch operation:',
+        error.message,
+      );
+      setError({error: error.message});
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isConnected) {
       setError({error: 'No internet connection'});
       return;
     }
-
-    const makeApiCall = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${Base_url}app-user/tenant/app-data`,
-          {
-            headers: {
-              'x-username': username,
-              'x-tenant-id': '1',
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        console.log('imagesresponse', response.data);
-        if (response.data.success === 'success') {
-          const data = response.data.data;
-          setLogo(data.logo);
-          setSignin(data.login_img);
-
-          const screenImages = {
-            signup: data.singup_img,
-            otp: data.otp_img,
-            logo: data.logo,
-            primary_color: data.primary_color,
-            secondary_color: data.secondary_color,
-          };
-          await saveUserData('images', screenImages);
-        } else {
-          console.error('Unexpected response format', responseData);
-          setError({error: 'Unexpected response format'});
-        }
-      } catch (error) {
-        console.log(
-          'There was a problem with the fetch operation:',
-          error.message,
-        );
-        setError({error: error.message});
-      } finally {
-        setLoading(false);
-      }
-    };
-
     makeApiCall();
   }, [username, isConnected]);
 

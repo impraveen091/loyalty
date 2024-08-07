@@ -120,7 +120,7 @@ const Redeem = () => {
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={['#342422', '#846824']}
+              colors={['#5873c6', '#bf4a4a']}
               style={styles.linearGradient}>
               <Text style={styles.subheading}> Redeem Log</Text>
               <Text style={styles.data}>
@@ -132,7 +132,7 @@ const Redeem = () => {
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={[pColor, sColor]}
+              colors={['#5873c6', '#bf4a4a']}
               style={styles.linearGradient}>
               <Text style={styles.subheading}>Redeem Points</Text>
               <Text style={styles.data}>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,17 +6,79 @@ import {
   TouchableOpacity,
   ToastAndroid,
   TextInput,
+  PermissionsAndroid,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
+import Geolocation from 'react-native-geolocation-service';
+import Geocoder from 'react-native-geocoding';
 import axiosInstance from '../Auth/AxiosInstance';
 import {useNavigation} from '@react-navigation/native';
 import {deviceWidth} from '../constants/Constants';
 
+Geocoder.init('AIzaSyAkikZ_PfaF6DnsfiTMQktBUBXcHD43pTI');
+
 const Scan = () => {
   const [code, setCode] = useState('');
   const [showScanner, setShowScanner] = useState(true);
+  // const [location, setLocation] = useState(null);
+  const [city, setCity] = useState('');
   const navigation = useNavigation();
+
+  console.log('city', city);
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
+
+  const requestLocationPermission = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Location Permission',
+        message:
+          'We need access to your location to show your position on the map',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Location permission granted');
+      getCurrentLocation();
+    } else {
+      console.log('Location permission denied');
+    }
+  };
+
+  const getCurrentLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        // setLocation(position.coords);
+        getCityFromCoordinates(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
+      },
+      error => {
+        console.log(error);
+        alert('Failed to get location');
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
+  const getCityFromCoordinates = async (latitude, longitude) => {
+    try {
+      const response = await Geocoder.from(latitude, longitude);
+      const addressComponent = response.results[0].address_components.find(
+        component => component.types.includes('locality'),
+      );
+      setCity(addressComponent ? addressComponent.long_name : '');
+    } catch (error) {
+      console.log('Error in geocoding:', error);
+      alert('Failed to get city from coordinates');
+    }
+  };
 
   const submit = async () => {
     if (!code) {
@@ -24,12 +86,12 @@ const Scan = () => {
       return;
     }
     try {
-      const url = 'qr-code/verify/unique-code';
+      const url = `qr-code/verify/unique-code?location=${city}`;
       const payload = {uniqueId: code};
       const response = await axiosInstance.post(url, payload);
       if (response.data.success) {
         ToastAndroid.show(
-          'Code Verified,Points will be added shortly',
+          'Code Verified, Points will be added shortly',
           ToastAndroid.SHORT,
         );
         navigation.navigate('DashboardDrawer', {screen: 'Dashboard'});
@@ -45,10 +107,12 @@ const Scan = () => {
   const handleScan = async data => {
     const url = data.split('api/')[1];
     try {
-      const response = await axiosInstance.get(`qr-code/${url}`);
+      const response = await axiosInstance.get(
+        `qr-code/${url}?location=${city.toLocaleLowerCase()}`,
+      );
       if (response.data.success) {
         ToastAndroid.show(
-          'Scan done,Points will be added shortly',
+          'Scan done, Points will be added shortly',
           ToastAndroid.SHORT,
         );
         navigation.navigate('DashboardDrawer', {screen: 'Dashboard'});

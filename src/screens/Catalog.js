@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: '300',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   loader: {
     marginTop: deviceHeight / 2 - 20,

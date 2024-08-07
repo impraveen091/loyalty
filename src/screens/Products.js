@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     color: 'black',
+    marginRight: 10,
   },
   productDescription: {
     flexWrap: 'wrap',

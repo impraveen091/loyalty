@@ -154,7 +154,11 @@ const Profile = () => {
       console.log('Update Profile Response', response.data);
       if (response.data.success) {
         ToastAndroid.show('Image Updated successfully', ToastAndroid.SHORT);
-        setImage(response.data.data.image);
+        const imageData = await getUserData('data');
+        console.log('imageData', imageData);
+        imageData.image = response.data?.data?.image;
+        const imagesave = await saveUserData('data', imageData);
+        setImage(response.data?.data?.image);
         navigation.navigate('DashboardDrawer');
       }
     } catch (err) {
@@ -338,6 +342,7 @@ const Profile = () => {
           'KYC details updated successfully',
           ToastAndroid.SHORT,
         );
+
         navigation.navigate('DashboardDrawer');
       }
     } catch (err) {

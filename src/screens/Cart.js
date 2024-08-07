@@ -16,7 +16,7 @@ const Cart = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const centralData = useSelector(state => state.cart.cart);
-  console.log('centralData', centralData);
+  // console.log('centralData', centralData);
 
   const truncateText = (text, length) => {
     if (text.length > length) {

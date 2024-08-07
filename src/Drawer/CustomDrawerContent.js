@@ -43,12 +43,14 @@ const CustomDrawerContent = ({navigation}) => {
   const [name, setName] = useState('');
   const [pColor, setPColor] = useState('');
   const [sColor, setSColor] = useState('');
+  const [storeData, setStoreData] = useState([]);
   const [kycStatus, setKycStatus] = useState(null);
 
   const data = async () => {
     try {
       const DataDrawer = await getUserData('data');
       // console.log('DataDrawer', DataDrawer);
+      setStoreData(DataDrawer);
       setImage(DataDrawer?.image === '' ? profileImageLink : DataDrawer?.image);
       setName(DataDrawer.name);
       setKycStatus(DataDrawer.status);
@@ -69,7 +71,6 @@ const CustomDrawerContent = ({navigation}) => {
 
     try {
       const result = await getUserData('images');
-      // console.log('Points limit:', result.data);
       setPColor(result.primary_color);
       setSColor(result.secondary_color);
     } catch (error) {
@@ -79,7 +80,7 @@ const CustomDrawerContent = ({navigation}) => {
 
   useEffect(() => {
     data();
-  }, []);
+  }, [storeData]);
 
   useEffect(() => {
     const loadLanguage = async () => {
