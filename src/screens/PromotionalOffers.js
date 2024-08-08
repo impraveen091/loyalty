@@ -7,17 +7,23 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {deviceHeight, deviceWidth, noDataImage} from '../constants/Constants';
+import {
+  COLORS,
+  deviceHeight,
+  deviceWidth,
+  noDataImage,
+} from '../constants/Constants';
 import Tag from '../components/Assets/svg/tag.svg';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
 import {getUserData} from '../Auth/Auth';
+import Loader from '../components/Loader/Loader';
 
 const PromotionalOffers = () => {
   const navigation = useNavigation();
-  const [pColor, setPColor] = useState('');
-  const [sColor, setSColor] = useState('');
+  const [pColor, setPColor] = useState(COLORS.primary);
+  const [sColor, setSColor] = useState(COLORS.secondary);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const getCatalog = async () => {
@@ -36,8 +42,8 @@ const PromotionalOffers = () => {
     try {
       const result = await getUserData('images');
       // console.log('Points limit:', result.data);
-      setPColor(result.primary_color);
-      setSColor(result.secondary_color);
+      setPColor(result?.primary_color);
+      setSColor(result?.secondary_color);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -51,7 +57,9 @@ const PromotionalOffers = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <>
           <Text style={styles.heading}>Offers & Promotions</Text>

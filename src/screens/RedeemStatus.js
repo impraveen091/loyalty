@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import axiosInstance from '../Auth/AxiosInstance';
 import {deviceHeight, deviceWidth, noDataImage} from '../constants/Constants';
+import Loader from '../components/Loader/Loader';
 
 const RedeemStatus = () => {
   const [transactions, setTransactions] = useState([]);
@@ -97,7 +98,9 @@ const RedeemStatus = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <>
           <Text style={styles.heading}>RedeemStatus</Text>

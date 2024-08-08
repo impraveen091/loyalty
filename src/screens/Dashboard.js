@@ -10,6 +10,8 @@ import {
 import ImageSlider from '../components/imageSlider/ImageSlider';
 import PointCard from '../components/PointCard/PointCard';
 import {
+  COLORS,
+  defaultImage,
   deviceHeight,
   deviceWidth,
   profileImageLink,
@@ -27,14 +29,15 @@ import {useTranslation} from 'react-i18next';
 import {getUserData} from '../Auth/Auth';
 import axiosInstance from '../Auth/AxiosInstance';
 import {useIsFocused} from '@react-navigation/native';
+import Loader from '../components/Loader/Loader';
 
 const Dashboard = ({navigation}) => {
   const isFocused = useIsFocused();
   const {t} = useTranslation();
   const [image, setImage] = useState(profileImageLink);
   const [points, setPoints] = useState('');
-  const [pColor, setPColor] = useState('');
-  const [sColor, setSColor] = useState('');
+  const [pColor, setPColor] = useState(COLORS.primary);
+  const [sColor, setSColor] = useState(COLORS.secondary);
   const [pointLimit, setPointLimit] = useState('');
   const [status, setStatus] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -80,8 +83,8 @@ const Dashboard = ({navigation}) => {
     try {
       const result = await getUserData('images');
       // console.log('Points limit:', result.data);
-      setPColor(result.primary_color);
-      setSColor(result.secondary_color);
+      setPColor(result?.primary_color);
+      setSColor(result?.secondary_color);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -110,12 +113,14 @@ const Dashboard = ({navigation}) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <>
           <ImageSlider data={SliderImages} />
           <PointCard
-            imageLink={image}
+            imageLink={image ? image : defaultImage}
             points={points}
             pointLimit={pointLimit.limit}
             pColor={pColor}
@@ -196,7 +201,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   loader: {
-    marginTop: deviceHeight / 2 - 20,
+    marginTop: deviceWidth - 60,
   },
   menuCard: {
     width: deviceWidth / 3.73,

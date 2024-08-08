@@ -15,6 +15,7 @@ import {
 import React, {useState, useEffect} from 'react';
 import {
   COLORS,
+  defaultImage,
   deviceHeight,
   deviceWidth,
   username,
@@ -35,6 +36,7 @@ import axios from 'axios';
 import timeout from '../components/Assets/Images/timeout.jpg';
 import NoInternet from '../components/Assets/Images/noInternet.jpg';
 import NetInfo from '@react-native-community/netinfo';
+import Loader from '../components/Loader/Loader';
 
 const Signin = () => {
   const {t} = useTranslation();
@@ -42,8 +44,8 @@ const Signin = () => {
   const navigation = useNavigation();
   const [phone, setPhone] = useState('');
   const [error, setError] = useState(null);
-  const [logo, setLogo] = useState('');
-  const [signin, setSignin] = useState('');
+  const [logo, setLogo] = useState(defaultImage);
+  const [signin, setSignin] = useState(defaultImage);
   const [modalVisible, setModalVisible] = useState(false);
   const [isConnected, setIsConnected] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -79,8 +81,8 @@ const Signin = () => {
           signup: data.singup_img,
           otp: data.otp_img,
           logo: data.logo,
-          primary_color: data.primary_color,
-          secondary_color: data.secondary_color,
+          primary_color: data?.primary_color,
+          secondary_color: data?.secondary_color,
         };
         await saveUserData('images', screenImages);
       } else {
@@ -161,7 +163,9 @@ const Signin = () => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : !isConnected ? (
         <Image
           source={NoInternet}

@@ -1,6 +1,10 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {deviceWidth, profileImageLink} from '../../constants/Constants';
+import {
+  defaultImage,
+  deviceWidth,
+  profileImageLink,
+} from '../../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import Coin from '../Assets/svg/coin.svg';

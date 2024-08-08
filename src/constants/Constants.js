@@ -5,8 +5,12 @@ export const deviceHeight = Dimensions.get('window').height;
 
 export const profileImageLink =
   'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?t=st=1719550821~exp=1719554421~hmac=08ede42040b922d386ff3282f3388e73fadcca2707aa5c734b318878835f76ed&w=740';
+
 export const noDataImage =
   'https://img.freepik.com/free-vector/hand-drawn-no-data-concept_52683-127829.jpg?t=st=1721822195~exp=1721825795~hmac=d4e497a72d2f5967acb71abce529b790a5a63db1ce4703ea5d2ecef483850220&w=826';
+
+export const defaultImage =
+  'https://img.freepik.com/free-vector/loading-circles-blue-gradient_78370-2646.jpg?t=st=1723103342~exp=1723106942~hmac=5afc9bca387f5051007c4975461478a943f9c70f4f49c30c39b992a53385607d&w=740';
 
 // import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -24,11 +28,11 @@ const moderateScale = (size, factor = 0.5) =>
 
 // Colors
 export const COLORS = {
-  primary: '#3498db', // Blue
-  secondary: '#2ecc71', // Green
-  accent: '#e74c3c', // Red
-  background: '#ecf0f1', // Light gray
-  text: '#2c3e50', // Dark gray
+  primary: '#00246b',
+  secondary: '#cadcfc',
+  accent: '#e74c3c',
+  background: '#ecf0f1',
+  text: '#2c3e50',
   white: '#ffffff',
   black: '#000000',
 };

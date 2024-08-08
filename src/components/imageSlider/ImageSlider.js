@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {deviceWidth} from '../../constants/Constants';
+import {defaultImage, deviceWidth} from '../../constants/Constants';
 
 const ImageSlider = ({data}) => {
   const flatlistRef = useRef(null);
@@ -62,7 +62,7 @@ const ImageSlider = ({data}) => {
         <TouchableOpacity activeOpacity={0.7} key={index}>
           <Image
             resizeMode="cover"
-            source={{uri: item.filename}}
+            source={{uri: item.filename || defaultImage}}
             style={styles.image}
           />
 

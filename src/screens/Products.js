@@ -15,6 +15,7 @@ import {addToCart} from '../redux/actions';
 import Cart from '../components/Assets/svg/cart.svg';
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
+import Loader from '../components/Loader/Loader';
 
 const Products = () => {
   const navigation = useNavigation();
@@ -100,7 +101,9 @@ const Products = () => {
   return (
     <View style={styles.mainContainer}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <View style={styles.container}>
           <View style={styles.header}>

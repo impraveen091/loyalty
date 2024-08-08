@@ -26,6 +26,7 @@ import {
   deviceWidth,
   deviceHeight,
   profileImageLink,
+  COLORS,
 } from '../constants/Constants';
 import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
@@ -41,8 +42,8 @@ const CustomDrawerContent = ({navigation}) => {
   const [checked, setChecked] = useState('');
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
-  const [pColor, setPColor] = useState('');
-  const [sColor, setSColor] = useState('');
+  const [pColor, setPColor] = useState(COLORS.primary);
+  const [sColor, setSColor] = useState(COLORS.secondary);
   const [storeData, setStoreData] = useState([]);
   const [kycStatus, setKycStatus] = useState(null);
 
@@ -71,8 +72,8 @@ const CustomDrawerContent = ({navigation}) => {
 
     try {
       const result = await getUserData('images');
-      setPColor(result.primary_color);
-      setSColor(result.secondary_color);
+      setPColor(result?.primary_color);
+      setSColor(result?.secondary_color);
     } catch (error) {
       console.error('Get request failed:', error);
     }
@@ -125,7 +126,7 @@ const CustomDrawerContent = ({navigation}) => {
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
-        colors={['#00308F', '#5072A7']}
+        colors={[pColor, sColor]}
         style={styles.linearGradient}>
         <TouchableOpacity
           style={styles.imageContainer}

@@ -11,11 +11,12 @@ import {
   Modal,
   ToastAndroid,
 } from 'react-native';
-import {deviceHeight, deviceWidth} from '../constants/Constants';
+import {COLORS, deviceHeight, deviceWidth} from '../constants/Constants';
 import LinearGradient from 'react-native-linear-gradient';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
 import {getUserData} from '../Auth/Auth';
+import Loader from '../components/Loader/Loader';
 
 const Redeem = () => {
   const isFocused = useIsFocused();
@@ -26,8 +27,8 @@ const Redeem = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [maxRedeemValue, setMaxRedeemValue] = useState(null);
-  const [pColor, setPColor] = useState('');
-  const [sColor, setSColor] = useState('');
+  const [pColor, setPColor] = useState(COLORS.primary);
+  const [sColor, setSColor] = useState(COLORS.secondary);
 
   const fetchData = async () => {
     setLoading(true);
@@ -52,7 +53,6 @@ const Redeem = () => {
       const result = await getUserData('images');
       console.log('color', result);
       if (result?.primary_color) {
-        console.log('colorP', result.primary_color);
         setPColor(result?.primary_color);
         setSColor(result?.secondary_color);
       }
@@ -112,7 +112,9 @@ const Redeem = () => {
   return (
     <View showsVerticalScrollIndicator={false} style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <View>
           <Text style={styles.heading}>Redeem </Text>
@@ -120,7 +122,7 @@ const Redeem = () => {
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={['#5873c6', '#bf4a4a']}
+              colors={[pColor, sColor]}
               style={styles.linearGradient}>
               <Text style={styles.subheading}> Redeem Log</Text>
               <Text style={styles.data}>
@@ -128,11 +130,12 @@ const Redeem = () => {
               </Text>
             </LinearGradient>
           </TouchableOpacity>
+
           <TouchableOpacity onPress={notifyUser}>
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 1}}
-              colors={['#5873c6', '#bf4a4a']}
+              colors={[pColor, sColor]}
               style={styles.linearGradient}>
               <Text style={styles.subheading}>Redeem Points</Text>
               <Text style={styles.data}>

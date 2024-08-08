@@ -11,6 +11,7 @@ import React, {useEffect, useState} from 'react';
 import {deviceWidth} from '../constants/Constants';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
+import Loader from '../components/Loader/Loader';
 
 const Bank = () => {
   const isFocused = useIsFocused();
@@ -42,7 +43,9 @@ const Bank = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <>
           <Text style={styles.heading}>Bank Management</Text>

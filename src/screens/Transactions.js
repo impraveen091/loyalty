@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  ScrollView,
 } from 'react-native';
-
 import axiosInstance from '../Auth/AxiosInstance';
 import {deviceHeight, deviceWidth, noDataImage} from '../constants/Constants';
+import Loader from '../components/Loader/Loader';
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -40,9 +41,11 @@ const Transactions = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#1b254c" style={styles.loader} />
+        <View style={styles.loader}>
+          <Loader />
+        </View>
       ) : (
         <>
           <Text style={styles.heading}>Transactions</Text>
@@ -82,7 +85,7 @@ const Transactions = () => {
           )}
         </>
       )}
-    </View>
+    </ScrollView>
   );
 };
 

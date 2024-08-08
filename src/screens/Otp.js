@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {deviceWidth} from '../constants/Constants';
+import {defaultImage, deviceWidth} from '../constants/Constants';
 import RightArrow from '../components/Assets/svg/right-arrow.svg';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
@@ -19,10 +19,10 @@ import axiosInstance from '../Auth/AxiosInstance';
 const Otp = () => {
   const {t} = useTranslation();
   const navigation = useNavigation();
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState();
   const [error, setError] = useState('');
-  const [logo, setLogo] = useState('');
-  const [otpImage, setOtpImage] = useState('');
+  const [logo, setLogo] = useState(defaultImage);
+  const [otpImage, setOtpImage] = useState(defaultImage);
 
   useEffect(() => {
     const images = async () => {

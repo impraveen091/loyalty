@@ -26,7 +26,6 @@ import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
-import DummyScreen from '../screens/DummyScreen';
 import {getUserData} from '../Auth/Auth';
 import {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
