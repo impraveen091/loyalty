@@ -30,6 +30,7 @@ import {getUserData} from '../Auth/Auth';
 import axiosInstance from '../Auth/AxiosInstance';
 import {useIsFocused} from '@react-navigation/native';
 import Loader from '../components/Loader/Loader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Dashboard = ({navigation}) => {
   const isFocused = useIsFocused();
@@ -99,6 +100,13 @@ const Dashboard = ({navigation}) => {
       if (error.response.data.message === 'Kyc data not found.') {
         setStatus(2);
       }
+    }
+
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      console.log('All Keys', keys);
+    } catch (error) {
+      console.log('error', error);
     }
 
     setLoading(false);

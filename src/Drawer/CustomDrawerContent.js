@@ -114,7 +114,7 @@ const CustomDrawerContent = ({navigation}) => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.clear();
+      await AsyncStorage.removeItem('images');
       navigation.replace('Signin');
     } catch (error) {
       console.error('Failed to log out:', error);
