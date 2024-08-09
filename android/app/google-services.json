@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "758866544660",
+    "project_id": "surescanr-6d375",
+    "storage_bucket": "surescanr-6d375.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758866544660:android:3a0761496901129e4ebf01",
+        "android_client_info": {
+          "package_name": "com.loyalty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5ceHANcgEvf6mM88eVyLFUbv3sswXwAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

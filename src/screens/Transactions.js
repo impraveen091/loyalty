@@ -41,7 +41,7 @@ const Transactions = () => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {loading ? (
         <View style={styles.loader}>
           <Loader />

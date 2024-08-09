@@ -30,12 +30,13 @@ import {getUserData} from '../Auth/Auth';
 import {useEffect, useState} from 'react';
 import {useRoute} from '@react-navigation/native';
 import RedeemStatus from '../screens/RedeemStatus';
+import {defaultImage} from '../constants/Constants';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 const DashboardDrawerNavigator = ({navigation}) => {
-  const [logoImage, setLogoImage] = useState(null);
+  const [logoImage, setLogoImage] = useState(defaultImage);
 
   useEffect(() => {
     const fetchImages = async () => {
