@@ -149,7 +149,7 @@ const Signup = () => {
         ...formData,
         profession_id: profession,
         state: state,
-        city: city.toLowerCase(),
+        city: city,
       };
       console.log('payload signup', payload);
       try {
