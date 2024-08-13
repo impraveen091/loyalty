@@ -37,7 +37,6 @@ const Otp = () => {
 
   const submit = async () => {
     const data = await getUserData('data');
-    console.log('OTP data', data);
     if (otp.length !== 6) {
       setError('OTP must be 6 digits');
     } else {

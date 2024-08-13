@@ -33,9 +33,8 @@ import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import {getUserData} from '../Auth/Auth';
-import axiosInstance from '../Auth/AxiosInstance';
 
-const CustomDrawerContent = ({navigation}) => {
+const CustomDrawerContent = ({navigation, kycStatus}) => {
   const {t} = useTranslation();
   const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,29 +44,16 @@ const CustomDrawerContent = ({navigation}) => {
   const [pColor, setPColor] = useState(COLORS.primary);
   const [sColor, setSColor] = useState(COLORS.secondary);
   const [storeData, setStoreData] = useState([]);
-  const [kycStatus, setKycStatus] = useState(null);
 
   const data = async () => {
     try {
       const DataDrawer = await getUserData('data');
       // console.log('DataDrawer', DataDrawer);
       setStoreData(DataDrawer);
-      setImage(DataDrawer?.image === '' ? profileImageLink : DataDrawer?.image);
+      setImage(DataDrawer.image);
       setName(DataDrawer.name);
-      setKycStatus(DataDrawer.status);
     } catch (error) {
       console.error('Failed to fetch user data:', error);
-    }
-
-    const urlkyc = 'app-user/get/kyc-details';
-    try {
-      const result = await axiosInstance.get(urlkyc);
-      setKycStatus(result.data.data.status);
-    } catch (error) {
-      console.log('Get request failed:', error.response.data.message);
-      if (error.response.data.message === 'Kyc data not found.') {
-        setKycStatus(2);
-      }
     }
 
     try {
@@ -78,7 +64,6 @@ const CustomDrawerContent = ({navigation}) => {
       console.error('Get request failed:', error);
     }
   };
-
   useEffect(() => {
     data();
   }, [storeData]);

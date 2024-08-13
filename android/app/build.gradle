@@ -115,12 +115,8 @@ afterEvaluate {
 dependencies {
    
     implementation("com.facebook.react:react-android")
-    implementation("com.google.firebase:firebase-bom:32.8.0")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation 'com.google.firebase:firebase-core:9.6.1'
-    implementation project(':react-native-push-notification')
-    implementation ("com.google.firebase:firebase-messaging:23.1.0")
-
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+    implementation 'com.google.firebase:firebase-messaging'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
@@ -132,5 +128,7 @@ dependencies {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
-apply plugin: 'com.google.gms.google-services'
 
+
+
+apply plugin: 'com.google.gms.google-services'

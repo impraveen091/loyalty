@@ -1,3 +1,4 @@
+import {useEffect, useState} from 'react';
 import Redeem from '../screens/Redeem';
 import Dashboard from '../screens/Dashboard';
 import PromotionalOffers from '../screens/PromotionalOffers';
@@ -27,35 +28,53 @@ import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
 import {getUserData} from '../Auth/Auth';
-import {useEffect, useState} from 'react';
-import {useRoute} from '@react-navigation/native';
 import RedeemStatus from '../screens/RedeemStatus';
 import {defaultImage} from '../constants/Constants';
+import axiosInstance from '../Auth/AxiosInstance';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 const DashboardDrawerNavigator = ({navigation}) => {
   const [logoImage, setLogoImage] = useState(defaultImage);
+  const [kycStatus, setKycStatus] = useState(0);
+
+  const fetchImagesAndKyc = async () => {
+    try {
+      const images = await getUserData('images');
+      console.log('img1', images.logo);
+      setLogoImage(images.logo ? images.logo : defaultImage);
+    } catch (error) {
+      console.error('Failed to fetch images', error);
+      setLogoImage(defaultImage);
+    }
+
+    try {
+      const urlkyc = 'app-user/get/kyc-details';
+      const result = await axiosInstance.get(urlkyc);
+      console.log('KYC:', result.data);
+      if (result.data.success === 'success') {
+        console.log('Setting KYC Status to:', result.data.data.status);
+        setKycStatus(result.data.data.status);
+      }
+    } catch (error) {
+      console.log('Get request failed:', error.response.data.message);
+      if (error.response.data.message === 'Kyc data not found.') {
+        setKycStatus(2);
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const images = await getUserData('images');
-        console.log('img1', images.logo);
-        setLogoImage(images.logo ? images.logo : Logo);
-      } catch (error) {
-        console.error('Failed to fetch images', error);
-        setLogoImage(Logo);
-      }
-    };
-
-    fetchImages();
+    fetchImagesAndKyc();
   }, []);
+
   return (
     <Drawer.Navigator
       initialRouteName="Dashboard"
-      drawerContent={props => <CustomDrawerContent {...props} />}
+      drawerContent={props => (
+        <CustomDrawerContent {...props} kycStatus={kycStatus} />
+      )}
       screenOptions={{
         headerRight: () => (
           <TouchableOpacity

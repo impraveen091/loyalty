@@ -145,7 +145,12 @@ const Signup = () => {
     setError(newErrors);
     if (Object.keys(newErrors).length === 0) {
       const url = 'auth/app-user/sign-up';
-      const payload = {...formData, profession_id: profession, state, city};
+      const payload = {
+        ...formData,
+        profession_id: profession,
+        state: state,
+        city: city.toLowerCase(),
+      };
       console.log('payload signup', payload);
       try {
         const result = await axiosInstance.post(url, payload);

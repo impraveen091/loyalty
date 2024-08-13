@@ -5,14 +5,12 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import ImageSlider from '../components/imageSlider/ImageSlider';
 import PointCard from '../components/PointCard/PointCard';
 import {
   COLORS,
   defaultImage,
-  deviceHeight,
   deviceWidth,
   profileImageLink,
 } from '../constants/Constants';
@@ -30,7 +28,6 @@ import {getUserData} from '../Auth/Auth';
 import axiosInstance from '../Auth/AxiosInstance';
 import {useIsFocused} from '@react-navigation/native';
 import Loader from '../components/Loader/Loader';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Dashboard = ({navigation}) => {
   const isFocused = useIsFocused();
@@ -40,7 +37,7 @@ const Dashboard = ({navigation}) => {
   const [pColor, setPColor] = useState(COLORS.primary);
   const [sColor, setSColor] = useState(COLORS.secondary);
   const [pointLimit, setPointLimit] = useState('');
-  const [status, setStatus] = useState(0);
+  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [SliderImages, setSliderImages] = useState([]);
 
@@ -75,8 +72,7 @@ const Dashboard = ({navigation}) => {
     try {
       const imageData = await getUserData('data');
       console.log('profileDAta', imageData.image);
-
-      setImage(imageData?.image !== '' ? imageData?.image : profileImageLink);
+      setImage(imageData?.image);
     } catch (error) {
       console.error('Get user data failed:', error);
     }
@@ -93,7 +89,7 @@ const Dashboard = ({navigation}) => {
     const urlkyc = 'app-user/get/kyc-details';
     try {
       const result = await axiosInstance.get(urlkyc);
-      console.log('kyc details:', result.data);
+      console.log('kyc details:', result.data.data.status);
       setStatus(result.data.data.status);
     } catch (error) {
       console.log('Get request failed:', error.response.data.message);
@@ -102,11 +98,18 @@ const Dashboard = ({navigation}) => {
       }
     }
 
+    const urlfcm = 'app-user/notification-token';
+    const result = await getUserData('fcmToken');
+    const fcmPayload = {
+      fcm_device_token: result,
+    };
+    console.log('FCMpAYLOAD', fcmPayload);
+
     try {
-      const keys = await AsyncStorage.getAllKeys();
-      console.log('All Keys', keys);
+      const result = await axiosInstance.post(urlfcm, fcmPayload);
+      console.log('fcmToken post', result.data);
     } catch (error) {
-      console.log('error', error);
+      console.log('POST for FCM request failed:', error.response.data.message);
     }
 
     setLoading(false);
