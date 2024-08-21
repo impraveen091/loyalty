@@ -52,6 +52,9 @@ const Profile = () => {
         name: data?.name,
         email: data?.email,
         phone: data?.phone,
+        city: data?.city,
+        state: data?.state,
+        profession: data?.profession_name,
         adhar: kyc?.adhar,
         adhar_img: kyc?.adhar_img,
         pan: kyc?.pan,
@@ -351,7 +354,9 @@ const Profile = () => {
                 resizeMode="cover"
               />
             </TouchableOpacity>
-            <Text style={styles.text}>Edit Profile Photo</Text>
+            <Text style={styles.text} onPress={handleImagePick}>
+              Edit Profile Image
+            </Text>
           </View>
           <View style={styles.form}>
             <TouchableOpacity
@@ -383,7 +388,25 @@ const Profile = () => {
                 <TextInput
                   style={styles.input}
                   value={formData.phone}
-                  editable={!kyc}
+                  editable={false}
+                />
+                <Text style={styles.label}>Profession</Text>
+                <TextInput
+                  style={styles.input}
+                  value={formData.profession_name}
+                  editable={false}
+                />
+                <Text style={styles.label}>City</Text>
+                <TextInput
+                  style={styles.input}
+                  value={formData.city}
+                  editable={false}
+                />
+                <Text style={styles.label}>State</Text>
+                <TextInput
+                  style={styles.input}
+                  value={formData.state}
+                  editable={false}
                 />
               </View>
             )}
