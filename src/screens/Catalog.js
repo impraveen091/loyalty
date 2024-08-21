@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import {
   COLORS,

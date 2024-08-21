@@ -405,6 +405,7 @@ const Profile = () => {
                 <TextInput
                   style={styles.input}
                   value={formData.adhar}
+                  keyboardType="numeric"
                   editable={!kyc}
                   onChangeText={text => handleInputChange('adhar', text)}
                 />

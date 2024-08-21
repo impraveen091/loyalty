@@ -18,6 +18,7 @@ import {
   defaultImage,
   deviceHeight,
   deviceWidth,
+  userid,
   username,
 } from '../constants/Constants';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
@@ -67,7 +68,7 @@ const Signin = () => {
       const response = await axios.get(`${Base_url}app-user/tenant/app-data`, {
         headers: {
           'x-username': username,
-          'x-tenant-id': '1',
+          'x-tenant-id': userid,
           'Content-Type': 'application/json',
         },
       });
@@ -86,7 +87,7 @@ const Signin = () => {
         };
         await saveUserData('images', screenImages);
       } else {
-        console.error('Unexpected response format', responseData);
+        console.error('Unexpected response format', response);
         setError({error: 'Unexpected response format'});
       }
     } catch (error) {
@@ -105,8 +106,9 @@ const Signin = () => {
       setError({error: 'No internet connection'});
       return;
     }
+
     makeApiCall();
-  }, [username, isConnected]);
+  }, [isConnected]);
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -180,16 +182,19 @@ const Signin = () => {
         />
       ) : (
         <View>
-          <Image
-            source={{
-              uri: logo,
-            }}
-            style={[
-              styles.image,
-              {width: deviceWidth - 50, height: 70, alignSelf: 'center'},
-            ]}
-            resizeMode="contain"
-          />
+          {logo && (
+            <Image
+              source={{
+                uri: logo,
+              }}
+              style={[
+                styles.image,
+                {width: deviceWidth - 50, height: 70, alignSelf: 'center'},
+              ]}
+              resizeMode="contain"
+            />
+          )}
+
           <TouchableOpacity
             style={styles.languageSection}
             onPress={() => setModalVisible(!modalVisible)}>

@@ -147,7 +147,7 @@ const Scan = () => {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder={'Enter QR Code'}
+            placeholder="Enter QR Code"
             placeholderTextColor="grey"
             onChangeText={setCode}
             value={code}
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+    color: 'black',
   },
   submit: {
     backgroundColor: '#00308F',

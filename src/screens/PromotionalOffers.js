@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
@@ -63,8 +64,9 @@ const PromotionalOffers = () => {
       ) : (
         <>
           <Text style={styles.heading}>Offers & Promotions</Text>
-          <Text style={styles.subheading}>Product Offers</Text>
+
           {offers.length > 0 ? (
+            ((<Text style={styles.subheading}>Product Offers</Text>),
             offers.map((item, index) => (
               <TouchableOpacity
                 onPress={() =>
@@ -86,7 +88,7 @@ const PromotionalOffers = () => {
                   </View>
                 </LinearGradient>
               </TouchableOpacity>
-            ))
+            )))
           ) : (
             <Image
               resizeMode="cover"

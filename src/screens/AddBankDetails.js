@@ -1,6 +1,7 @@
 import {
   Alert,
   Button,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import DocumentPicker from 'react-native-document-picker';
 
 import {useNavigation} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
+import {deviceWidth} from '../constants/Constants';
 
 const AddBankDetails = ({route}) => {
   const navigation = useNavigation();
@@ -33,31 +35,27 @@ const AddBankDetails = ({route}) => {
     if (editData) {
       setFormData({
         acc_no: editData.acc_no,
-        bank_name: editData.bank_name,
-        ifsc_code: editData.ifsc_code,
-        passbook_img: null,
-        account_name: editData.account_name,
-        upi_id: editData.upi_id,
+        bank_name: editData.bank_name?.toUpperCase(),
+        ifsc_code: editData.ifsc_code?.toUpperCase(),
+        passbook_img: editData.passbook_img,
+        account_name: editData.account_name?.toUpperCase(),
+        upi_id: editData.upi_id?.toUpperCase(),
       });
     }
   }, []);
 
   const handleInputChange = (field, value) => {
-    setFormData({...formData, [field]: value});
+    console.log('update fields', field, value);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      [field]: value.toUpperCase(),
+    }));
     if (typeof value === 'string' && value.trim() !== '') {
-      setErrors({...errors, [field]: null});
+      setErrors(prevError => ({
+        ...prevError,
+        [field]: null,
+      }));
     }
-  };
-
-  const validateFields = () => {
-    const newErrors = {};
-    Object.keys(formData).forEach(field => {
-      if (!formData[field]) {
-        newErrors[field] = 'This field is required';
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   const pickFile = async field => {
@@ -82,29 +80,64 @@ const AddBankDetails = ({route}) => {
   };
 
   const handleSubmit = async () => {
-    console.log('formdatabank', formData);
-    if (validateFields()) {
-      try {
-        const response = await axiosInstance.post(
-          'app-user/bank-details/update',
-          formData,
-        );
-        console.log('bank details', response.data);
-        if (response.data.success === 'success') {
-          ToastAndroid.show('Details Added', ToastAndroid.SHORT);
-          navigation.navigate('Dashboard');
-        }
-      } catch (error) {
-        Alert.alert(
-          'Submission Error',
-          error.response.data.message || error.message,
-        );
-      }
-    } else {
-      ToastAndroid.show(
-        'Please fill in all required fields',
-        ToastAndroid.SHORT,
+    const {acc_no, account_name, bank_name, ifsc_code, passbook_img, upi_id} =
+      formData;
+    if (
+      !acc_no ||
+      !account_name ||
+      !bank_name ||
+      !ifsc_code ||
+      !passbook_img ||
+      !upi_id
+    ) {
+      setErrors({
+        acc_no: !adhar ? 'Aadhar number is required' : '',
+        account_name: !account_name ? 'Account Name is required' : '',
+        bank_name: !bank_name ? 'Bank Name is required' : '',
+        ifsc_code: !ifsc_code ? 'ifsc code is required' : '',
+        passbook_img: !passbook_img ? 'Passbook Image is required' : '',
+        upi_id: !upi_id ? 'upi id is required' : '',
+      });
+      return;
+    }
+    const payload = new FormData();
+
+    payload.append('acc_no', acc_no);
+    payload.append('account_name', account_name);
+    payload.append('bank_name', bank_name);
+    payload.append('ifsc_code', ifsc_code);
+    payload.append('upi_id', upi_id);
+
+    if (typeof passbook_img === 'object') {
+      payload.append('passbook_img', {
+        uri: passbook_img.uri,
+        type: passbook_img.type,
+        name: passbook_img.name,
+      });
+    }
+
+    console.log('payload', payload);
+    try {
+      const response = await axiosInstance.post(
+        'app-user/bank-details/update',
+        payload,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
       );
+      console.log('update bank Details', response.data);
+      if (response.data.success === 'success') {
+        ToastAndroid.show('Details Added', ToastAndroid.SHORT);
+        navigation.navigate('Dashboard');
+      }
+    } catch (err) {
+      console.log(
+        'API call error:',
+        err.response?.data?.message || err.message,
+      );
+      Alert.alert(err.response?.data?.message || err.message);
     }
   };
 
@@ -166,8 +199,10 @@ const AddBankDetails = ({route}) => {
       </View>
       <View style={styles.fileSection}>
         <Text style={{fontSize: 18, color: 'grey'}}>
-          {formData.passbook_img
-            ? `${formData.passbook_img.name.slice(0, 25)}`
+          {formData.passbook_img?.name
+            ? formData.passbook_img.name?.slice(0, 25)
+            : formData.passbook_img
+            ? formData.passbook_img.slice(0, 29.5)
             : 'Bank Passbook First Page'}
         </Text>
         <TouchableOpacity
@@ -176,6 +211,10 @@ const AddBankDetails = ({route}) => {
           <Text style={styles.upload}>Upload</Text>
         </TouchableOpacity>
       </View>
+      {/* {formData.passbook_img && (
+        <Image source={formData.passbook_img} style={styles.imageStyle} />
+      )} */}
+
       {errors.passbook_img && (
         <Text style={styles.errorText}>{errors.passbook_img}</Text>
       )}
@@ -247,5 +286,9 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 14,
     marginTop: 5,
+  },
+  imageStyle: {
+    width: deviceWidth / 3,
+    height: deviceWidth / 2,
   },
 });

@@ -1,6 +1,7 @@
 // Api.js
 import axios from 'axios';
 import {getToken, getUserData} from '../src/Auth/Auth';
+import {userid, username} from '../src/constants/Constants';
 
 export const Base_url = 'https://api.surescanr.com/api/';
 
@@ -23,8 +24,8 @@ const getHeaders = async () => {
       }
     }
   } else {
-    headers['x-username'] = 'bigleap';
-    headers['x-tenant-id'] = 1;
+    headers['x-username'] = username;
+    headers['x-tenant-id'] = userid;
   }
 
   return headers;

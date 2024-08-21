@@ -99,7 +99,9 @@ const CustomDrawerContent = ({navigation, kycStatus}) => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('images');
+      await AsyncStorage.removeItem('phone');
+      await AsyncStorage.removeItem('kyc');
+      await AsyncStorage.removeItem('data');
       navigation.replace('Signin');
     } catch (error) {
       console.error('Failed to log out:', error);

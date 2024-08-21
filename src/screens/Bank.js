@@ -29,7 +29,7 @@ const Bank = () => {
         setBank(result.data.data);
       }
     } catch (error) {
-      console.error('Get request failed:', error);
+      console.error('Get request failed1:', error);
     }
     setLoading(false);
   };

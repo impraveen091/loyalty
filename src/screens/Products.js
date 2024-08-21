@@ -56,20 +56,21 @@ const Products = () => {
         <Image
           source={{uri: item?.ProductImages[0].image}}
           style={styles.image}
+          resizeMode="contain"
         />
         <View style={{maxWidth: '70%', rowGap: 5}}>
           <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.productDescription}>
+          {/* <Text style={styles.productDescription}>
             <Text style={styles.boldText}>Description: </Text>
             {item.description}
-          </Text>
+          </Text> */}
           <Text style={styles.productPrice}>
             <Text style={styles.boldText}>Price: ₹</Text>
             {item.price}
           </Text>
           <Text style={styles.productColor}>{item.color}</Text>
 
-          <View style={styles.quantityContainer}>
+          {/* <View style={styles.quantityContainer}>
             {quantity <= 0 ? (
               <TouchableOpacity
                 style={styles.addtocart}
@@ -92,7 +93,7 @@ const Products = () => {
                 </TouchableOpacity>
               </>
             )}
-          </View>
+          </View> */}
         </View>
       </View>
     );
@@ -183,9 +184,11 @@ const styles = StyleSheet.create({
   image: {width: 150, height: 150},
   productName: {
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     color: 'black',
     marginRight: 10,
+    width: '85%',
+    flexWrap: 'wrap',
   },
   productDescription: {
     flexWrap: 'wrap',

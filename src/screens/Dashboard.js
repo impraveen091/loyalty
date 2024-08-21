@@ -46,27 +46,27 @@ const Dashboard = ({navigation}) => {
     const url = 'app-user/points-available';
     try {
       const result = await axiosInstance.get(url);
-      // console.log('Points:', result.data);
+      console.log('Points:', result.data);
       setPoints(result.data.data);
     } catch (error) {
-      console.error('Get request failed:', error);
+      console.error('Get request failed1:', error);
     }
     const urllimit = 'tenant/redemption/get';
     try {
       const result = await axiosInstance.get(urllimit);
-      // console.log('Points limit:', result.data);
+      console.log('Points limit:', result.data);
       setPointLimit(result.data.data);
     } catch (error) {
-      console.error('Get request failed:', error);
+      console.error('Get request failed2:', error);
     }
 
-    const urlSlider = 'app-data/slider-img/list';
+    const urlSlider = 'app-user/slider/list';
     try {
       const result = await axiosInstance.get(urlSlider);
-      // console.log('SliderImages:', result.data);
+      console.log('SliderImages:', result.data);
       setSliderImages(result.data.data);
     } catch (error) {
-      console.error('Get request failed:', error);
+      console.error('Get request failed3:', error);
     }
 
     try {
@@ -74,7 +74,7 @@ const Dashboard = ({navigation}) => {
       console.log('profileDAta', imageData.image);
       setImage(imageData?.image);
     } catch (error) {
-      console.error('Get user data failed:', error);
+      console.error('Get user data failed4:', error);
     }
 
     try {
@@ -129,7 +129,8 @@ const Dashboard = ({navigation}) => {
         </View>
       ) : (
         <>
-          <ImageSlider data={SliderImages} />
+          {SliderImages.length > 0 && <ImageSlider data={SliderImages} />}
+
           <PointCard
             imageLink={image ? image : defaultImage}
             points={points}

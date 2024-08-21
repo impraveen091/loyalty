@@ -54,6 +54,14 @@ const Transactions = () => {
               <View style={styles.card} key={index.toString()}>
                 <View style={styles.insideCard}>
                   <Text style={styles.data}>
+                    <Text style={styles.subheading}>Product:</Text>
+                    <Text style={[styles.subheading, {fontWeight: '300'}]}>
+                      {item.Product.name}
+                    </Text>
+                  </Text>
+                </View>
+                <View style={styles.insideCard}>
+                  <Text style={styles.data}>
                     <Text style={styles.subheading}>Date:</Text>
                     <Text style={[styles.subheading, {fontWeight: '300'}]}>
                       {formatDate(item.scan_date)}
@@ -63,14 +71,6 @@ const Transactions = () => {
                     <Text style={styles.subheading}>Points:</Text>
                     <Text style={[styles.subheading, {fontWeight: '300'}]}>
                       {item.points}
-                    </Text>
-                  </Text>
-                </View>
-                <View style={styles.insideCard}>
-                  <Text style={styles.data}>
-                    <Text style={styles.subheading}>Product:</Text>
-                    <Text style={[styles.subheading, {fontWeight: '300'}]}>
-                      {item.Product.name}
                     </Text>
                   </Text>
                 </View>
@@ -101,16 +101,16 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 10,
     backgroundColor: 'white',
-    height: 100,
     borderRadius: 10,
     elevation: 5,
     padding: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   subheading: {
     color: 'black',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
   },
   data: {color: 'black', fontSize: 16, marginBottom: 10},
