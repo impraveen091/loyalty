@@ -8,109 +8,54 @@ import {
   Image,
   ActivityIndicator,
   Button,
+  ScrollView,
 } from 'react-native';
 import {deviceHeight, deviceWidth} from '../constants/Constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToCart} from '../redux/actions';
 import Cart from '../components/Assets/svg/cart.svg';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import axiosInstance from '../Auth/AxiosInstance';
 import Loader from '../components/Loader/Loader';
+import ImageSlider from '../components/imageSlider/ImageSlider';
 
-const Products = () => {
+const ProductDetails = () => {
+  const route = useRoute();
   const navigation = useNavigation();
   const centralData = useSelector(state => state.cart.cart);
   const dispatch = useDispatch();
-  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
+  const product_id = route.params.product_id;
+
+  const cartItem = centralData.find(cartItem => cartItem.id === product.id);
+  const quantity = cartItem ? cartItem.quantity : 0;
+  console.log('central', centralData);
 
   useEffect(() => {
-    const getProducts = async () => {
+    const getProduct = async () => {
       setLoading(true);
-      const url = 'product/get-list';
+      const url = `app-user/product/${product_id}`;
       try {
         const result = await axiosInstance.get(url);
-        console.log('Products:', result.data.data[0]);
+        console.log('ProductDetails:', result.data.data);
         if (result.data.success === 'success') {
-          setProducts(result.data.data);
+          setProduct(result.data.data);
         }
       } catch (error) {
-        console.error('Get request failed:', error);
+        console.error(
+          'Get request failed:',
+          error.response.data.message || error.message,
+        );
       }
 
       setLoading(false);
     };
-    getProducts();
+    getProduct();
   }, []);
 
   const handleAddToCart = (item, quantity) => {
     dispatch(addToCart(item, quantity));
-  };
-
-  const renderProduct = ({item}) => {
-    const cartItem = centralData.find(cartItem => cartItem.id === item.id);
-    const quantity = cartItem ? cartItem.quantity : 0;
-    console.log('item', item);
-
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          navigation.navigate('ProductDetails', {
-            product_id: item?.id,
-          })
-        }>
-        <Image
-          source={{uri: item?.ProductImages[0].image}}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <View style={{maxWidth: '70%', rowGap: 5}}>
-          <Text style={styles.productName}>{item.name}</Text>
-          {/* <Text style={styles.productDescription}>
-            <Text style={styles.boldText}>Description: </Text>
-            {item.description}
-          </Text> */}
-          <Text style={styles.productPrice}>
-            <Text style={styles.boldText}>Price: ₹</Text>
-            {item.price}
-          </Text>
-          <Text style={styles.productColor}>{item.color}</Text>
-
-          <View style={styles.quantityContainer}>
-            {quantity <= 0 ? (
-              <Cart
-                style={styles.cartIcon}
-                onPress={() => handleAddToCart(item, quantity + 1)}
-              />
-            ) : (
-              // <TouchableOpacity
-              //   style={styles.addtocart}
-              //   onPress={() => handleAddToCart(item, quantity + 1)}>
-              //   <Text style={styles.addToCartText}>
-
-              //     Add to Cart
-              //   </Text>
-              // </TouchableOpacity>
-              <>
-                <TouchableOpacity
-                  style={styles.quantityButton}
-                  onPress={() => handleAddToCart(item, quantity - 1)}
-                  disabled={quantity <= 0}>
-                  <Text style={styles.quantityButtonText}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.quantityText}>{quantity}</Text>
-                <TouchableOpacity
-                  style={styles.quantityButton}
-                  onPress={() => handleAddToCart(item, quantity + 1)}>
-                  <Text style={styles.quantityButtonText}>+</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -122,7 +67,7 @@ const Products = () => {
       ) : (
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.heading}>Products</Text>
+            <Text style={styles.heading}>Product Detail</Text>
             <TouchableOpacity
               style={styles.cartContainer}
               onPress={() => navigation.navigate('Cart')}>
@@ -132,29 +77,75 @@ const Products = () => {
               </View>
             </TouchableOpacity>
           </View>
-          <FlatList
-            data={products}
-            renderItem={renderProduct}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={styles.cardContainer}
-            showsVerticalScrollIndicator={false}
-          />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Cart')}>
-            <Text style={styles.buttonText}>Go to Cart</Text>
-          </TouchableOpacity>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View
+              style={{
+                justifyContent: 'center',
+                paddingHorizontal: 15,
+                marginBottom: 10,
+              }}>
+              <ImageSlider data={product.ProductImages} mode="contain" />
+            </View>
+
+            <View style={{paddingHorizontal: 15}}>
+              <Text style={styles.detail}>{product.name}</Text>
+              <Text style={[styles.detail, {fontSize: 14, color: 'grey'}]}>
+                {product.description}
+              </Text>
+              <Text style={[styles.detail, {fontSize: 14, color: 'grey'}]}>
+                Colors: {product.color}
+              </Text>
+              <Text style={[styles.detail, {fontSize: 16}]}>
+                price: ₹{product.price}
+              </Text>
+              <Text style={[styles.detail, {fontSize: 16}]}>
+                size: {product.weight}
+              </Text>
+            </View>
+            <View style={styles.quantityContainer}>
+              {quantity <= 0 ? (
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    {width: '100%', backgroundColor: 'green'},
+                  ]}
+                  onPress={() => handleAddToCart(product, quantity + 1)}>
+                  <Text style={styles.buttonText}>Add to Cart</Text>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => handleAddToCart(product, quantity - 1)}
+                    disabled={quantity <= 0}>
+                    <Text style={styles.quantityButtonText}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.quantityText}>{quantity}</Text>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => handleAddToCart(product, quantity + 1)}>
+                    <Text style={styles.quantityButtonText}>+</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('Cart')}>
+              <Text style={styles.buttonText}>Go to Cart</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       )}
     </View>
   );
 };
 
-export default Products;
+export default ProductDetails;
 
 const styles = StyleSheet.create({
   mainContainer: {flex: 1},
-  container: {flex: 1, padding: 10},
+  container: {flex: 1, padding: 5},
   loader: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   header: {flexDirection: 'row', justifyContent: 'center'},
   heading: {
@@ -170,6 +161,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  scrollViewContent: {
+    alignItems: 'center',
+    flexDirection: 'column',
+    width: deviceWidth - 10,
+    marginBottom: 10,
+    paddingHorizontal: 15,
+    zIndex: 1000,
+  },
   cartCount: {
     textAlign: 'center',
     fontSize: 16,
@@ -184,17 +183,7 @@ const styles = StyleSheet.create({
   },
   cartIcon: {width: 20, height: 20, marginLeft: 5, marginTop: 10},
   cardContainer: {paddingBottom: 10, backgroundColor: 'white'},
-  card: {
-    width: deviceWidth - 20,
-    height: 170,
-    backgroundColor: 'white',
-    elevation: 5,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    flexDirection: 'row',
-    columnGap: 10,
-  },
+
   image: {width: 150, height: 150},
   productName: {
     fontWeight: 'bold',
@@ -216,10 +205,8 @@ const styles = StyleSheet.create({
   productColor: {fontWeight: 'bold', color: 'black'},
   quantityContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
+    marginTop: 10,
+    justifyContent: 'center',
   },
   quantityButton: {
     backgroundColor: '#00308F',
@@ -244,7 +231,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
@@ -267,5 +254,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: 'white',
+  },
+  detail: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'black',
+    textAlign: 'justify',
   },
 });

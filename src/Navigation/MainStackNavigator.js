@@ -31,6 +31,7 @@ import {getUserData} from '../Auth/Auth';
 import RedeemStatus from '../screens/RedeemStatus';
 import {defaultImage} from '../constants/Constants';
 import axiosInstance from '../Auth/AxiosInstance';
+import ProductDetails from '../screens/ProductDetails';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -136,6 +137,11 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Products"
         component={Products}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ProductDetails"
+        component={ProductDetails}
         options={{headerShown: false}}
       />
       <Stack.Screen

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {defaultImage, deviceWidth} from '../../constants/Constants';
 
-const ImageSlider = ({data}) => {
+const ImageSlider = ({data, mode}) => {
   const flatlistRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -61,7 +61,7 @@ const ImageSlider = ({data}) => {
       return (
         <TouchableOpacity activeOpacity={0.7} key={index}>
           <Image
-            resizeMode="cover"
+            resizeMode={mode}
             source={{uri: item.filename || defaultImage}}
             style={styles.image}
           />
@@ -93,7 +93,6 @@ const ImageSlider = ({data}) => {
 
 const styles = StyleSheet.create({
   image: {
-    resizeMode: 'cover',
     height: 210,
     width: deviceWidth - 40,
     backgroundColor: 'white',

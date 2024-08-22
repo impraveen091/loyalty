@@ -48,7 +48,7 @@ const AddBankDetails = ({route}) => {
     console.log('update fields', field, value);
     setFormData(prevFormData => ({
       ...prevFormData,
-      [field]: value.toUpperCase(),
+      [field]: value,
     }));
     if (typeof value === 'string' && value.trim() !== '') {
       setErrors(prevError => ({

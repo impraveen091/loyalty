@@ -129,7 +129,9 @@ const Dashboard = ({navigation}) => {
         </View>
       ) : (
         <>
-          {SliderImages.length > 0 && <ImageSlider data={SliderImages} />}
+          {SliderImages.length > 0 && (
+            <ImageSlider data={SliderImages} mode="cover" />
+          )}
 
           <PointCard
             imageLink={image ? image : defaultImage}
