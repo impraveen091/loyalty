@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import ImageSlider from '../components/imageSlider/ImageSlider';
 import PointCard from '../components/PointCard/PointCard';
@@ -39,7 +40,17 @@ const Dashboard = ({navigation}) => {
   const [pointLimit, setPointLimit] = useState('');
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [SliderImages, setSliderImages] = useState([]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 500);
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
@@ -122,7 +133,12 @@ const Dashboard = ({navigation}) => {
   }, [isFocused]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       {loading ? (
         <View style={styles.loader}>
           <Loader />

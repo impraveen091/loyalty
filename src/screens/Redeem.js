@@ -87,6 +87,7 @@ const Redeem = () => {
           if (result.data.success === 'success') {
             setModalVisible(false);
             ToastAndroid.show('Redeemption Request Sent', ToastAndroid.SHORT);
+            setInputValue('');
           }
         } catch (error) {
           console.error('Get request failed:', error);
@@ -225,6 +226,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     marginBottom: 10,
+    color: 'black',
   },
   buttonContainer: {
     flexDirection: 'row',

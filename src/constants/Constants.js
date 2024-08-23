@@ -20,11 +20,12 @@ const {width, height} = Dimensions.get('window');
 const guidelineBaseWidth = 350;
 const guidelineBaseHeight = 680;
 
+export const moderateScale = (size, factor = 0.5) =>
+  size + ((width / guidelineBaseWidth) * size - size) * factor;
+
 // Responsive function for scaling
 const scale = size => (width / guidelineBaseWidth) * size;
 const verticalScale = size => (height / guidelineBaseHeight) * size;
-const moderateScale = (size, factor = 0.5) =>
-  size + (scale(size) - size) * factor;
 
 // Colors
 export const COLORS = {
@@ -35,22 +36,6 @@ export const COLORS = {
   text: '#2c3e50',
   white: '#ffffff',
   black: '#000000',
-};
-
-// Font Sizes
-export const FONT_SIZES = {
-  small: moderateScale(12),
-  medium: moderateScale(16),
-  large: moderateScale(20),
-  xLarge: moderateScale(24),
-};
-
-// Spacing
-export const SPACING = {
-  small: moderateScale(8),
-  medium: moderateScale(16),
-  large: moderateScale(24),
-  xLarge: moderateScale(32),
 };
 
 // Device Dimensions
@@ -64,39 +49,6 @@ export const DEVICE_DIMENSIONS = {
 // Platform-specific constants
 export const IS_IOS = Platform.OS === 'ios';
 export const IS_ANDROID = Platform.OS === 'android';
-
-// Example usage of constants in styles
-export const commonStyles = {
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-    padding: SPACING.medium,
-  },
-  text: {
-    color: COLORS.text,
-    fontSize: FONT_SIZES.medium,
-  },
-  button: {
-    backgroundColor: COLORS.primary,
-    padding: SPACING.small,
-    borderRadius: 5,
-  },
-  // Example usage of verticalScale
-  header: {
-    height: verticalScale(50),
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: FONT_SIZES.large,
-    color: COLORS.white,
-  },
-  icon: {
-    width: scale(24),
-    height: verticalScale(24),
-  },
-};
 
 export const username = 'albarulo';
 export const userid = 30;

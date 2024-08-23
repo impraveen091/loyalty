@@ -29,7 +29,7 @@ import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
 import {getUserData} from '../Auth/Auth';
 import RedeemStatus from '../screens/RedeemStatus';
-import {defaultImage} from '../constants/Constants';
+import {defaultImage, moderateScale} from '../constants/Constants';
 import axiosInstance from '../Auth/AxiosInstance';
 import ProductDetails from '../screens/ProductDetails';
 
@@ -85,8 +85,13 @@ const DashboardDrawerNavigator = ({navigation}) => {
         ),
         headerTitle: () => (
           <Image
-            source={logoImage !== null && logoImage}
-            style={{width: 200, resizeMode: 'contain'}}
+            source={{uri: logoImage}}
+            style={{
+              width: moderateScale(140),
+              height: moderateScale(20),
+              marginLeft: moderateScale(-20),
+            }}
+            resizeMode="contain"
           />
         ),
       }}>

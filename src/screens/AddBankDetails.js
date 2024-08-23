@@ -44,13 +44,28 @@ const AddBankDetails = ({route}) => {
     }
   }, []);
 
+  console.log('formData', formData);
+
   const handleInputChange = (field, value) => {
-    console.log('update fields', field, value);
+    let sanitizedValue = value;
+
+    // Check if the value is a string before converting to uppercase
+    if (typeof sanitizedValue === 'string') {
+      sanitizedValue = sanitizedValue.toUpperCase();
+
+      if (field === 'ifsc_code') {
+        // Only allow alphanumeric characters
+        sanitizedValue = sanitizedValue.replace(/[^a-zA-Z0-9]/g, '');
+      }
+    }
+
     setFormData(prevFormData => ({
       ...prevFormData,
-      [field]: value,
+      [field]: sanitizedValue,
     }));
-    if (typeof value === 'string' && value.trim() !== '') {
+
+    // Check for errors and clear them if input is valid
+    if (typeof sanitizedValue === 'string' && sanitizedValue.trim() !== '') {
       setErrors(prevError => ({
         ...prevError,
         [field]: null,
@@ -65,7 +80,12 @@ const AddBankDetails = ({route}) => {
       });
       const fileType = file.name.split('.').pop().toLowerCase();
       if (['jpg', 'jpeg', 'png'].includes(fileType)) {
-        handleInputChange(field, file);
+        const fileData = {
+          uri: file.uri,
+          type: file.type,
+          name: file.name,
+        };
+        handleInputChange(field, fileData);
       } else {
         Alert.alert(
           'Invalid File Type',
@@ -91,15 +111,16 @@ const AddBankDetails = ({route}) => {
       !upi_id
     ) {
       setErrors({
-        acc_no: !adhar ? 'Aadhar number is required' : '',
+        acc_no: !acc_no ? 'Account Number is required' : '',
         account_name: !account_name ? 'Account Name is required' : '',
         bank_name: !bank_name ? 'Bank Name is required' : '',
-        ifsc_code: !ifsc_code ? 'ifsc code is required' : '',
+        ifsc_code: !ifsc_code ? 'IFSC Code is required' : '',
         passbook_img: !passbook_img ? 'Passbook Image is required' : '',
-        upi_id: !upi_id ? 'upi id is required' : '',
+        upi_id: !upi_id ? 'UPI ID is required' : '',
       });
       return;
     }
+
     const payload = new FormData();
 
     payload.append('acc_no', acc_no);
@@ -108,7 +129,7 @@ const AddBankDetails = ({route}) => {
     payload.append('ifsc_code', ifsc_code);
     payload.append('upi_id', upi_id);
 
-    if (typeof passbook_img === 'object') {
+    if (passbook_img && typeof passbook_img.uri === 'string') {
       payload.append('passbook_img', {
         uri: passbook_img.uri,
         type: passbook_img.type,
@@ -211,13 +232,17 @@ const AddBankDetails = ({route}) => {
           <Text style={styles.upload}>Upload</Text>
         </TouchableOpacity>
       </View>
-      {/* {formData.passbook_img && (
-        <Image source={formData.passbook_img} style={styles.imageStyle} />
-      )} */}
-
       {errors.passbook_img && (
         <Text style={styles.errorText}>{errors.passbook_img}</Text>
       )}
+      {formData.passbook_img && (
+        <Image
+          source={{uri: formData.passbook_img.uri || formData.passbook_img}}
+          style={styles.imageStyle}
+          resizeMode="contain"
+        />
+      )}
+
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
@@ -288,7 +313,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   imageStyle: {
-    width: deviceWidth / 3,
-    height: deviceWidth / 2,
+    marginTop: 15,
+    width: deviceWidth - 10,
+    height: deviceWidth - 10,
   },
 });

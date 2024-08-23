@@ -19,10 +19,10 @@ const OfferDetails = () => {
         <Text style={styles.data}>{data.name}</Text>
         <Text style={styles.head}>Description</Text>
         <Text style={styles.data}>{data.Product.description}</Text>
-        <Text style={styles.head}>From Date</Text>
+        {/* <Text style={styles.head}>From Date</Text>
         <Text style={styles.data}>15, Jun 2024</Text>
         <Text style={styles.head}>To Date </Text>
-        <Text style={styles.data}>15, Dec 2024</Text>
+        <Text style={styles.data}>15, Dec 2024</Text> */}
         <Text style={styles.head}>Offer Points</Text>
         <Text style={styles.data}>{data.total_amount}</Text>
       </View>
