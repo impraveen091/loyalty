@@ -393,7 +393,7 @@ const Profile = () => {
                 <Text style={styles.label}>Profession</Text>
                 <TextInput
                   style={styles.input}
-                  value={formData.profession_name}
+                  value={formData.profession}
                   editable={false}
                 />
                 <Text style={styles.label}>City</Text>
