@@ -150,7 +150,7 @@ const Dashboard = ({navigation}) => {
           )}
 
           <PointCard
-            imageLink={image ? image : defaultImage}
+            imageLink={image ? image : profileImageLink}
             points={points}
             pointLimit={pointLimit.limit}
             pColor={pColor}
