@@ -108,9 +108,10 @@ const Profile = () => {
 
   const handleInputChange = (field, value) => {
     console.log('update fields', field, value);
+    const valueCap = value?.toUpperCase();
     setFormData(prevFormData => ({
       ...prevFormData,
-      [field]: value,
+      [field]: valueCap,
     }));
     if (typeof value === 'string' && value.trim() !== '') {
       setError(prevError => ({
@@ -435,12 +436,15 @@ const Profile = () => {
                 {error.adhar && <Text style={styles.error}>{error.adhar}</Text>}
 
                 <Text style={styles.label}>Adhar Image</Text>
-                <TouchableOpacity
-                  style={styles.fileButton}
-                  onPress={() => pickFile('adhar_img')}
-                  disabled={kyc}>
-                  <Text style={styles.buttonText}>Upload Adhar Image</Text>
-                </TouchableOpacity>
+                {!kyc && (
+                  <TouchableOpacity
+                    style={styles.fileButton}
+                    onPress={() => pickFile('adhar_img')}
+                    disabled={kyc}>
+                    <Text style={styles.buttonText}>Upload Adhar Image</Text>
+                  </TouchableOpacity>
+                )}
+
                 {formData.adhar_img && (
                   <Image
                     source={{uri: formData.adhar_img.uri || formData.adhar_img}}
@@ -459,12 +463,15 @@ const Profile = () => {
                 {error.pan && <Text style={styles.error}>{error.pan}</Text>}
 
                 <Text style={styles.label}>PAN Image</Text>
-                <TouchableOpacity
-                  style={styles.fileButton}
-                  disabled={kyc}
-                  onPress={() => pickFile('pan_img')}>
-                  <Text style={styles.buttonText}>Upload PAN Image</Text>
-                </TouchableOpacity>
+                {!kyc && (
+                  <TouchableOpacity
+                    style={styles.fileButton}
+                    disabled={kyc}
+                    onPress={() => pickFile('pan_img')}>
+                    <Text style={styles.buttonText}>Upload PAN Image</Text>
+                  </TouchableOpacity>
+                )}
+
                 {formData.pan_img && (
                   <Image
                     source={{uri: formData.pan_img.uri || formData.pan_img}}
@@ -474,11 +481,14 @@ const Profile = () => {
                 )}
 
                 <Text style={styles.label}>Selfie Image</Text>
-                <TouchableOpacity
-                  style={styles.fileButton}
-                  onPress={captureSelfie}>
-                  <Text style={styles.buttonText}>Capture Selfie</Text>
-                </TouchableOpacity>
+                {!kyc && (
+                  <TouchableOpacity
+                    style={styles.fileButton}
+                    onPress={captureSelfie}>
+                    <Text style={styles.buttonText}>Capture Selfie</Text>
+                  </TouchableOpacity>
+                )}
+
                 {formData.selfie_img && (
                   <Image
                     source={{
@@ -490,9 +500,13 @@ const Profile = () => {
                 )}
               </View>
             )}
-            <TouchableOpacity style={styles.button} onPress={updateKYCDetails}>
-              <Text style={styles.buttonText}>Update KYC Details</Text>
-            </TouchableOpacity>
+            {!kyc && (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={updateKYCDetails}>
+                <Text style={styles.buttonText}>Update KYC Details</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ScrollView>
       )}

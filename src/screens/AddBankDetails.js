@@ -51,8 +51,6 @@ const AddBankDetails = ({route}) => {
 
     // Check if the value is a string before converting to uppercase
     if (typeof sanitizedValue === 'string') {
-      sanitizedValue = sanitizedValue.toUpperCase();
-
       if (field === 'ifsc_code') {
         // Only allow alphanumeric characters
         sanitizedValue = sanitizedValue.replace(/[^a-zA-Z0-9]/g, '');
