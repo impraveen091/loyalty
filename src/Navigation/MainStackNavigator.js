@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import Redeem from '../screens/Redeem';
 import Dashboard from '../screens/Dashboard';
 import PromotionalOffers from '../screens/PromotionalOffers';
@@ -22,16 +22,25 @@ import Profile from '../screens/Profile';
 import Aboutus from '../screens/StaticPages/Aboutus';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawerContent from '../Drawer/CustomDrawerContent';
-import {Image, Text, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
-import {getUserData} from '../Auth/Auth';
+import {getToken, getUserData} from '../Auth/Auth';
 import RedeemStatus from '../screens/RedeemStatus';
 import {defaultImage, moderateScale} from '../constants/Constants';
-import axiosInstance from '../Auth/AxiosInstance';
+import axiosInstance, {setNavigationRef} from '../Auth/AxiosInstance';
 import ProductDetails from '../screens/ProductDetails';
+import {NavigationContainer} from '@react-navigation/native';
+import {useNavigationContext} from '../../App';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -101,8 +110,45 @@ const DashboardDrawerNavigator = ({navigation}) => {
 };
 
 const MainStackNavigator = () => {
+  const [initialRoute, setInitialRoute] = useState(null);
+  const {navigationState} = useNavigationContext();
+  const navigationRef = useRef(null);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await getToken();
+        if (token) {
+          setInitialRoute('DashboardDrawer');
+        } else {
+          setInitialRoute(navigationState);
+        }
+      } catch (error) {
+        console.error('Error checking token', error);
+        setInitialRoute('Signin');
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  // Set the navigation reference for axios
+  useEffect(() => {
+    if (navigationRef.current) {
+      setNavigationRef(navigationRef.current);
+    }
+  }, [navigationRef]);
+
+  if (initialRoute === null) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
-    <Stack.Navigator initialRouteName="Signin">
+    <Stack.Navigator initialRouteName={initialRoute}>
       <Stack.Screen
         name="DashboardDrawer"
         component={DashboardDrawerNavigator}
@@ -167,7 +213,7 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Scan"
         component={Scan}
-        // options={{headerShown: false}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="OfferDetails"
@@ -232,5 +278,13 @@ const MainStackNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default MainStackNavigator;

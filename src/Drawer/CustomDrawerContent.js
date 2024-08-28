@@ -32,7 +32,7 @@ import {useTranslation} from 'react-i18next';
 import i18next from '../../services/i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused} from '@react-navigation/native';
-import {getUserData} from '../Auth/Auth';
+import {getUserData, removeToken} from '../Auth/Auth';
 
 const CustomDrawerContent = ({navigation, kycStatus}) => {
   const {t} = useTranslation();
@@ -102,6 +102,7 @@ const CustomDrawerContent = ({navigation, kycStatus}) => {
       await AsyncStorage.removeItem('phone');
       await AsyncStorage.removeItem('kyc');
       await AsyncStorage.removeItem('data');
+      await removeToken();
       navigation.replace('Signin');
     } catch (error) {
       console.error('Failed to log out:', error);

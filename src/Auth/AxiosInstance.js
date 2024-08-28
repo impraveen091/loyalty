@@ -2,6 +2,9 @@ import axios from 'axios';
 import {Base_url} from '../../services/Api';
 import {getToken, getUserData, refreshToken, removeToken} from './Auth';
 import {userid, username} from '../constants/Constants';
+import {NavigationContext, useNavigation} from '@react-navigation/native';
+import {replace} from '../Navigation/NavigationService';
+import {useContext} from 'react';
 
 const axiosInstance = axios.create({
   baseURL: Base_url,
@@ -31,21 +34,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async error => {
-    const originalRequest = error.config;
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
-      const newToken = await refreshToken();
-      if (newToken) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-        return axiosInstance(originalRequest);
-      } else {
-        await removeToken();
-        // handle redirection to login page
-      }
+    const {handleNavigation} = useContext(NavigationContext);
+    if (error.response && error.response.status === 401) {
+      console.log('error', error.response.status);
+      await removeToken();
+      handleNavigation('Signin');
     }
     return Promise.reject(error);
   },

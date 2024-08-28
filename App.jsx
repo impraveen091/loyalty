@@ -1,4 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
@@ -11,9 +17,17 @@ import {
   requestUserPermission,
 } from './src/NotificationServices/NotificationServices';
 
+const NavigationContext = createContext();
+export const useNavigationContext = () => useContext(NavigationContext);
+
 const store = createStore(rootReducer);
 
 const App = () => {
+  const [navigationState, setNavigationState] = useState('Signin');
+
+  const handleNavigation = screen => {
+    setNavigationState(screen);
+  };
   useEffect(() => {
     PushNotification.createChannel(
       {
@@ -54,9 +68,11 @@ const App = () => {
   }, []);
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <MainStackNavigator />
-      </NavigationContainer>
+      <NavigationContext.Provider value={{navigationState, handleNavigation}}>
+        <NavigationContainer>
+          <MainStackNavigator />
+        </NavigationContainer>
+      </NavigationContext.Provider>
     </Provider>
   );
 };
