@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  createNavigationContainerRef,
+  NavigationContainer,
+} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import rootReducer from './src/redux/reducer';
@@ -12,6 +15,14 @@ import {
 } from './src/NotificationServices/NotificationServices';
 
 const store = createStore(rootReducer);
+
+export const navigationRef = createNavigationContainerRef();
+
+export function navigate(name, params) {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name, params);
+  }
+}
 
 const App = () => {
   useEffect(() => {
@@ -54,7 +65,7 @@ const App = () => {
   }, []);
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <MainStackNavigator />
       </NavigationContainer>
     </Provider>

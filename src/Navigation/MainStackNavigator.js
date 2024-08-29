@@ -22,12 +22,19 @@ import Profile from '../screens/Profile';
 import Aboutus from '../screens/StaticPages/Aboutus';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawerContent from '../Drawer/CustomDrawerContent';
-import {Image, Text, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import Bell from '../components/Assets/svg/bell.svg';
 import Signup from '../screens/Signup';
 import AddBankDetails from '../screens/AddBankDetails';
 import Cart from '../screens/Cart';
-import {getUserData} from '../Auth/Auth';
+import {getToken, getUserData} from '../Auth/Auth';
 import RedeemStatus from '../screens/RedeemStatus';
 import {defaultImage, moderateScale} from '../constants/Constants';
 import axiosInstance from '../Auth/AxiosInstance';
@@ -101,8 +108,34 @@ const DashboardDrawerNavigator = ({navigation}) => {
 };
 
 const MainStackNavigator = () => {
+  const [initialRoute, setInitialRoute] = useState(null);
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await getToken();
+        if (token) {
+          setInitialRoute('DashboardDrawer');
+        } else {
+          setInitialRoute('Signin');
+        }
+      } catch (error) {
+        console.error('Error checking token', error);
+        setInitialRoute('Signin');
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  if (initialRoute === null) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
   return (
-    <Stack.Navigator initialRouteName="Signin">
+    <Stack.Navigator initialRouteName={initialRoute}>
       <Stack.Screen
         name="DashboardDrawer"
         component={DashboardDrawerNavigator}
@@ -232,5 +265,13 @@ const MainStackNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default MainStackNavigator;

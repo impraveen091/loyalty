@@ -61,7 +61,7 @@ const Products = () => {
           })
         }>
         <Image
-          source={{uri: item?.ProductImages[0].image}}
+          source={{uri: item?.ProductImages[0]?.image}}
           style={styles.image}
           resizeMode="contain"
         />
