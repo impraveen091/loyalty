@@ -39,6 +39,7 @@ import RedeemStatus from '../screens/RedeemStatus';
 import {defaultImage, moderateScale} from '../constants/Constants';
 import axiosInstance from '../Auth/AxiosInstance';
 import ProductDetails from '../screens/ProductDetails';
+import Splash from '../screens/Splash';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -108,37 +109,16 @@ const DashboardDrawerNavigator = ({navigation}) => {
 };
 
 const MainStackNavigator = () => {
-  const [initialRoute, setInitialRoute] = useState(null);
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const token = await getToken();
-        if (token) {
-          setInitialRoute('DashboardDrawer');
-        } else {
-          setInitialRoute('Signin');
-        }
-      } catch (error) {
-        console.error('Error checking token', error);
-        setInitialRoute('Signin');
-      }
-    };
-
-    checkToken();
-  }, []);
-
-  if (initialRoute === null) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
   return (
-    <Stack.Navigator initialRouteName={initialRoute}>
+    <Stack.Navigator initialRouteName="Splash">
       <Stack.Screen
         name="DashboardDrawer"
         component={DashboardDrawerNavigator}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Splash"
+        component={Splash}
         options={{headerShown: false}}
       />
       <Stack.Screen
